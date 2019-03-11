@@ -9,7 +9,6 @@ public class Computer {
     private Date    introduced, discontinued;
 
     public Computer() {
-        super();
     }
 
     public Integer getId() {
