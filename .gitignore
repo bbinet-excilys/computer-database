@@ -12,7 +12,7 @@ local.properties
 .loadpath
 .recommenders
 *.launch
-
+build/
 # Code Recommenders
 .recommenders/
 
