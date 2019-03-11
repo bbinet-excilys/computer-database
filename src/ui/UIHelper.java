@@ -44,7 +44,7 @@ public class UIHelper {
     }
 
     public static void displayMenu() {
-        System.out.println("---------- Computer DataBase ----------");
+        System.out.println("========== Computer DataBase ==========");
         System.out.println("0 - Exit");
         System.out.println("1 - List Companies");
         System.out.println("2 - List Computers");
@@ -52,6 +52,11 @@ public class UIHelper {
         System.out.println("4 - Read Computer");
         System.out.println("5 - Update Computer");
         System.out.println("6 - Delete Computer");
+        System.out.println("7 - PageList Computers");
+        System.out.println("8 - PageList Companies");
+    }
+
+    public static void displayNavMenu() {
     }
 
     public static void displayError(String message) {
@@ -63,6 +68,22 @@ public class UIHelper {
         Scanner mScanner = new Scanner(System.in);
         String  tString  = mScanner.nextLine();
         return tString.matches("^[yY]");
+    }
+
+    public static Integer promptPage(Integer page) {
+        System.out.println("<- p | p."+page+" | n ->");
+        System.out.println(" anything else to exit ");
+        Scanner mScanner = new Scanner(System.in);
+        String  rString  = mScanner.nextLine().trim();
+        if (rString.matches("^[pP]")) {            
+            System.out.println("Previous");
+            return -1;
+        }
+        if (rString.matches("^[nN]")) {
+            System.out.println("Next");
+            return 1;
+        }
+        return 0;
     }
 
 }
