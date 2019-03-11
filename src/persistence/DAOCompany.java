@@ -47,12 +47,14 @@ public class DAOCompany extends DAO<Company> {
         Company           rCompany           = null;
         try {
             mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company WHERE id=?;");
+            mPreparedStatement.setInt(1, id);
             mResultSet         = mPreparedStatement.executeQuery();
-            mResultSet.first();
-            rCompany = new Company();
-            rCompany.setId(mResultSet.getInt("id"));
-            rCompany.setName(mResultSet.getString("name"));
-            return rCompany;
+            if(mResultSet.first()) {
+                rCompany = new Company();
+                rCompany.setId(mResultSet.getInt("id"));
+                rCompany.setName(mResultSet.getString("name"));
+                return rCompany;                
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();

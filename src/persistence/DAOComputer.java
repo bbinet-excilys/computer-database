@@ -20,11 +20,11 @@ public class DAOComputer extends DAO<Computer> {
         PreparedStatement mPreparedStatement = null;
         try {
             mPreparedStatement = this.dbConnection.prepareStatement(
-                    "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES (?,?,?,?,?);");
+                    "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES (?,?,?,?);");
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setDate(2, object.getIntroduced());
             mPreparedStatement.setDate(3, object.getDiscontinued());
-            mPreparedStatement.setInt(4, object.getCompanyId());
+            mPreparedStatement.setObject(4, object.getCompanyId());
             mPreparedStatement.executeUpdate();
             return true;
         }
@@ -55,13 +55,15 @@ public class DAOComputer extends DAO<Computer> {
                     .prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?");
             mPreparedStatement.setInt(1, id);
             mResultSet = mPreparedStatement.executeQuery();
-            mResultSet.first();
-            rComputer = new Computer();
-            rComputer.setId(mResultSet.getInt("id"));
-            rComputer.setName(mResultSet.getString("name"));
-            rComputer.setIntroduced(mResultSet.getDate("introduced"));
-            rComputer.setDiscontinued(mResultSet.getDate("discontinued"));
-            rComputer.setCompanyId(mResultSet.getInt("company_id"));
+            if(mResultSet.first()) {                
+                rComputer = new Computer();
+                rComputer.setId(mResultSet.getInt("id"));
+                rComputer.setName(mResultSet.getString("name"));
+                rComputer.setIntroduced(mResultSet.getDate("introduced"));
+                rComputer.setDiscontinued(mResultSet.getDate("discontinued"));
+                rComputer.setCompanyId(mResultSet.getInt("company_id"));
+                return rComputer;
+            }
         }
         catch (SQLException e) {
             e.printStackTrace();
@@ -96,7 +98,7 @@ public class DAOComputer extends DAO<Computer> {
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setDate(2, object.getIntroduced());
             mPreparedStatement.setDate(3, object.getDiscontinued());
-            mPreparedStatement.setInt(4, object.getCompanyId());
+            mPreparedStatement.setObject(4, object.getCompanyId());
             mPreparedStatement.setInt(5, object.getId());
             int status = mPreparedStatement.executeUpdate();
             return true;
