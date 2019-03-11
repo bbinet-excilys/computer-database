@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.Company;
 
@@ -116,7 +118,7 @@ public class DAOCompany extends DAO<Company> {
             e.printStackTrace();
         }
         finally {
-            if(mPreparedStatement != null) {
+            if (mPreparedStatement != null) {
                 try {
                     mPreparedStatement.close();
                 }
@@ -127,6 +129,47 @@ public class DAOCompany extends DAO<Company> {
         }
 
         return false;
+    }
+
+    @Override
+    public List<Company> list() {
+        PreparedStatement mPreparedStatement = null;
+        ResultSet mResultSet = null;
+        List<Company> rCompanyList = null;
+        try {
+            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company;");
+            mResultSet = mPreparedStatement.executeQuery();
+            rCompanyList = new ArrayList<Company>();
+            while(mResultSet.next()) {
+                Company tCompany = new Company();
+                tCompany.setId(mResultSet.getInt("id"));
+                tCompany.setName(mResultSet.getString("name"));
+                rCompanyList.add(tCompany);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(mPreparedStatement != null) {
+                try {
+                    mPreparedStatement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(mResultSet != null) {
+                try {
+                    mResultSet.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return rCompanyList;
     }
 
 }

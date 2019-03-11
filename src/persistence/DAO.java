@@ -1,6 +1,7 @@
 package persistence;
 
 import java.sql.Connection;
+import java.util.List;
 
 public abstract class DAO<T> {
 
@@ -17,4 +18,6 @@ public abstract class DAO<T> {
     public abstract boolean update(T object);
 
     public abstract boolean delete(T object);
+    
+    public abstract List<T> list();
 }

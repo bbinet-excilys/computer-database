@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import model.Computer;
 
@@ -62,23 +64,24 @@ public class DAOComputer extends DAO<Computer> {
             rComputer.setCompanyId(mResultSet.getInt("company_id"));
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         finally {
-            try {
-                mPreparedStatement.close();
+            if (mPreparedStatement != null) {
+                try {
+                    mPreparedStatement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
-            catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-            try {
-                mResultSet.close();
-            }
-            catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            if (mResultSet != null) {
+                try {
+                    mResultSet.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
         return rComputer;
@@ -99,7 +102,6 @@ public class DAOComputer extends DAO<Computer> {
             return true;
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         finally {
@@ -108,7 +110,6 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -127,7 +128,6 @@ public class DAOComputer extends DAO<Computer> {
             return true;
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         finally {
@@ -136,12 +136,55 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         }
         return false;
+    }
+
+    @Override
+    public List<Computer> list() {
+        List<Computer>    rComputerList      = null;
+        PreparedStatement mPreparedStatement = null;
+        ResultSet         mResultSet         = null;
+        try {
+            rComputerList      = new ArrayList<Computer>();
+            mPreparedStatement = dbConnection
+                    .prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer;");
+            mResultSet         = mPreparedStatement.executeQuery();
+            while (mResultSet.next()) {
+                Computer tComputer = new Computer();
+                tComputer.setId(mResultSet.getInt("id"));
+                tComputer.setName(mResultSet.getString("name"));
+                tComputer.setIntroduced(mResultSet.getDate("introduced"));
+                tComputer.setDiscontinued(mResultSet.getDate("discontinued"));
+                tComputer.setCompanyId(mResultSet.getInt("company_id"));
+                rComputerList.add(tComputer);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(mPreparedStatement != null) {
+                try {
+                    mPreparedStatement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(mResultSet != null) {
+                try {
+                    mResultSet.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return rComputerList;
     }
 
 }
