@@ -2,7 +2,7 @@ package model;
 
 import java.sql.Date;
 
-public class Computer {
+public class Computer extends Entity {
 
     private Integer id, companyId;
     private String  name;
@@ -16,7 +16,8 @@ public class Computer {
     }
 
     public void setId(Integer id) {
-        this.id = id;
+        if(id!=null)
+            this.id = id;
     }
 
     public Integer getCompanyId() {
@@ -24,7 +25,8 @@ public class Computer {
     }
 
     public void setCompanyId(Integer companyId) {
-        this.companyId = companyId;
+        if(companyId!=null)
+            this.companyId = companyId;
     }
 
     public String getName() {
@@ -32,7 +34,8 @@ public class Computer {
     }
 
     public void setName(String name) {
-        this.name = name;
+        if(name!=null)
+            this.name = name;
     }
 
     public Date getIntroduced() {
@@ -40,7 +43,8 @@ public class Computer {
     }
 
     public void setIntroduced(Date introduced) {
-        this.introduced = introduced;
+        if(introduced!=null)
+            this.introduced = introduced;
     }
 
     public Date getDiscontinued() {
@@ -48,7 +52,14 @@ public class Computer {
     }
 
     public void setDiscontinued(Date discontinued) {
-        this.discontinued = discontinued;
+        if(discontinued!=null)
+            this.discontinued = discontinued;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%5s | %30.30s | %10s | %10s | %5s", this.id, this.name, this.introduced, this.discontinued,
+                this.companyId);
     }
 
 }

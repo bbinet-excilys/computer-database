@@ -1,6 +1,6 @@
 package model;
 
-public class Company {
+public class Company extends Entity {
 
     private Integer id;
     private String  name;
@@ -22,6 +22,10 @@ public class Company {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String toString() {
+        return String.format("%5s | %30s", this.id, this.name);
     }
 
 }
