@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.Company;
+import model.Computer;
 
 public class DAOCompany extends DAO<Company> {
 
@@ -134,11 +135,65 @@ public class DAOCompany extends DAO<Company> {
     }
 
     @Override
+    public List<Company> list(Integer size, Integer offset) {
+        PreparedStatement mPreparedStatement = null;
+        ResultSet mResultSet = null;
+        List<Company> rCompanyList = null;
+        try {
+            rCompanyList = new ArrayList<Company>();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT id, name FROM company");
+            if (offset != null && size != null) {
+                queryBuilder.append(" LIMIT ? OFFSET ?");
+            }
+            queryBuilder.append(";");
+            mPreparedStatement = dbConnection.prepareStatement(queryBuilder.toString());
+            if(size!=null && offset!=null) {
+                mPreparedStatement.setInt(1, size);
+                mPreparedStatement.setInt(2, offset);
+            }
+            mResultSet = mPreparedStatement.executeQuery();
+            rCompanyList = new ArrayList<Company>();
+            while(mResultSet.next()) {
+                Company tCompany = new Company();
+                tCompany.setId(mResultSet.getInt("id"));
+                tCompany.setName(mResultSet.getString("name"));
+                rCompanyList.add(tCompany);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if(mPreparedStatement != null) {
+                try {
+                    mPreparedStatement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(mResultSet != null) {
+                try {
+                    mResultSet.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        return rCompanyList;
+    }
+
+    @Override
     public List<Company> list() {
         PreparedStatement mPreparedStatement = null;
         ResultSet mResultSet = null;
         List<Company> rCompanyList = null;
         try {
+            rCompanyList = new ArrayList<Company>();
+            StringBuilder queryBuilder = new StringBuilder();
             mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company;");
             mResultSet = mPreparedStatement.executeQuery();
             rCompanyList = new ArrayList<Company>();

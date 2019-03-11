@@ -19,5 +19,6 @@ public abstract class DAO<T> {
 
     public abstract boolean delete(T object);
     
+    public abstract List<T> list(Integer size, Integer offset);
     public abstract List<T> list();
 }

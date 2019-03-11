@@ -55,7 +55,7 @@ public class DAOComputer extends DAO<Computer> {
                     .prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?");
             mPreparedStatement.setInt(1, id);
             mResultSet = mPreparedStatement.executeQuery();
-            if(mResultSet.first()) {                
+            if (mResultSet.first()) {
                 rComputer = new Computer();
                 rComputer.setId(mResultSet.getInt("id"));
                 rComputer.setName(mResultSet.getString("name"));
@@ -146,14 +146,23 @@ public class DAOComputer extends DAO<Computer> {
     }
 
     @Override
-    public List<Computer> list() {
+    public List<Computer> list(Integer size, Integer offset) {
         List<Computer>    rComputerList      = null;
         PreparedStatement mPreparedStatement = null;
         ResultSet         mResultSet         = null;
         try {
-            rComputerList      = new ArrayList<Computer>();
-            mPreparedStatement = dbConnection
-                    .prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer;");
+            rComputerList = new ArrayList<Computer>();
+            StringBuilder queryBuilder = new StringBuilder();
+            queryBuilder.append("SELECT id, name, introduced, discontinued, company_id FROM computer");
+            if (offset != null && size != null) {
+                queryBuilder.append(" LIMIT ? OFFSET ?");
+            }
+            queryBuilder.append(";");
+            mPreparedStatement = dbConnection.prepareStatement(queryBuilder.toString());
+            if (offset != null && size != null) {
+                mPreparedStatement.setInt(1, size);
+                mPreparedStatement.setInt(2, offset);
+            }
             mResultSet         = mPreparedStatement.executeQuery();
             while (mResultSet.next()) {
                 Computer tComputer = new Computer();
@@ -169,7 +178,7 @@ public class DAOComputer extends DAO<Computer> {
             e.printStackTrace();
         }
         finally {
-            if(mPreparedStatement != null) {
+            if (mPreparedStatement != null) {
                 try {
                     mPreparedStatement.close();
                 }
@@ -177,7 +186,50 @@ public class DAOComputer extends DAO<Computer> {
                     e.printStackTrace();
                 }
             }
-            if(mResultSet != null) {
+            if (mResultSet != null) {
+                try {
+                    mResultSet.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return rComputerList;
+    }
+
+    @Override
+    public List<Computer> list() {
+        List<Computer>    rComputerList      = null;
+        PreparedStatement mPreparedStatement = null;
+        ResultSet         mResultSet         = null;
+        try {
+            rComputerList = new ArrayList<Computer>();
+            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer;");
+            mResultSet         = mPreparedStatement.executeQuery();
+            while (mResultSet.next()) {
+                Computer tComputer = new Computer();
+                tComputer.setId(mResultSet.getInt("id"));
+                tComputer.setName(mResultSet.getString("name"));
+                tComputer.setIntroduced(mResultSet.getDate("introduced"));
+                tComputer.setDiscontinued(mResultSet.getDate("discontinued"));
+                tComputer.setCompanyId(mResultSet.getInt("company_id"));
+                rComputerList.add(tComputer);
+            }
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
+        finally {
+            if (mPreparedStatement != null) {
+                try {
+                    mPreparedStatement.close();
+                }
+                catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (mResultSet != null) {
                 try {
                     mResultSet.close();
                 }

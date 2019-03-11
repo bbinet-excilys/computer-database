@@ -95,7 +95,8 @@ public class ComputerController extends EntityController<Computer> {
             if (UIHelper.promptValidation("Are you sure ? (y/N)")) {
                 this.dao.delete(cComputer);
             }
-        }else {
+        }
+        else {
             UIHelper.displayError("This computer doesn't exist");
         }
     }
@@ -104,6 +105,26 @@ public class ComputerController extends EntityController<Computer> {
     public void list() {
         List<Computer> mComputerList = this.dao.list();
         ComputerUI.printList(mComputerList);
+    }
+
+    public void pagedList() {
+        Integer        size          = UIHelper.promptInt("How many computers per page ?");
+        Integer        offset        = 0;
+        List<Computer> mComputerList = null;
+        do {
+            mComputerList = this.dao.list(size, offset * size);
+            if (mComputerList.size() <= 0) {
+                break;
+            }
+            ComputerUI.printList(mComputerList);
+            Integer cpt = UIHelper.promptPage(offset);
+            if (cpt != 0) {
+                offset = (offset + cpt <= 0) ? 0 : offset + cpt;
+            }
+            else {
+                break;
+            }
+        } while (true);
     }
 
 }
