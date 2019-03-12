@@ -6,27 +6,27 @@ package com.excilys.cdb.main.model;
  */
 public class Company extends Entity {
 
+    /**
+     * The Name of the Company
+     */
     private String  name;
 
-    public Company() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
+    /**
+     * @return The Name of the Company
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * 
+     * @param name The name of the Company to set
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String toString() {
         return String.format("%5s | %30s", this.id, this.name);
     }

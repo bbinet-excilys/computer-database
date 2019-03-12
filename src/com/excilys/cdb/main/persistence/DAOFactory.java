@@ -6,7 +6,7 @@ import com.excilys.cdb.main.model.Entity;
  * 
  * @author bbinet
  *
- * Singleton implementation of the Factory pattern for DAOs
+ *         Singleton implementation of the Factory pattern for DAOs
  *
  */
 public enum DAOFactory {
@@ -16,9 +16,7 @@ public enum DAOFactory {
     public static final byte DAO_COMPUTER = 0;
     public static final byte DAO_COMPANY  = 1;
 
-    private DAOFactory() {
-
-    }
+    private DAOFactory() {}
 
     public DAO getDao(int type) {
         DAO rDAO = null;

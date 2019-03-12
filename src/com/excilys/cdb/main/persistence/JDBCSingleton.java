@@ -8,13 +8,15 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * @author bbinet
  *
- * Singleton implementation of a JDBC connector.
- * Uses parameters for a mariadb database (can be easily changed to a mysql driver)
+ *         Singleton implementation of a JDBC connector. Uses parameters for a
+ *         mariadb database (can be easily changed to a mysql driver)
  */
 public enum JDBCSingleton {
 
@@ -23,8 +25,13 @@ public enum JDBCSingleton {
     private static final String PROPERTIES_FILE = "src/resources/jdbcSettings.properties";
     private Connection          connection;
     private Properties          jdbcProperties  = new Properties();
+    static final Logger         LOG             = LoggerFactory.getLogger(JDBCSingleton.class);
 
+    /**
+     * JDBCSingleton constructor. Read properties from the PropertiesFile and initiates the Connection with the database.
+     */
     private JDBCSingleton() {
+        Logger constructorLogger = LoggerFactory.getLogger(JDBCSingleton.class);
         try {
             FileReader mFileReader = new FileReader(PROPERTIES_FILE);
             this.jdbcProperties.load(mFileReader);
@@ -39,20 +46,20 @@ public enum JDBCSingleton {
                     connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
                 }
                 catch (ClassNotFoundException e) {
-                    System.err.println("Couldn't find class, try adding the JAR properly\n");
-                    e.printStackTrace();
+                    constructorLogger.error("Couldn't find the Driver Class. Check parameters value in "
+                            + PROPERTIES_FILE + " : " + e.getMessage());
                 }
                 catch (SQLException e) {
-                    System.err.println("Couldn't getConnection from DriverManager, Check parameters\n");
-                    e.printStackTrace();
+                    constructorLogger.error("Couldn't getConnection from the DriverManager. Check parameters value in "
+                            + PROPERTIES_FILE + " : " + e.getMessage());
                 }
             }
         }
         catch (FileNotFoundException e) {
-            e.printStackTrace();
+            constructorLogger.error("Couldn't find file " + PROPERTIES_FILE + " : " + e.getMessage());
         }
         catch (IOException e) {
-            e.printStackTrace();
+            constructorLogger.error("Couldn't read file " + PROPERTIES_FILE + " : " + e.getMessage());
         }
     }
 
@@ -64,9 +71,10 @@ public enum JDBCSingleton {
         if (this.connection != null) {
             try {
                 this.connection.close();
+                LOG.trace("Closing JDBC connection");
             }
             catch (SQLException e) {
-                e.printStackTrace();
+                LOG.error("Error closing JDBC connection :" + e.getMessage());
             }
         }
     }

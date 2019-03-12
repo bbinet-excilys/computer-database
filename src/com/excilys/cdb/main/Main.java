@@ -3,12 +3,22 @@ import com.excilys.cdb.main.control.CompanyController;
 import com.excilys.cdb.main.control.ComputerController;
 import com.excilys.cdb.main.persistence.JDBCSingleton;
 import com.excilys.cdb.main.ui.UIHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * Main class of the application.
+ * 
+ * @author bbinet
+ *
+ */
 public class Main {
+    
+    static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
+        LOG.trace("Starting main method");
         boolean loop = true;
-        
         ComputerController mComputerController = new ComputerController();
         CompanyController  mCompanyController  = new CompanyController();
         do {

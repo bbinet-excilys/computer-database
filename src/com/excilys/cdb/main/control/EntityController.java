@@ -10,12 +10,12 @@ import com.excilys.cdb.main.ui.UIHelper;
 
 /**
  * 
- * @author bbinet
- *
  * Base class for entity controller
  * contains CRUD and list/pagedlist methods
  *
- * @param <T>
+ * @param <T> The type of Entity used by the Controller
+ *
+ * @author bbinet
  */
 public abstract class EntityController<T extends Entity> {
 
@@ -30,11 +30,17 @@ public abstract class EntityController<T extends Entity> {
 
     public abstract void delete();
 
+    /**
+     * Prints the whole list of entity
+     */
     public void list() {
         List<T> entityList = this.dao.list();
         this.entityUI.printList(entityList);
     }
     
+    /**
+     * Manages Input and Output
+     */
     public void pagedList() {
         Integer        size          = UIHelper.promptInt("How many items per page ?");
         EntityPage<T> pagedEntityList = new EntityPage<T>();

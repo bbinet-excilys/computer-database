@@ -6,13 +6,21 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.main.model.Company;
 import com.excilys.cdb.main.model.Computer;
 
 public class DAOComputer extends DAO<Computer> {
 
-    public DAOComputer() {
-        super();
+    static final Logger LOG = LoggerFactory.getLogger(DAOComputer.class);
+
+    static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name \n"
+            + "FROM computer\n" + "LEFT OUTER JOIN company\n" + "ON computer.company_id=company.id %s;";
+
+    {
+        this.mapper = new ComputerMapper();
     }
 
     @Override
@@ -29,8 +37,7 @@ public class DAOComputer extends DAO<Computer> {
             return true;
         }
         catch (SQLException e) {
-
-            e.printStackTrace();
+            LOG.warn("Couldn't execute insert query : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -38,7 +45,7 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close PreparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -48,54 +55,34 @@ public class DAOComputer extends DAO<Computer> {
     @Override
     public Computer read(Integer id) {
         Computer          rComputer                  = null;
-        PreparedStatement mComputerPreparedStatement = null;
-        PreparedStatement mCompanyPreparedStatement  = null;
-        ResultSet         mComputerResultSet         = null;
-        ResultSet         mCompanyResultSet          = null;
+        PreparedStatement mPreparedStatement = null;
+        ResultSet         mResultSet         = null;
         try {
-            mComputerPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY,
-                    "id, name, introduced, discontinued, company_id", "computer", "WHERE id=?"));
-            mComputerPreparedStatement.setInt(1, id);
-            mComputerResultSet = mComputerPreparedStatement.executeQuery();
-            if (mComputerResultSet.first()) {
-                rComputer = new Computer();
-                Company rCompany = null;
-                rComputer.setId(mComputerResultSet.getInt("id"));
-                rComputer.setName(mComputerResultSet.getString("name"));
-                rComputer.setIntroduced(mComputerResultSet.getDate("introduced"));
-                rComputer.setDiscontinued(mComputerResultSet.getDate("discontinued"));
-                rComputer.setCompanyId(mComputerResultSet.getInt("company_id"));
-                mCompanyPreparedStatement = dbConnection
-                        .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
-                mCompanyPreparedStatement.setInt(1, rComputer.getCompanyId());
-                mCompanyResultSet = mCompanyPreparedStatement.executeQuery();
-                if (mCompanyResultSet.first()) {
-                    rCompany = new Company();
-                    rCompany.setId(mCompanyResultSet.getInt("id"));
-                    rCompany.setName(mCompanyResultSet.getString("name"));
-                }
-                rComputer.setCompany(rCompany);
-                return rComputer;
+            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE id=?"));
+            mPreparedStatement.setInt(1, id);
+            mResultSet = mPreparedStatement.executeQuery();
+            if (mResultSet.first()) {
+                rComputer = this.mapper.map(mResultSet);
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Coudn't execute select query :" + e.getMessage());
         }
         finally {
-            if (mComputerPreparedStatement != null) {
+            if (mPreparedStatement != null) {
                 try {
-                    mComputerPreparedStatement.close();
+                    mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close select preparedStatement : " + e.getMessage());
                 }
             }
-            if (mComputerResultSet != null) {
+            if (mResultSet != null) {
                 try {
-                    mComputerResultSet.close();
+                    mResultSet.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close select resultSet : " + e.getMessage());
                 }
             }
         }
@@ -117,7 +104,7 @@ public class DAOComputer extends DAO<Computer> {
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't update : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -125,7 +112,7 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -143,7 +130,7 @@ public class DAOComputer extends DAO<Computer> {
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute delete query : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -151,7 +138,7 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -160,39 +147,21 @@ public class DAOComputer extends DAO<Computer> {
 
     @Override
     public List<Computer> list() {
-        List<Computer>    rComputerList      = null;
-        PreparedStatement mPreparedStatement = null;
-        ResultSet         mResultSet         = null;
-        ResultSet         mCompanyResultSet  = null;
-        PreparedStatement mCompanyPreparedStatement  = null;
+        List<Computer>    rComputerList             = null;
+        PreparedStatement mPreparedStatement        = null;
+        ResultSet         mResultSet                = null;
+        ResultSet         mCompanyResultSet         = null;
+        PreparedStatement mCompanyPreparedStatement = null;
         try {
-            rComputerList      = new ArrayList<Computer>();
-            mPreparedStatement = dbConnection.prepareStatement(
-                    String.format(SELECT_QUERY, "id, name, introduced, discontinued, company_id", "computer", ""));
-            mResultSet         = mPreparedStatement.executeQuery();
-            while (mResultSet.next()) {
-                Computer tComputer = new Computer();
-                Company rCompany = null;
-                tComputer.setId(mResultSet.getInt("id"));
-                tComputer.setName(mResultSet.getString("name"));
-                tComputer.setIntroduced(mResultSet.getDate("introduced"));
-                tComputer.setDiscontinued(mResultSet.getDate("discontinued"));
-                tComputer.setCompanyId(mResultSet.getInt("company_id"));
-                mCompanyPreparedStatement = dbConnection
-                        .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
-                mCompanyPreparedStatement.setInt(1, tComputer.getCompanyId());
-                mCompanyResultSet = mCompanyPreparedStatement.executeQuery();
-                if (mCompanyResultSet.first()) {
-                    rCompany = new Company();
-                    rCompany.setId(mCompanyResultSet.getInt("id"));
-                    rCompany.setName(mCompanyResultSet.getString("name"));
-                }
-                tComputer.setCompany(rCompany);
-                rComputerList.add(tComputer);
+            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, ""));
+            mResultSet = mPreparedStatement.executeQuery();
+            if (mResultSet.first()) {
+                rComputerList = this.mapper.mapList(mResultSet);
+            
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute select in list : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -200,7 +169,7 @@ public class DAOComputer extends DAO<Computer> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
             if (mResultSet != null) {
@@ -208,7 +177,7 @@ public class DAOComputer extends DAO<Computer> {
                     mResultSet.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close resultSet : " + e.getMessage());
                 }
             }
         }

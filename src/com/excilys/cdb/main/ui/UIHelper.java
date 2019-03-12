@@ -7,16 +7,16 @@ import java.util.Scanner;
 
 
 /**
+ * Class containing static methods for user interactions (mostly prompts and prints)
  * 
  * @author bbinet
- *
- * Class containing static methods for user interactions (mostly prompts and prints)
  */
 public class UIHelper {
 
     /**
      * Prompts the user for an Integer.
-     * @param message The message to display
+     * @param message 
+     *      The message to display
      * @return the Integer object corresponding to what the user typed (until carriage return was typed). May return null if it was empty or not a numeric.
      */
     public static Integer promptInt(String message) {
@@ -82,7 +82,7 @@ public class UIHelper {
 
     /**
      * Displays a message on the default error output
-     * @param message
+     * @param message The message to display
      */
     public static void displayError(String message) {
         System.err.println(message);

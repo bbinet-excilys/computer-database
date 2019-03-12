@@ -5,15 +5,19 @@ import com.excilys.cdb.main.persistence.DAOCompany;
 import com.excilys.cdb.main.persistence.DAOFactory;
 
 /**
+ * Computer entity controller with specific DAO of type company
  * 
  * @author bbinet
- * Computer entity controller with specific DAO of type company
  */
 
 //TODO : Implement CRUD methods
 
 public class CompanyController extends EntityController<Company> {
 
+    /**
+     * Basic Controller for Company entities.
+     * Sets the dao attribute using the dao factory. 
+     */
     public CompanyController() {
         this.dao = (DAOCompany)DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
     }
