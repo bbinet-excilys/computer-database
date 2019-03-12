@@ -3,7 +3,6 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 
-import ui.ComputerUI;
 import model.Entity;
 
 public class EntityPage<T extends Entity> {
