@@ -76,11 +76,9 @@ public class UIHelper {
         Scanner mScanner = new Scanner(System.in);
         String  rString  = mScanner.nextLine().trim();
         if (rString.matches("^[pP]")) {            
-            System.out.println("Previous");
             return -1;
         }
         if (rString.matches("^[nN]")) {
-            System.out.println("Next");
             return 1;
         }
         return 0;
