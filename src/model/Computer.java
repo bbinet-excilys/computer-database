@@ -4,7 +4,7 @@ import java.sql.Date;
 
 public class Computer extends Entity {
 
-    private Integer id, companyId;
+    private Integer companyId;
     private String  name;
     private Date    introduced, discontinued;
 
@@ -12,7 +12,7 @@ public class Computer extends Entity {
     }
 
     public Integer getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Integer id) {

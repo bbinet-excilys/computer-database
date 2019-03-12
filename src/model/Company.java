@@ -2,7 +2,6 @@ package model;
 
 public class Company extends Entity {
 
-    private Integer id;
     private String  name;
 
     public Company() {

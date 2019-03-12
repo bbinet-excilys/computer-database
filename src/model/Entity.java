@@ -2,7 +2,7 @@ package model;
 
 public abstract class Entity {
     
-    private Integer id;
+    Integer id;
     
     public abstract String toString();
     
