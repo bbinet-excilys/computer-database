@@ -6,7 +6,6 @@ import java.util.List;
 import model.Company;
 import model.Computer;
 import persistence.DAOCompany;
-import ui.CompanyUI;
 import ui.UIHelper;
 
 public class CompanyController extends EntityController<Company> {
@@ -48,7 +47,7 @@ public class CompanyController extends EntityController<Company> {
             if (mCompanyList.size() <= 0) {
                 break;
             }
-            CompanyUI.printList(mCompanyList);
+            this.entityUI.printList(mCompanyList);
             Integer cpt = UIHelper.promptPage(offset);
             if (cpt != 0) {
                 offset = (offset + cpt <= 0) ? 0 : offset + cpt;

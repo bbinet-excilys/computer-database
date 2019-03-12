@@ -10,7 +10,6 @@ import model.Computer;
 import model.EntityPage;
 import persistence.DAOCompany;
 import persistence.DAOComputer;
-import ui.ComputerUI;
 import ui.UIHelper;
 
 public class ComputerController extends EntityController<Computer> {
@@ -58,7 +57,7 @@ public class ComputerController extends EntityController<Computer> {
         } while (cId == null);
         Computer cComputer = this.dao.read(cId);
         if (cComputer != null)
-            ComputerUI.print(cComputer);
+            this.entityUI.print(cComputer);
         else
             UIHelper.displayError("This computer doesn't exist in the database");
     }
@@ -73,7 +72,7 @@ public class ComputerController extends EntityController<Computer> {
         String   cName       = null;
         Date     cIntroduced = null, cDiscontinued = null;
         Integer  cCompanyId  = null;
-        ComputerUI.print(cComputer);
+        this.entityUI.print(cComputer);
         cName         = UIHelper.promptString("Enter computer name :");
         cIntroduced   = UIHelper.promptDate("Enter date of introduction (YYYY-MM-DD) :");
         cDiscontinued = UIHelper.promptDate("Enter date of discontinuation (YYYY-MM-DD) :");

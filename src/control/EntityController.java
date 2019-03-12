@@ -7,7 +7,6 @@ import model.Computer;
 import model.Entity;
 import model.EntityPage;
 import persistence.DAO;
-import ui.ComputerUI;
 import ui.EntityUI;
 import ui.UIHelper;
 
