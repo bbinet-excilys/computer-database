@@ -1,15 +1,22 @@
-package control;
+package com.excilys.cdb.main.control;
 
-import java.sql.Connection;
 import java.util.List;
 
-import model.Computer;
-import model.Entity;
-import model.EntityPage;
-import persistence.DAO;
-import ui.EntityUI;
-import ui.UIHelper;
+import com.excilys.cdb.main.model.Entity;
+import com.excilys.cdb.main.model.EntityPage;
+import com.excilys.cdb.main.persistence.DAO;
+import com.excilys.cdb.main.ui.EntityUI;
+import com.excilys.cdb.main.ui.UIHelper;
 
+/**
+ * 
+ * @author bbinet
+ *
+ * Base class for entity controller
+ * contains CRUD and list/pagedlist methods
+ *
+ * @param <T>
+ */
 public abstract class EntityController<T extends Entity> {
 
     DAO<T> dao;
@@ -37,7 +44,7 @@ public abstract class EntityController<T extends Entity> {
         List<T> entityList = pagedEntityList.getPage(0);
         do {
             this.entityUI.printList(entityList);
-            int direction = UIHelper.promptPage(pagedEntityList.getOffset());
+            int direction = UIHelper.promptPage(pagedEntityList.getPage());
             if(direction == 0)
                 break;
             entityList = pagedEntityList.getPage(direction);

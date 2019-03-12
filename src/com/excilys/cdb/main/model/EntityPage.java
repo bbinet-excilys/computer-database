@@ -1,10 +1,17 @@
-package model;
+package com.excilys.cdb.main.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Entity;
+import com.excilys.cdb.main.model.Entity;
 
+
+/**
+ * 
+ * @author bbinet
+ * Pagination class for database entity
+ * @param <T> Class of the entity (must extend Entity)
+ */
 public class EntityPage<T extends Entity> {
 
     Integer pageSize, offset;
@@ -32,6 +39,10 @@ public class EntityPage<T extends Entity> {
 
     public void setEntities(List<T> entities) {
         this.entities = entities;
+    }
+    
+    public int getPage() {
+        return 1+((this.offset % this.entities.size() + this.entities.size())%this.entities.size())/this.pageSize;
     }
 
     public List<T> getPage(int direction) {

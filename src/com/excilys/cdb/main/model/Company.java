@@ -1,5 +1,9 @@
-package model;
-
+package com.excilys.cdb.main.model;
+/**
+ * 
+ * @author bbinet
+ * Model class for database company entity
+ */
 public class Company extends Entity {
 
     private String  name;

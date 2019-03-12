@@ -1,19 +1,17 @@
-package persistence;
+package com.excilys.cdb.main.persistence;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Company;
-import model.Computer;
+import com.excilys.cdb.main.model.Company;
 
-public class DAOCompany extends DAO<Company> {
+public class DAOCompany extends DAO<Company>{
 
-    public DAOCompany(Connection connection) {
-        super(connection);
+    public DAOCompany() {
+        super();
     }
 
     @Override
@@ -22,7 +20,7 @@ public class DAOCompany extends DAO<Company> {
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
             mPreparedStatement.setString(1, object.getName());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -91,7 +89,7 @@ public class DAOCompany extends DAO<Company> {
                     .prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setInt(2, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -116,7 +114,7 @@ public class DAOCompany extends DAO<Company> {
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
             mPreparedStatement.setInt(1, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -143,7 +141,6 @@ public class DAOCompany extends DAO<Company> {
         List<Company>     rCompanyList       = null;
         try {
             rCompanyList = new ArrayList<Company>();
-            StringBuilder queryBuilder = new StringBuilder();
             mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
             mResultSet         = mPreparedStatement.executeQuery();
             rCompanyList       = new ArrayList<Company>();

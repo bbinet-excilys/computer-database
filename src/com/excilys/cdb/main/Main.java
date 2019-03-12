@@ -1,17 +1,16 @@
-import org.apache.catalina.valves.JDBCAccessLogValve;
-
-import control.CompanyController;
-import control.ComputerController;
-import persistence.JDBCHelper;
-import ui.UIHelper;
+package com.excilys.cdb.main;
+import com.excilys.cdb.main.control.CompanyController;
+import com.excilys.cdb.main.control.ComputerController;
+import com.excilys.cdb.main.persistence.JDBCSingleton;
+import com.excilys.cdb.main.ui.UIHelper;
 
 public class Main {
 
     public static void main(String[] args) {
         boolean loop = true;
-        System.out.println(JDBCHelper.getConnection());
-        ComputerController mComputerController = new ComputerController(JDBCHelper.getConnection());
-        CompanyController  mCompanyController  = new CompanyController(JDBCHelper.getConnection());
+        
+        ComputerController mComputerController = new ComputerController();
+        CompanyController  mCompanyController  = new CompanyController();
         do {
             UIHelper.displayMenu();
             Integer choice;
@@ -52,7 +51,7 @@ public class Main {
                 break;
             }
         } while (loop);
-        JDBCHelper.closeConnection();
+        JDBCSingleton.INSTANCE.closeConnection();
     }
 
 }

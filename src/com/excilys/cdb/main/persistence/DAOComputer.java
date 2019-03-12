@@ -1,18 +1,18 @@
-package persistence;
+package com.excilys.cdb.main.persistence;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Computer;
+import com.excilys.cdb.main.model.Company;
+import com.excilys.cdb.main.model.Computer;
 
 public class DAOComputer extends DAO<Computer> {
 
-    public DAOComputer(Connection connection) {
-        super(connection);
+    public DAOComputer() {
+        super();
     }
 
     @Override
@@ -47,21 +47,34 @@ public class DAOComputer extends DAO<Computer> {
 
     @Override
     public Computer read(Integer id) {
-        Computer          rComputer          = null;
-        PreparedStatement mPreparedStatement = null;
-        ResultSet         mResultSet         = null;
+        Computer          rComputer                  = null;
+        PreparedStatement mComputerPreparedStatement = null;
+        PreparedStatement mCompanyPreparedStatement  = null;
+        ResultSet         mComputerResultSet         = null;
+        ResultSet         mCompanyResultSet          = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY,
+            mComputerPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY,
                     "id, name, introduced, discontinued, company_id", "computer", "WHERE id=?"));
-            mPreparedStatement.setInt(1, id);
-            mResultSet = mPreparedStatement.executeQuery();
-            if (mResultSet.first()) {
+            mComputerPreparedStatement.setInt(1, id);
+            mComputerResultSet = mComputerPreparedStatement.executeQuery();
+            if (mComputerResultSet.first()) {
                 rComputer = new Computer();
-                rComputer.setId(mResultSet.getInt("id"));
-                rComputer.setName(mResultSet.getString("name"));
-                rComputer.setIntroduced(mResultSet.getDate("introduced"));
-                rComputer.setDiscontinued(mResultSet.getDate("discontinued"));
-                rComputer.setCompanyId(mResultSet.getInt("company_id"));
+                Company rCompany = null;
+                rComputer.setId(mComputerResultSet.getInt("id"));
+                rComputer.setName(mComputerResultSet.getString("name"));
+                rComputer.setIntroduced(mComputerResultSet.getDate("introduced"));
+                rComputer.setDiscontinued(mComputerResultSet.getDate("discontinued"));
+                rComputer.setCompanyId(mComputerResultSet.getInt("company_id"));
+                mCompanyPreparedStatement = dbConnection
+                        .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
+                mCompanyPreparedStatement.setInt(1, rComputer.getCompanyId());
+                mCompanyResultSet = mCompanyPreparedStatement.executeQuery();
+                if (mCompanyResultSet.first()) {
+                    rCompany = new Company();
+                    rCompany.setId(mCompanyResultSet.getInt("id"));
+                    rCompany.setName(mCompanyResultSet.getString("name"));
+                }
+                rComputer.setCompany(rCompany);
                 return rComputer;
             }
         }
@@ -69,17 +82,17 @@ public class DAOComputer extends DAO<Computer> {
             e.printStackTrace();
         }
         finally {
-            if (mPreparedStatement != null) {
+            if (mComputerPreparedStatement != null) {
                 try {
-                    mPreparedStatement.close();
+                    mComputerPreparedStatement.close();
                 }
                 catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
-            if (mResultSet != null) {
+            if (mComputerResultSet != null) {
                 try {
-                    mResultSet.close();
+                    mComputerResultSet.close();
                 }
                 catch (SQLException e) {
                     e.printStackTrace();
@@ -100,7 +113,7 @@ public class DAOComputer extends DAO<Computer> {
             mPreparedStatement.setDate(3, object.getDiscontinued());
             mPreparedStatement.setObject(4, object.getCompanyId());
             mPreparedStatement.setInt(5, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -126,7 +139,7 @@ public class DAOComputer extends DAO<Computer> {
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(DELETE_QUERY, "computer"));
             mPreparedStatement.setInt(1, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
@@ -150,18 +163,31 @@ public class DAOComputer extends DAO<Computer> {
         List<Computer>    rComputerList      = null;
         PreparedStatement mPreparedStatement = null;
         ResultSet         mResultSet         = null;
+        ResultSet         mCompanyResultSet  = null;
+        PreparedStatement mCompanyPreparedStatement  = null;
         try {
             rComputerList      = new ArrayList<Computer>();
             mPreparedStatement = dbConnection.prepareStatement(
                     String.format(SELECT_QUERY, "id, name, introduced, discontinued, company_id", "computer", ""));
-            mResultSet = mPreparedStatement.executeQuery();
+            mResultSet         = mPreparedStatement.executeQuery();
             while (mResultSet.next()) {
                 Computer tComputer = new Computer();
+                Company rCompany = null;
                 tComputer.setId(mResultSet.getInt("id"));
                 tComputer.setName(mResultSet.getString("name"));
                 tComputer.setIntroduced(mResultSet.getDate("introduced"));
                 tComputer.setDiscontinued(mResultSet.getDate("discontinued"));
                 tComputer.setCompanyId(mResultSet.getInt("company_id"));
+                mCompanyPreparedStatement = dbConnection
+                        .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
+                mCompanyPreparedStatement.setInt(1, tComputer.getCompanyId());
+                mCompanyResultSet = mCompanyPreparedStatement.executeQuery();
+                if (mCompanyResultSet.first()) {
+                    rCompany = new Company();
+                    rCompany.setId(mCompanyResultSet.getInt("id"));
+                    rCompany.setName(mCompanyResultSet.getString("name"));
+                }
+                tComputer.setCompany(rCompany);
                 rComputerList.add(tComputer);
             }
         }

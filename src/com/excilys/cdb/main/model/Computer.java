@@ -1,12 +1,17 @@
-package model;
+package com.excilys.cdb.main.model;
 
 import java.sql.Date;
-
+/**
+ * 
+ * @author bbinet
+ * Model class for db computer entity
+ */
 public class Computer extends Entity {
 
     private Integer companyId;
     private String  name;
     private Date    introduced, discontinued;
+    private Company company;
 
     public Computer() {
     }
@@ -16,7 +21,7 @@ public class Computer extends Entity {
     }
 
     public void setId(Integer id) {
-        if(id!=null)
+        if (id != null)
             this.id = id;
     }
 
@@ -25,7 +30,7 @@ public class Computer extends Entity {
     }
 
     public void setCompanyId(Integer companyId) {
-        if(companyId!=null)
+        if (companyId != null)
             this.companyId = companyId;
     }
 
@@ -34,7 +39,7 @@ public class Computer extends Entity {
     }
 
     public void setName(String name) {
-        if(name!=null)
+        if (name != null)
             this.name = name;
     }
 
@@ -43,7 +48,7 @@ public class Computer extends Entity {
     }
 
     public void setIntroduced(Date introduced) {
-        if(introduced!=null)
+        if (introduced != null)
             this.introduced = introduced;
     }
 
@@ -52,14 +57,22 @@ public class Computer extends Entity {
     }
 
     public void setDiscontinued(Date discontinued) {
-        if(discontinued!=null)
+        if (discontinued != null)
             this.discontinued = discontinued;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 
     @Override
     public String toString() {
-        return String.format("%5s | %30.30s | %10s | %10s | %5s", this.id, this.name, this.introduced, this.discontinued,
-                this.companyId);
+        return String.format("%5s | %30.30s | %10s | %10s | %s", this.id, this.name, this.introduced,
+                this.discontinued, (this.company!=null)?this.company.toString():String.format("%5s", "null"));
     }
 
 }

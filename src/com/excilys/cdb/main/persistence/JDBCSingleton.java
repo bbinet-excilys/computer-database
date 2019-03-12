@@ -1,4 +1,4 @@
-package persistence;
+package com.excilys.cdb.main.persistence;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +8,14 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+
+/**
+ * 
+ * @author bbinet
+ *
+ * Singleton implementation of a JDBC connector.
+ * Uses parameters for a mariadb database (can be easily changed to a mysql driver)
+ */
 public enum JDBCSingleton {
 
     INSTANCE;
@@ -58,7 +66,6 @@ public enum JDBCSingleton {
                 this.connection.close();
             }
             catch (SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

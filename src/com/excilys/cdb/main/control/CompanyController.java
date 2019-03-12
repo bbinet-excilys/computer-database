@@ -1,17 +1,21 @@
-package control;
+package com.excilys.cdb.main.control;
 
-import java.sql.Connection;
-import java.util.List;
+import com.excilys.cdb.main.model.Company;
+import com.excilys.cdb.main.persistence.DAOCompany;
+import com.excilys.cdb.main.persistence.DAOFactory;
 
-import model.Company;
-import model.Computer;
-import persistence.DAOCompany;
-import ui.UIHelper;
+/**
+ * 
+ * @author bbinet
+ * Computer entity controller with specific DAO of type company
+ */
+
+//TODO : Implement CRUD methods
 
 public class CompanyController extends EntityController<Company> {
 
-    public CompanyController(Connection connection) {
-        this.dao = new DAOCompany(connection);
+    public CompanyController() {
+        this.dao = (DAOCompany)DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
     }
 
     @Override

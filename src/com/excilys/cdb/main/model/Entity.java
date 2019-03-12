@@ -1,5 +1,10 @@
-package model;
+package com.excilys.cdb.main.model;
 
+/**
+ * 
+ * @author bbinet
+ * Base class for database entity
+ */
 public abstract class Entity {
     
     Integer id;
