@@ -37,7 +37,6 @@ public class UIHelper {
                 date = new Date(sdf.parse(input).getTime());
             }
             catch (ParseException e) {
-//                e.printStackTrace();
             }
         }
         return date;
@@ -71,11 +70,11 @@ public class UIHelper {
     }
 
     public static Integer promptPage(Integer page) {
-        System.out.println("<- p | p."+page+" | n ->");
+        System.out.println("<- p | p." + page + " | n ->");
         System.out.println(" anything else to exit ");
         Scanner mScanner = new Scanner(System.in);
         String  rString  = mScanner.nextLine().trim();
-        if (rString.matches("^[pP]")) {            
+        if (rString.matches("^[pP]")) {
             return -1;
         }
         if (rString.matches("^[nN]")) {
