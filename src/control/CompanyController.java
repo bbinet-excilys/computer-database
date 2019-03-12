@@ -39,12 +39,6 @@ public class CompanyController extends EntityController<Company> {
 
     }
 
-    @Override
-    public void list() {
-        List<Company> mCompanyList = this.dao.list();
-        CompanyUI.printList(mCompanyList);
-    }
-
     public void pagedList() {
         Integer       size         = UIHelper.promptInt("How many companies per page ?");
         Integer       offset       = 0;
