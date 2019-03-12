@@ -3,7 +3,9 @@ package persistence;
 import java.sql.Connection;
 import java.util.List;
 
-public abstract class DAO<T> {
+import model.Entity;
+
+public abstract class DAO<T extends Entity> {
 
     Connection dbConnection;
 
