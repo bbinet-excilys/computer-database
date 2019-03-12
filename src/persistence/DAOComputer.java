@@ -20,7 +20,7 @@ public class DAOComputer extends DAO<Computer> {
         PreparedStatement mPreparedStatement = null;
         try {
             mPreparedStatement = this.dbConnection.prepareStatement(
-                    "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES (?,?,?,?);");
+                    String.format(INSERT_QUERY, "computer", "name, introduced, discontinued, company_id", "?,?,?,?"));
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setDate(2, object.getIntroduced());
             mPreparedStatement.setDate(3, object.getDiscontinued());
@@ -51,8 +51,8 @@ public class DAOComputer extends DAO<Computer> {
         PreparedStatement mPreparedStatement = null;
         ResultSet         mResultSet         = null;
         try {
-            mPreparedStatement = dbConnection
-                    .prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer WHERE id=?");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY,
+                    "id, name, introduced, discontinued, company_id", "computer", "WHERE id=?"));
             mPreparedStatement.setInt(1, id);
             mResultSet = mPreparedStatement.executeQuery();
             if (mResultSet.first()) {
@@ -94,7 +94,7 @@ public class DAOComputer extends DAO<Computer> {
         PreparedStatement mPreparedStatement = null;
         try {
             mPreparedStatement = dbConnection.prepareStatement(
-                    "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE ID=?");
+                    String.format(UPDATE_QUERY, "computer", "name=?, introduced=?, discontinued=?, company_id=?"));
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setDate(2, object.getIntroduced());
             mPreparedStatement.setDate(3, object.getDiscontinued());
@@ -124,7 +124,7 @@ public class DAOComputer extends DAO<Computer> {
     public boolean delete(Computer object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("DELETE FROM computer WHERE id=?");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(DELETE_QUERY, "computer"));
             mPreparedStatement.setInt(1, object.getId());
             int status = mPreparedStatement.executeUpdate();
             return true;
@@ -146,67 +146,15 @@ public class DAOComputer extends DAO<Computer> {
     }
 
     @Override
-    public List<Computer> list(Integer size, Integer offset) {
-        List<Computer>    rComputerList      = null;
-        PreparedStatement mPreparedStatement = null;
-        ResultSet         mResultSet         = null;
-        try {
-            rComputerList = new ArrayList<Computer>();
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("SELECT id, name, introduced, discontinued, company_id FROM computer");
-            if (offset != null && size != null) {
-                queryBuilder.append(" LIMIT ? OFFSET ?");
-            }
-            queryBuilder.append(";");
-            mPreparedStatement = dbConnection.prepareStatement(queryBuilder.toString());
-            if (offset != null && size != null) {
-                mPreparedStatement.setInt(1, size);
-                mPreparedStatement.setInt(2, offset);
-            }
-            mResultSet         = mPreparedStatement.executeQuery();
-            while (mResultSet.next()) {
-                Computer tComputer = new Computer();
-                tComputer.setId(mResultSet.getInt("id"));
-                tComputer.setName(mResultSet.getString("name"));
-                tComputer.setIntroduced(mResultSet.getDate("introduced"));
-                tComputer.setDiscontinued(mResultSet.getDate("discontinued"));
-                tComputer.setCompanyId(mResultSet.getInt("company_id"));
-                rComputerList.add(tComputer);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if (mPreparedStatement != null) {
-                try {
-                    mPreparedStatement.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (mResultSet != null) {
-                try {
-                    mResultSet.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return rComputerList;
-    }
-
-    @Override
     public List<Computer> list() {
         List<Computer>    rComputerList      = null;
         PreparedStatement mPreparedStatement = null;
         ResultSet         mResultSet         = null;
         try {
-            rComputerList = new ArrayList<Computer>();
-            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name, introduced, discontinued, company_id FROM computer;");
-            mResultSet         = mPreparedStatement.executeQuery();
+            rComputerList      = new ArrayList<Computer>();
+            mPreparedStatement = dbConnection.prepareStatement(
+                    String.format(SELECT_QUERY, "id, name, introduced, discontinued, company_id", "computer", ""));
+            mResultSet = mPreparedStatement.executeQuery();
             while (mResultSet.next()) {
                 Computer tComputer = new Computer();
                 tComputer.setId(mResultSet.getInt("id"));

@@ -9,6 +9,11 @@ public abstract class DAO<T extends Entity> {
 
     Connection dbConnection;
 
+    final static String INSERT_QUERY = "INSERT INTO %s(%s) VALUES(%s);";
+    final static String UPDATE_QUERY = "UPDATE %s SET %s WHERE id=?;";
+    final static String SELECT_QUERY = "SELECT %s FROM %s %s;";
+    final static String DELETE_QUERY = "DELETE FROM %s WHERE id=?;";
+
     public DAO(Connection connection) {
         this.dbConnection = connection;
     }
@@ -20,7 +25,6 @@ public abstract class DAO<T extends Entity> {
     public abstract boolean update(T object);
 
     public abstract boolean delete(T object);
-    
-    public abstract List<T> list(Integer size, Integer offset);
+
     public abstract List<T> list();
 }

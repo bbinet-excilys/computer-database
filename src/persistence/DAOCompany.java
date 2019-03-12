@@ -20,7 +20,7 @@ public class DAOCompany extends DAO<Company> {
     public boolean create(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("INSERT INTO company(name) VALUES(?);");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
             mPreparedStatement.setString(1, object.getName());
             int status = mPreparedStatement.executeUpdate();
             return true;
@@ -47,14 +47,15 @@ public class DAOCompany extends DAO<Company> {
         ResultSet         mResultSet         = null;
         Company           rCompany           = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company WHERE id=?;");
+            mPreparedStatement = dbConnection
+                    .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
             mPreparedStatement.setInt(1, id);
-            mResultSet         = mPreparedStatement.executeQuery();
-            if(mResultSet.first()) {
+            mResultSet = mPreparedStatement.executeQuery();
+            if (mResultSet.first()) {
                 rCompany = new Company();
                 rCompany.setId(mResultSet.getInt("id"));
                 rCompany.setName(mResultSet.getString("name"));
-                return rCompany;                
+                return rCompany;
             }
         }
         catch (SQLException e) {
@@ -86,7 +87,8 @@ public class DAOCompany extends DAO<Company> {
     public boolean update(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("UPDATE computer SET name=? WHERE id=?;");
+            mPreparedStatement = dbConnection
+                    .prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setInt(2, object.getId());
             int status = mPreparedStatement.executeUpdate();
@@ -112,7 +114,7 @@ public class DAOCompany extends DAO<Company> {
     public boolean delete(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("DELETE FROM company WHERE id=?;");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
             mPreparedStatement.setInt(1, object.getId());
             int status = mPreparedStatement.executeUpdate();
             return true;
@@ -135,69 +137,17 @@ public class DAOCompany extends DAO<Company> {
     }
 
     @Override
-    public List<Company> list(Integer size, Integer offset) {
-        PreparedStatement mPreparedStatement = null;
-        ResultSet mResultSet = null;
-        List<Company> rCompanyList = null;
-        try {
-            rCompanyList = new ArrayList<Company>();
-            StringBuilder queryBuilder = new StringBuilder();
-            queryBuilder.append("SELECT id, name FROM company");
-            if (offset != null && size != null) {
-                queryBuilder.append(" LIMIT ? OFFSET ?");
-            }
-            queryBuilder.append(";");
-            mPreparedStatement = dbConnection.prepareStatement(queryBuilder.toString());
-            if(size!=null && offset!=null) {
-                mPreparedStatement.setInt(1, size);
-                mPreparedStatement.setInt(2, offset);
-            }
-            mResultSet = mPreparedStatement.executeQuery();
-            rCompanyList = new ArrayList<Company>();
-            while(mResultSet.next()) {
-                Company tCompany = new Company();
-                tCompany.setId(mResultSet.getInt("id"));
-                tCompany.setName(mResultSet.getString("name"));
-                rCompanyList.add(tCompany);
-            }
-        }
-        catch (SQLException e) {
-            e.printStackTrace();
-        }
-        finally {
-            if(mPreparedStatement != null) {
-                try {
-                    mPreparedStatement.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(mResultSet != null) {
-                try {
-                    mResultSet.close();
-                }
-                catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        
-        return rCompanyList;
-    }
-
-    @Override
     public List<Company> list() {
         PreparedStatement mPreparedStatement = null;
-        ResultSet mResultSet = null;
-        List<Company> rCompanyList = null;
+        ResultSet         mResultSet         = null;
+        List<Company>     rCompanyList       = null;
         try {
             rCompanyList = new ArrayList<Company>();
             StringBuilder queryBuilder = new StringBuilder();
-            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company;");
-            mResultSet = mPreparedStatement.executeQuery();
-            rCompanyList = new ArrayList<Company>();
-            while(mResultSet.next()) {
+            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
+            mResultSet         = mPreparedStatement.executeQuery();
+            rCompanyList       = new ArrayList<Company>();
+            while (mResultSet.next()) {
                 Company tCompany = new Company();
                 tCompany.setId(mResultSet.getInt("id"));
                 tCompany.setName(mResultSet.getString("name"));
@@ -208,7 +158,7 @@ public class DAOCompany extends DAO<Company> {
             e.printStackTrace();
         }
         finally {
-            if(mPreparedStatement != null) {
+            if (mPreparedStatement != null) {
                 try {
                     mPreparedStatement.close();
                 }
@@ -216,7 +166,7 @@ public class DAOCompany extends DAO<Company> {
                     e.printStackTrace();
                 }
             }
-            if(mResultSet != null) {
+            if (mResultSet != null) {
                 try {
                     mResultSet.close();
                 }
@@ -225,7 +175,7 @@ public class DAOCompany extends DAO<Company> {
                 }
             }
         }
-        
+
         return rCompanyList;
     }
 
