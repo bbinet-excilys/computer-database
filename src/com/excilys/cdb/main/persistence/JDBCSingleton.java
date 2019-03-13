@@ -13,10 +13,10 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 
- * @author bbinet
- *
  *         Singleton implementation of a JDBC connector. Uses parameters for a
  *         mariadb database (can be easily changed to a mysql driver)
+ *
+ * @author bbinet
  */
 public enum JDBCSingleton {
 

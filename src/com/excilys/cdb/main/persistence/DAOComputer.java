@@ -3,13 +3,11 @@ package com.excilys.cdb.main.persistence;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.main.model.Company;
 import com.excilys.cdb.main.model.Computer;
 
 public class DAOComputer extends DAO<Computer> {
@@ -54,11 +52,12 @@ public class DAOComputer extends DAO<Computer> {
 
     @Override
     public Computer read(Integer id) {
-        Computer          rComputer                  = null;
+        Computer          rComputer          = null;
         PreparedStatement mPreparedStatement = null;
         ResultSet         mResultSet         = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE id=?"));
+            mPreparedStatement = dbConnection
+                    .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE id=?"));
             mPreparedStatement.setInt(1, id);
             mResultSet = mPreparedStatement.executeQuery();
             if (mResultSet.first()) {
@@ -150,14 +149,11 @@ public class DAOComputer extends DAO<Computer> {
         List<Computer>    rComputerList             = null;
         PreparedStatement mPreparedStatement        = null;
         ResultSet         mResultSet                = null;
-        ResultSet         mCompanyResultSet         = null;
-        PreparedStatement mCompanyPreparedStatement = null;
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, ""));
-            mResultSet = mPreparedStatement.executeQuery();
+            mResultSet         = mPreparedStatement.executeQuery();
             if (mResultSet.first()) {
                 rComputerList = this.mapper.mapList(mResultSet);
-            
             }
         }
         catch (SQLException e) {

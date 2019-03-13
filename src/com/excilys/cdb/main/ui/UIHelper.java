@@ -5,9 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
-
 /**
- * Class containing static methods for user interactions (mostly prompts and prints)
+ * Class containing static methods for user interactions (mostly prompts and
+ * prints)
  * 
  * @author bbinet
  */
@@ -15,9 +15,11 @@ public class UIHelper {
 
     /**
      * Prompts the user for an Integer.
-     * @param message 
-     *      The message to display
-     * @return the Integer object corresponding to what the user typed (until carriage return was typed). May return null if it was empty or not a numeric.
+     * 
+     * @param message The message to display
+     * @return the Integer object corresponding to what the user typed (until
+     *         carriage return was typed). May return null if it was empty or not a
+     *         numeric.
      */
     public static Integer promptInt(String message) {
         Scanner mScanner = new Scanner(System.in);
@@ -33,8 +35,10 @@ public class UIHelper {
 
     /**
      * Prompts the user for a String.
+     * 
      * @param message The message to display
-     * @return the String object corresponding to what the user typed (until carriage return was typed). Null if it was empty.
+     * @return the String object corresponding to what the user typed (until
+     *         carriage return was typed). Null if it was empty.
      */
     public static String promptString(String message) {
         Scanner mScanner = new Scanner(System.in);
@@ -45,8 +49,10 @@ public class UIHelper {
 
     /**
      * Prompts the User for a Date
+     * 
      * @param message The message to Display
-     * @return Tries to parse the user input to a sql.Date. Returns null if the input couldn't be parsed.
+     * @return Tries to parse the user input to a sql.Date. Returns null if the
+     *         input couldn't be parsed.
      */
     public static Date promptDate(String message) {
         Date             date     = null;
@@ -82,6 +88,7 @@ public class UIHelper {
 
     /**
      * Displays a message on the default error output
+     * 
      * @param message The message to display
      */
     public static void displayError(String message) {
@@ -90,6 +97,7 @@ public class UIHelper {
 
     /**
      * Prompts the user for a validation
+     * 
      * @param message The message to display
      * @return True if input was y or Y. False otherwise.
      */
@@ -102,8 +110,10 @@ public class UIHelper {
 
     /**
      * Prompts the user for page navigation
+     * 
      * @param page The current page, viewed by the user.
-     * @return The direction to scroll page. -1 if input was p or P (previous). 1 if input was n or N (Next). 0 otherwise;
+     * @return The direction to scroll page. -1 if input was p or P (previous). 1 if
+     *         input was n or N (Next). 0 otherwise;
      */
     public static Integer promptPage(Integer page) {
         System.out.println("<- p | p." + page + " | n ->");

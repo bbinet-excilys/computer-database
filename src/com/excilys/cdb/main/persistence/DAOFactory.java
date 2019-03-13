@@ -1,13 +1,10 @@
 package com.excilys.cdb.main.persistence;
 
-import com.excilys.cdb.main.model.Entity;
-
 /**
  * 
+ * Singleton implementation of the Factory pattern for DAOs
+ *
  * @author bbinet
- *
- *         Singleton implementation of the Factory pattern for DAOs
- *
  */
 public enum DAOFactory {
 
