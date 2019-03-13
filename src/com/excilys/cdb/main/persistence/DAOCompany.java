@@ -1,31 +1,32 @@
-package persistence;
+package com.excilys.cdb.main.persistence;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
-import model.Company;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.main.model.Company;
 
 public class DAOCompany extends DAO<Company> {
 
-    public DAOCompany(Connection connection) {
-        super(connection);
-    }
+    static final Logger LOG = LoggerFactory.getLogger(DAOCompany.class);
+    
+    {this.mapper = new CompanyMapper();}
 
     @Override
     public boolean create(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("INSERT INTO company(name) VALUES(?);");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
             mPreparedStatement.setString(1, object.getName());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error("Error in Create query : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -33,7 +34,7 @@ public class DAOCompany extends DAO<Company> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -46,18 +47,16 @@ public class DAOCompany extends DAO<Company> {
         ResultSet         mResultSet         = null;
         Company           rCompany           = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company WHERE id=?;");
+            mPreparedStatement = dbConnection
+                    .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
             mPreparedStatement.setInt(1, id);
-            mResultSet         = mPreparedStatement.executeQuery();
-            if(mResultSet.first()) {
-                rCompany = new Company();
-                rCompany.setId(mResultSet.getInt("id"));
-                rCompany.setName(mResultSet.getString("name"));
-                return rCompany;                
+            mResultSet = mPreparedStatement.executeQuery();
+            if (mResultSet.first()) {
+                rCompany = this.mapper.map(mResultSet);
             }
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute select query : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -65,7 +64,7 @@ public class DAOCompany extends DAO<Company> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
             if (mResultSet != null) {
@@ -73,26 +72,26 @@ public class DAOCompany extends DAO<Company> {
                     mResultSet.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close resultSet : " + e.getMessage());
                 }
             }
         }
-
-        return null;
+        return rCompany;
     }
 
     @Override
     public boolean update(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("UPDATE computer SET name=? WHERE id=?;");
+            mPreparedStatement = dbConnection
+                    .prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
             mPreparedStatement.setString(1, object.getName());
             mPreparedStatement.setInt(2, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute update query : " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -100,7 +99,7 @@ public class DAOCompany extends DAO<Company> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -111,13 +110,13 @@ public class DAOCompany extends DAO<Company> {
     public boolean delete(Company object) {
         PreparedStatement mPreparedStatement = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("DELETE FROM company WHERE id=?;");
+            mPreparedStatement = dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
             mPreparedStatement.setInt(1, object.getId());
-            int status = mPreparedStatement.executeUpdate();
+            mPreparedStatement.executeUpdate();
             return true;
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute delete query: " + e.getMessage());
         }
         finally {
             if (mPreparedStatement != null) {
@@ -125,7 +124,7 @@ public class DAOCompany extends DAO<Company> {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
         }
@@ -136,41 +135,35 @@ public class DAOCompany extends DAO<Company> {
     @Override
     public List<Company> list() {
         PreparedStatement mPreparedStatement = null;
-        ResultSet mResultSet = null;
-        List<Company> rCompanyList = null;
+        ResultSet         mResultSet         = null;
+        List<Company>     rCompanyList       = null;
         try {
-            mPreparedStatement = dbConnection.prepareStatement("SELECT id, name FROM company;");
-            mResultSet = mPreparedStatement.executeQuery();
-            rCompanyList = new ArrayList<Company>();
-            while(mResultSet.next()) {
-                Company tCompany = new Company();
-                tCompany.setId(mResultSet.getInt("id"));
-                tCompany.setName(mResultSet.getString("name"));
-                rCompanyList.add(tCompany);
-            }
+            mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
+            mResultSet         = mPreparedStatement.executeQuery();
+            if(mResultSet.first())
+                rCompanyList       = this.mapper.mapList(mResultSet);
         }
         catch (SQLException e) {
-            e.printStackTrace();
+            LOG.warn("Couldn't execute select query : " + e.getMessage());
         }
         finally {
-            if(mPreparedStatement != null) {
+            if (mPreparedStatement != null) {
                 try {
                     mPreparedStatement.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
                 }
             }
-            if(mResultSet != null) {
+            if (mResultSet != null) {
                 try {
                     mResultSet.close();
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
+                    LOG.warn("Couldn't close resultSet : " + e.getMessage());
                 }
             }
         }
-        
         return rCompanyList;
     }
 
