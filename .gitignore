@@ -16,6 +16,7 @@ build/
 doc/
 WebContent/WEB-INF/lib/
 target/*
+.vscode*
 # Code Recommenders
 .recommenders/
 
