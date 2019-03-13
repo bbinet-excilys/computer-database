@@ -14,7 +14,7 @@ public class DAOComputer extends DAO<Computer> {
 
     static final Logger LOG = LoggerFactory.getLogger(DAOComputer.class);
 
-    static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name \n"
+    static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.id, company.name \n"
             + "FROM computer\n" + "LEFT OUTER JOIN company\n" + "ON computer.company_id=company.id %s;";
 
     {
@@ -57,7 +57,7 @@ public class DAOComputer extends DAO<Computer> {
         ResultSet         mResultSet         = null;
         try {
             mPreparedStatement = dbConnection
-                    .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE id=?"));
+                    .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE computer.id=?"));
             mPreparedStatement.setInt(1, id);
             mResultSet = mPreparedStatement.executeQuery();
             if (mResultSet.first()) {

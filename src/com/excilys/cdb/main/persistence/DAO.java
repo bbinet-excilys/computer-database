@@ -101,7 +101,7 @@ public abstract class DAO<T extends Entity> {
 
     /**
      * Fetch the whole list of object from database
-     * @return A List object containing all entities from database.
+     * @return A List containing all entities from database.
      */
     public abstract List<T> list();
 }

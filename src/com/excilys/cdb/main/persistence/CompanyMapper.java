@@ -5,9 +5,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.main.Main;
 import com.excilys.cdb.main.model.Company;
 
 public class CompanyMapper extends Mapper<Company> {
+    
+    static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
 
     @Override
     public Company map(ResultSet result) {
@@ -20,8 +26,7 @@ public class CompanyMapper extends Mapper<Company> {
             }
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("Error in mapping : "+e.getMessage());
         }
         return rCompany;
     }
@@ -39,8 +44,7 @@ public class CompanyMapper extends Mapper<Company> {
             }
         }
         catch (SQLException e) {
-            //TODO Logger !
-            e.printStackTrace();
+            LOG.warn("Error in mappingList : "+e.getMessage());
         }
         return rCompanyList;
     }

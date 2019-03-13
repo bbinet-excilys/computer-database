@@ -5,10 +5,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.main.Main;
 import com.excilys.cdb.main.model.Company;
 import com.excilys.cdb.main.model.Computer;
 
 public class ComputerMapper extends Mapper<Computer> {
+    
+    static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
 
     @Override
     public Computer map(ResultSet resultSet) {
@@ -29,8 +35,7 @@ public class ComputerMapper extends Mapper<Computer> {
             }
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("Error in mapping : "+e.getMessage());
         }
         return rComputer;
     }
@@ -56,8 +61,7 @@ public class ComputerMapper extends Mapper<Computer> {
             }
         }
         catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.warn("Error in list mapping : "+e.getMessage());
         }
         return rComputerList;
     }

@@ -22,7 +22,7 @@ public enum JDBCSingleton {
 
     INSTANCE;
 
-    private static final String PROPERTIES_FILE = "src/resources/jdbcSettings.properties";
+    private static final String PROPERTIES_FILE = "src/com/excilys/cdb/main/resources/jdbcSettings.properties";
     private Connection          connection;
     private Properties          jdbcProperties  = new Properties();
     static final Logger         LOG             = LoggerFactory.getLogger(JDBCSingleton.class);
