@@ -3,7 +3,6 @@ package model;
 import java.sql.Date;
 
 /**
- *
  * @author bbinet Model class for db computer entity
  */
 public class Computer extends Entity {
@@ -11,15 +10,15 @@ public class Computer extends Entity {
     /**
      * The name of the computer.
      */
-    private String name;
+    private String  name;
     /**
      * Date of introduction of the computer.
      */
-    private Date introduced;
+    private Date    introduced;
     /**
      * Date of discontinuation of the computer.
      */
-    private Date discontinued;
+    private Date    discontinued;
     /**
      * ID of the company the computer belongs to.
      */
