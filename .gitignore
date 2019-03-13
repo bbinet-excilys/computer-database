@@ -13,6 +13,8 @@ local.properties
 .recommenders
 *.launch
 build/
+doc/
+WebContent/WEB-INF/lib/
 # Code Recommenders
 .recommenders/
 
