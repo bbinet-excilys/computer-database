@@ -17,7 +17,7 @@ import com.excilys.cdb.main.ui.UIHelper;
  *
  * @author bbinet
  */
-public abstract class EntityController<T extends Entity> {
+public abstract class EntityController<T extends Entity> implements Controller{
 
     DAO<T> dao;
     EntityUI<T> entityUI = new EntityUI<T>();

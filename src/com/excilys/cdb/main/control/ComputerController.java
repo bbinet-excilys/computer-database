@@ -2,6 +2,9 @@ package com.excilys.cdb.main.control;
 
 import java.sql.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.main.model.Company;
 import com.excilys.cdb.main.model.Computer;
 import com.excilys.cdb.main.persistence.DAOCompany;
@@ -15,10 +18,12 @@ import com.excilys.cdb.main.ui.UIHelper;
  * Computer entity controller with specific DAO of type computer
  */
 public class ComputerController extends EntityController<Computer> {
+    
+
+    static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
 
     public ComputerController() {
         this.dao = (DAOComputer) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER);
-        System.out.println(dao);
     }
 
     @Override

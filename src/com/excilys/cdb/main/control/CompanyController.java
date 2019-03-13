@@ -1,5 +1,9 @@
 package com.excilys.cdb.main.control;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.main.Main;
 import com.excilys.cdb.main.model.Company;
 import com.excilys.cdb.main.persistence.DAOCompany;
 import com.excilys.cdb.main.persistence.DAOFactory;
@@ -13,6 +17,7 @@ import com.excilys.cdb.main.persistence.DAOFactory;
 //TODO : Implement CRUD methods
 
 public class CompanyController extends EntityController<Company> {
+    
 
     /**
      * Basic Controller for Company entities.
