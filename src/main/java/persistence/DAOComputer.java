@@ -1,4 +1,5 @@
 package persistence;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,11 +12,20 @@ import model.Computer;
 
 public class DAOComputer extends DAO<Computer> {
 
+    /**
+     * Logger for the DAOComputer Class.
+     */
     static final Logger LOG = LoggerFactory.getLogger(DAOComputer.class);
 
+    /**
+     * SELECT query for a computer. Uses a join to fetch company informations.
+     */
     static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.id, company.name \n"
             + "FROM computer\n" + "LEFT OUTER JOIN company\n" + "ON computer.company_id=company.id %s;";
 
+    /**
+     * Initializer block to create the Mapper on DAOComputer instanciation.
+     */
     {
         this.mapper = new ComputerMapper();
     }
@@ -145,9 +155,9 @@ public class DAOComputer extends DAO<Computer> {
 
     @Override
     public List<Computer> list() {
-        List<Computer>    rComputerList             = null;
-        PreparedStatement mPreparedStatement        = null;
-        ResultSet         mResultSet                = null;
+        List<Computer>    rComputerList      = null;
+        PreparedStatement mPreparedStatement = null;
+        ResultSet         mResultSet         = null;
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, ""));
             mResultSet         = mPreparedStatement.executeQuery();

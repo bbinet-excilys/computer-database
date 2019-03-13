@@ -13,13 +13,20 @@ import persistence.DAOFactory;
 import ui.UIHelper;
 
 /**
- * 
+ *
  * @author bbinet Computer entity controller with specific DAO of type computer
  */
 public class ComputerController extends EntityController<Computer> {
 
+    /**
+     * Logger for the ComputerController class.
+     */
     static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
 
+    /**
+     * Basic constructor for ComputerController. Get a DAOComputer from the
+     * DAOFactory.
+     */
     public ComputerController() {
         this.dao = DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER);
     }

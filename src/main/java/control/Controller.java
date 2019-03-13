@@ -1,4 +1,7 @@
 package control;
-public interface Controller {
 
+/**
+ * Basic interface to allow genericity in Factory.
+ */
+public interface Controller {
 }

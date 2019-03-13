@@ -1,15 +1,15 @@
 package model;
+
 /**
- * 
- * @author bbinet
- * Model class for database company entity
+ *
+ * @author bbinet Model class for database company entity
  */
 public class Company extends Entity {
 
     /**
-     * The Name of the Company
+     * The Name of the Company.
      */
-    private String  name;
+    private String name;
 
     /**
      * @return The Name of the Company
@@ -19,7 +19,7 @@ public class Company extends Entity {
     }
 
     /**
-     * 
+     *
      * @param name The name of the Company to set
      */
     public void setName(String name) {

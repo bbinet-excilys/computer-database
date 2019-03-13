@@ -1,4 +1,5 @@
 package persistence;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -11,7 +12,10 @@ import model.Company;
 import model.Computer;
 
 public class ComputerMapper extends Mapper<Computer> {
-    
+
+    /**
+     * Logger for the ComputerMapper Factory.
+     */
     static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
 
     @Override
@@ -31,9 +35,8 @@ public class ComputerMapper extends Mapper<Computer> {
                 rCompany.setName(resultSet.getString("company.name"));
                 rComputer.setCompany(rCompany);
             }
-        }
-        catch (SQLException e) {
-            LOG.warn("Error in mapping : "+e.getMessage());
+        } catch (SQLException e) {
+            LOG.warn("Error in mapping : " + e.getMessage());
         }
         return rComputer;
     }
@@ -57,9 +60,8 @@ public class ComputerMapper extends Mapper<Computer> {
                 rComputer.setCompany(rCompany);
                 rComputerList.add(rComputer);
             }
-        }
-        catch (SQLException e) {
-            LOG.warn("Error in list mapping : "+e.getMessage());
+        } catch (SQLException e) {
+            LOG.warn("Error in list mapping : " + e.getMessage());
         }
         return rComputerList;
     }

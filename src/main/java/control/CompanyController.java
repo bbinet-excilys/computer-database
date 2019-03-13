@@ -1,23 +1,21 @@
 package control;
 
 import model.Company;
-import persistence.DAOCompany;
 import persistence.DAOFactory;
 
 /**
- * Computer entity controller with specific DAO of type company
- * 
+ * Computer entity controller with specific DAO of type company.
+ *
  * @author bbinet
  */
 
-//TODO : Implement CRUD methods
+// TODO : Implement CRUD methods
 
 public class CompanyController extends EntityController<Company> {
-    
 
     /**
-     * Basic Controller for Company entities.
-     * Sets the dao attribute using the dao factory. 
+     * Basic Controller for Company entities. Sets the dao attribute using the dao
+     * factory.
      */
     public CompanyController() {
         this.dao = DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
@@ -46,6 +44,5 @@ public class CompanyController extends EntityController<Company> {
         // TODO Auto-generated method stub
 
     }
-
 
 }

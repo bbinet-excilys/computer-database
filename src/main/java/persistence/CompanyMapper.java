@@ -11,21 +11,24 @@ import org.slf4j.LoggerFactory;
 import model.Company;
 
 public class CompanyMapper extends Mapper<Company> {
-    
+
+    /**
+     * Logger for the CompanyMapper class.
+     */
     static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
 
     @Override
     public Company map(ResultSet result) {
         Company rCompany = null;
         try {
-            if(result.first()) {
+            if (result.first()) {
                 rCompany = new Company();
                 rCompany.setId(result.getInt("id"));
                 rCompany.setName(result.getString("name"));
             }
         }
         catch (SQLException e) {
-            LOG.warn("Error in mapping : "+e.getMessage());
+            LOG.warn("Error in mapping : " + e.getMessage());
         }
         return rCompany;
     }
@@ -43,7 +46,7 @@ public class CompanyMapper extends Mapper<Company> {
             }
         }
         catch (SQLException e) {
-            LOG.warn("Error in mappingList : "+e.getMessage());
+            LOG.warn("Error in mappingList : " + e.getMessage());
         }
         return rCompanyList;
     }

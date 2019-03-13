@@ -1,4 +1,5 @@
 package control;
+
 import java.util.List;
 
 import model.Entity;
@@ -8,40 +9,58 @@ import ui.EntityUI;
 import ui.UIHelper;
 
 /**
- * 
- * Base class for entity controller
- * contains CRUD and list/pagedlist methods
  *
- * @param <T> The type of Entity used by the Controller
+ * Base class for entity controller contains CRUD and list/pagedlist methods. In
+ * charge of calling View and Model methods (UI and DAO).
+ *
+ * @param <T> The type of entity used by the Controller, must extend Entity.
  *
  * @author bbinet
  */
-public abstract class EntityController<T extends Entity> implements Controller{
+public abstract class EntityController<T extends Entity> implements Controller {
 
-    DAO<T> dao;
+    /**
+     * The dao of the Controller.
+     */
+    DAO<T>      dao;
+    /**
+     * The UI manager object for the Entity.
+     */
     EntityUI<T> entityUI = new EntityUI<T>();
 
+    /**
+     * Basic create method.
+     */
     public abstract void create();
 
+    /**
+     * Basic read method.
+     */
     public abstract void read();
 
+    /**
+     * Basic update method.
+     */
     public abstract void update();
 
+    /**
+     * Basic delete method.
+     */
     public abstract void delete();
 
     /**
-     * Prints the whole list of entity
+     * Behavior for printing the whole list of entities.
      */
     public void list() {
         List<T> entityList = this.dao.list();
         this.entityUI.printList(entityList);
     }
-    
+
     /**
-     * Manages Input and Output
+     * Manages paged lists behavior.
      */
     public void pagedList() {
-        Integer        size          = UIHelper.promptInt("How many items per page ?");
+        Integer       size            = UIHelper.promptInt("How many items per page ?");
         EntityPage<T> pagedEntityList = new EntityPage<T>();
         pagedEntityList.setEntities(this.dao.list());
         pagedEntityList.setPageSize(size);
@@ -50,10 +69,10 @@ public abstract class EntityController<T extends Entity> implements Controller{
         do {
             this.entityUI.printList(entityList);
             int direction = UIHelper.promptPage(pagedEntityList.getPage());
-            if(direction == 0)
+            if (direction == 0)
                 break;
             entityList = pagedEntityList.getPage(direction);
-        }while(true);
+        } while (true);
     }
 
 }

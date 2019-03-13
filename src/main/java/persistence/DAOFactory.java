@@ -3,20 +3,35 @@ package persistence;
 import model.Entity;
 
 /**
- * 
- * Singleton implementation of the Factory pattern for DAOs
+ *
+ * Singleton implementation of the Factory pattern for DAOs.
  *
  * @author bbinet
  */
 public enum DAOFactory {
-
+    /**
+     * The unique instance of DAOFactory.
+     */
     INSTANCE;
 
+    /**
+     * Value for a ComputerDAO.
+     */
     public static final byte DAO_COMPUTER = 0;
+    /**
+     * Value for a CompanyDAO.
+     */
     public static final byte DAO_COMPANY  = 1;
 
-    private DAOFactory() {}
+    /**
+     * Private constructor to avoid external instanciation.
+     */
+    private DAOFactory() {
+    }
 
+    /**
+     * Getter for the right DAO.
+     */
     public DAO getDao(int type) {
         DAO rDAO = null;
         switch (type) {

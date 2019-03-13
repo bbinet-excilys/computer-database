@@ -1,19 +1,31 @@
 package model;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
- * @author bbinet Pagination class for database entity
+ * Pagination class for database entity.
+ *
+ * @author bbinet
  * @param <T> Class of the entity (must extend Entity)
  */
 public class EntityPage<T extends Entity> {
 
-    Integer pageSize, offset;
+    /**
+     * The number of elements a page displays.
+     */
+    Integer pageSize;
+    /**
+     * The current offset of the page.
+     */
+    Integer offset;
+    /**
+     * The list of entities to paginate.
+     */
     List<T> entities;
 
     /**
-     * 
+     *
      * @return The size of a page (number of elements displayed at the same time)
      */
     public Integer getPageSize() {
@@ -21,7 +33,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @param pageSize The size of a page (number of elements displayed at the same
      *                 time)
      */
@@ -30,7 +42,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @return The current offset in the List of Entities
      */
     public Integer getOffset() {
@@ -38,7 +50,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @param offset The current offset in the List of Entities
      */
     public void setOffset(Integer offset) {
@@ -46,7 +58,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @return The list of entities paginated
      */
     public List<T> getEntities() {
@@ -54,7 +66,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @param entities The list of entities to paginate
      */
     public void setEntities(List<T> entities) {
@@ -62,7 +74,7 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @return The number of the current "page" (starting at 1)
      */
     public int getPage() {
@@ -70,13 +82,13 @@ public class EntityPage<T extends Entity> {
     }
 
     /**
-     * 
+     *
      * @param direction Whether the page to display will be :
-     * <ul>
-     *      <li> 0 : the current page</li>
-     *      <li> 1 : the next page</li>
-     *      <li>-1 : the previous page</li>
-     * </ul>
+     *                  <ul>
+     *                  <li>0 : the current page</li>
+     *                  <li>1 : the next page</li>
+     *                  <li>-1 : the previous page</li>
+     *                  </ul>
      * @return The List of Entities to display
      */
     public List<T> getPage(int direction) {

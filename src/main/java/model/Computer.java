@@ -1,19 +1,36 @@
 package model;
+
 import java.sql.Date;
 
 /**
- * 
+ *
  * @author bbinet Model class for db computer entity
  */
 public class Computer extends Entity {
 
+    /**
+     * The name of the computer.
+     */
+    private String name;
+    /**
+     * Date of introduction of the computer.
+     */
+    private Date introduced;
+    /**
+     * Date of discontinuation of the computer.
+     */
+    private Date discontinued;
+    /**
+     * ID of the company the computer belongs to.
+     */
     private Integer companyId;
-    private String  name;
-    private Date    introduced, discontinued;
+    /**
+     * Company object corresponding to the companyId field.
+     */
     private Company company;
 
     /**
-     * 
+     *
      * @return The ID of the Company the computer belongs to
      */
     public Integer getCompanyId() {
@@ -21,7 +38,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @param companyId The ID of the Company the computer belongs to
      */
     public void setCompanyId(Integer companyId) {
@@ -30,7 +47,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @return The name of the Computer
      */
     public String getName() {
@@ -38,7 +55,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @param name The name of the Computer
      */
     public void setName(String name) {
@@ -47,7 +64,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @return The java.sql.Date object of introduction of the Computer
      */
     public Date getIntroduced() {
@@ -55,7 +72,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @param introduced The java.sql.Date object of introduction of the Computer
      */
     public void setIntroduced(Date introduced) {
@@ -64,7 +81,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @return The java.sql.Date object of discontinuation of the Computer
      */
     public Date getDiscontinued() {
@@ -72,8 +89,9 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
-     * @param discontinued The java.sql.Date object of discontinuation of the Computer
+     *
+     * @param discontinued The java.sql.Date object of discontinuation of the
+     *                     Computer
      */
     public void setDiscontinued(Date discontinued) {
         if (discontinued != null)
@@ -81,7 +99,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @return The Company object the Computer belongs to
      */
     public Company getCompany() {
@@ -89,7 +107,7 @@ public class Computer extends Entity {
     }
 
     /**
-     * 
+     *
      * @param company The Company object the Computer belongs to
      */
     public void setCompany(Company company) {

@@ -1,8 +1,27 @@
 package control;
+
 import ui.UIHelper;
 
+/**
+ * Basic class describing the behavior of the menu and calling corresponding
+ * controllers methods.
+ */
 public class MenuController implements Controller {
 
+    private final static int EXIT            = 0;
+    private final static int LIST_COMPANIES  = 1;
+    private final static int LIST_COMPUTERS  = 2;
+    private final static int CREATE_COMPUTER = 3;
+    private final static int READ_COMPUTER   = 4;
+    private final static int UPDATE_COMPUTER = 5;
+    private final static int DELETE_COMPUTER = 6;
+    private final static int PAGED_COMPANIES = 7;
+    private final static int PAGED_COMPUTERS = 8;
+
+    /**
+     * Basic method looping until the user wants to exit. Get Controllers from the
+     * Factory and calls corresponding methods.
+     */
     public void runMenu() {
         boolean            loop                = true;
         ComputerController mComputerController = (ComputerController) ControllerFactory.INSTANCE
@@ -16,34 +35,33 @@ public class MenuController implements Controller {
                 choice = UIHelper.promptInt("Please choose an item :");
             } while (choice == null);
             switch (choice) {
-            case 0:
+            case EXIT:
                 loop = false;
                 break;
-            case 1:
+            case LIST_COMPANIES:
                 mCompanyController.list();
                 break;
-            case 2:
+            case LIST_COMPUTERS:
                 mComputerController.list();
                 break;
-            case 3:
+            case CREATE_COMPUTER:
                 mComputerController.create();
                 break;
-            case 4:
+            case READ_COMPUTER:
                 mComputerController.read();
                 break;
-            case 5:
+            case UPDATE_COMPUTER:
                 mComputerController.update();
                 break;
-            case 6:
+            case DELETE_COMPUTER:
                 mComputerController.delete();
                 break;
-            case 7:
-                mComputerController.pagedList();
-                break;
-            case 8:
+            case PAGED_COMPANIES:
                 mCompanyController.pagedList();
                 break;
-
+            case PAGED_COMPUTERS:
+                mComputerController.pagedList();
+                break;
             default:
                 UIHelper.displayError("Not available");
                 break;

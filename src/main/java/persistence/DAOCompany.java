@@ -1,4 +1,5 @@
 package persistence;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,9 +12,17 @@ import model.Company;
 
 public class DAOCompany extends DAO<Company> {
 
+    /**
+     * Logger for the DAOCompany class.
+     */
     static final Logger LOG = LoggerFactory.getLogger(DAOCompany.class);
-    
-    {this.mapper = new CompanyMapper();}
+
+    /**
+     * Initialization block to set the Mapper on DAOCompany instanciation.
+     */
+    {
+        this.mapper = new CompanyMapper();
+    }
 
     @Override
     public boolean create(Company object) {
@@ -139,8 +148,8 @@ public class DAOCompany extends DAO<Company> {
         try {
             mPreparedStatement = dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
             mResultSet         = mPreparedStatement.executeQuery();
-            if(mResultSet.first())
-                rCompanyList       = this.mapper.mapList(mResultSet);
+            if (mResultSet.first())
+                rCompanyList = this.mapper.mapList(mResultSet);
         }
         catch (SQLException e) {
             LOG.warn("Couldn't execute select query : " + e.getMessage());
