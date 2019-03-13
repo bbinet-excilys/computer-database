@@ -15,6 +15,7 @@ local.properties
 build/
 doc/
 WebContent/WEB-INF/lib/
+target/*
 # Code Recommenders
 .recommenders/
 
