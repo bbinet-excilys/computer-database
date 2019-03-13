@@ -14,6 +14,7 @@ local.properties
 *.launch
 build/
 doc/
+WebContent/WEB-INF/lib/
 # Code Recommenders
 .recommenders/
 
