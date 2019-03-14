@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
+import control.MenuEnum;
+
 /**
  * Class containing static methods for user interactions (mostly prompts and
  * prints).
@@ -75,15 +77,9 @@ public class UIHelper {
      */
     public static void displayMenu() {
         System.out.println("========== Computer DataBase ==========");
-        System.out.println("0 - Exit");
-        System.out.println("1 - List Companies");
-        System.out.println("2 - List Computers");
-        System.out.println("3 - Create Computer");
-        System.out.println("4 - Read Computer");
-        System.out.println("5 - Update Computer");
-        System.out.println("6 - Delete Computer");
-        System.out.println("7 - PageList Computers");
-        System.out.println("8 - PageList Companies");
+        for(MenuEnum item : MenuEnum.values()) {
+          System.out.println(String.format("%d - %s", item.ordinal(), item.toString()));
+        }
     }
 
     /**
