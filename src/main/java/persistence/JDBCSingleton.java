@@ -29,7 +29,7 @@ public enum JDBCSingleton {
      * The path to the properties file, containing database parameters (driver, url,
      * username, password).
      */
-    private static final String PROPERTIES_FILE = "src/main/resources/jdbcSettings.properties";
+    private static final String PROPERTIES_FILE = "properties/jdbcSettings.properties";
     /**
      * The connection to the database.
      */
@@ -66,12 +66,10 @@ public enum JDBCSingleton {
                     connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
                 }
                 catch (ClassNotFoundException e) {
-                    e.printStackTrace();
                     constructorLogger.error("Couldn't find the Driver Class. Check parameters value in "
                             + PROPERTIES_FILE + " : " + e.getMessage());
                 }
                 catch (SQLException e) {
-                    e.printStackTrace();
                     constructorLogger.error("Couldn't getConnection from the DriverManager. Check parameters value in "
                             + PROPERTIES_FILE + " : " + e.getMessage());
                 }
@@ -79,7 +77,6 @@ public enum JDBCSingleton {
         }
         catch (FileNotFoundException e) {
             constructorLogger.error("Couldn't find file " + PROPERTIES_FILE + " : " + e.getMessage());
-            e.printStackTrace();
         }
         catch (IOException e) {
             constructorLogger.error("Couldn't read file " + PROPERTIES_FILE + " : " + e.getMessage());

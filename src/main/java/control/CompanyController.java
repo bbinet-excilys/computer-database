@@ -28,6 +28,12 @@ public class CompanyController extends EntityController<Company> {
   }
 
   @Override
+  public void delete() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
   public void read() {
     // TODO Auto-generated method stub
 
@@ -35,12 +41,6 @@ public class CompanyController extends EntityController<Company> {
 
   @Override
   public void update() {
-    // TODO Auto-generated method stub
-
-  }
-
-  @Override
-  public void delete() {
     // TODO Auto-generated method stub
 
   }
