@@ -1,8 +1,8 @@
 package model;
 
 /**
- *
- * @author bbinet Model class for database company entity
+ * Model class for database company entity
+ * @author bbinet
  */
 public class Company extends Entity {
 
