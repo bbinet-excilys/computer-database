@@ -3,9 +3,6 @@ package persistence;
 import java.sql.Connection;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import model.Entity;
 
 /**
@@ -61,7 +58,7 @@ public abstract class DAO<T extends Entity> {
   /**
    * The logger for the DAO class.
    */
-  static final Logger LOG = LoggerFactory.getLogger(JDBCSingleton.class);
+//  static final Logger LOG = LoggerFactory.getLogger(DAO.class);
 
   /**
    * The object representing the connection to the database.
@@ -78,7 +75,7 @@ public abstract class DAO<T extends Entity> {
    */
   public DAO() {
     this.dbConnection = JDBCSingleton.INSTANCE.getConnection();
-    LOG.info("Creating DAO");
+//    LOG.info("Creating DAO");
   }
 
   /**
@@ -115,6 +112,10 @@ public abstract class DAO<T extends Entity> {
    *         database.
    */
   public abstract T read(Integer id);
+
+  public void setConnection(Connection conn) {
+    this.dbConnection = conn;
+  }
 
   /**
    * Update an object in database using its id.

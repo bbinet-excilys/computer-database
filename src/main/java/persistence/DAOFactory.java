@@ -29,8 +29,8 @@ public enum DAOFactory {
   /**
    * Getter for the right DAO.
    */
-  public DAO getDao(int type) {
-    DAO rDAO = null;
+  public DAO<?> getDao(int type) {
+    DAO<?> rDAO = null;
     switch (type) {
       case DAO_COMPUTER:
         rDAO = new DAOComputer();

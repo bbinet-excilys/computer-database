@@ -1,6 +1,7 @@
 package control;
 
 import model.Company;
+import persistence.DAO;
 import persistence.DAOFactory;
 
 /**
@@ -18,7 +19,7 @@ public class CompanyController extends EntityController<Company> {
    * factory.
    */
   public CompanyController() {
-    this.dao = DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
+    this.dao = (DAO<Company>) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
   }
 
   @Override

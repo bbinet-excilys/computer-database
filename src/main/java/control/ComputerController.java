@@ -7,13 +7,14 @@ import org.slf4j.LoggerFactory;
 
 import model.Company;
 import model.Computer;
+import persistence.DAO;
 import persistence.DAOCompany;
 import persistence.DAOFactory;
 import ui.UIHelper;
 
 /**
  * Controller for Computers (basic CRUD and list methods).
- * 
+ *
  * @author bbinet Computer entity controller with specific DAO of type computer
  */
 public class ComputerController extends EntityController<Computer> {
@@ -28,7 +29,7 @@ public class ComputerController extends EntityController<Computer> {
    * DAOFactory.
    */
   public ComputerController() {
-    this.dao = DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER);
+    this.dao = (DAO<Computer>) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER);
   }
 
   @Override
@@ -57,19 +58,21 @@ public class ComputerController extends EntityController<Computer> {
     this.dao.create(tComputer);
   }
 
-  /**
-   * Checks if the companyId exists in the database.
-   * 
-   * @param companyId
-   *                  The id that requires checking.
-   * @return Either the companyId or null
-   */
-  public Integer verifyCompanyId(Integer companyId) {
-    DAOCompany daoCompany = (DAOCompany) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
-    Company    vCompany   = daoCompany.read(companyId);
-    if (vCompany != null)
-      return vCompany.getId();
-    return null;
+  @Override
+  public void delete() {
+    Integer cId = null;
+    do {
+      cId = UIHelper.promptInt("Enter the ID of the computer to delete :");
+    } while (cId == null);
+    Computer cComputer = this.dao.read(cId);
+    if (cComputer != null) {
+      if (UIHelper.promptValidation("Are you sure ? (y/N)")) {
+        this.dao.delete(cComputer);
+      }
+    }
+    else {
+      UIHelper.displayError("This computer doesn't exist");
+    }
   }
 
   @Override
@@ -79,10 +82,12 @@ public class ComputerController extends EntityController<Computer> {
       cId = UIHelper.promptInt("Enter the ID of the computer to display :");
     } while (cId == null);
     Computer cComputer = this.dao.read(cId);
-    if (cComputer != null)
+    if (cComputer != null) {
       this.entityUI.print(cComputer);
-    else
+    }
+    else {
       UIHelper.displayError("This computer doesn't exist in the database");
+    }
   }
 
   @Override
@@ -114,21 +119,20 @@ public class ComputerController extends EntityController<Computer> {
     this.dao.update(cComputer);
   }
 
-  @Override
-  public void delete() {
-    Integer cId = null;
-    do {
-      cId = UIHelper.promptInt("Enter the ID of the computer to delete :");
-    } while (cId == null);
-    Computer cComputer = this.dao.read(cId);
-    if (cComputer != null) {
-      if (UIHelper.promptValidation("Are you sure ? (y/N)")) {
-        this.dao.delete(cComputer);
-      }
+  /**
+   * Checks if the companyId exists in the database.
+   *
+   * @param companyId
+   *                  The id that requires checking.
+   * @return Either the companyId or null
+   */
+  public Integer verifyCompanyId(Integer companyId) {
+    DAOCompany daoCompany = (DAOCompany) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
+    Company    vCompany   = daoCompany.read(companyId);
+    if (vCompany != null) {
+      return vCompany.getId();
     }
-    else {
-      UIHelper.displayError("This computer doesn't exist");
-    }
+    return null;
   }
 
 }
