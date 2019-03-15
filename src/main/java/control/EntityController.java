@@ -37,6 +37,11 @@ public abstract class EntityController<T extends Entity> implements Controller {
    */
   public abstract void delete();
 
+  @Override
+  public boolean equals(Object obj) {
+    return this.dao.getClass() == ((EntityController<T>) obj).dao.getClass();
+  }
+
   /**
    * Behavior for printing the whole list of entities.
    */
@@ -74,5 +79,4 @@ public abstract class EntityController<T extends Entity> implements Controller {
    * Basic update method.
    */
   public abstract void update();
-
 }

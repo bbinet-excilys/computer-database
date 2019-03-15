@@ -28,7 +28,7 @@ public enum JDBCSingleton {
    * The path to the properties file, containing database parameters (driver, url,
    * username, password).
    */
-  private static final String PROPERTIES_FILE = "properties/jdbcSettings.properties";
+  private static final String PROPERTIES_FILE = "../../properties/jdbcSettings.properties";
   /**
    * The logger for the JDBCSingleton enum.
    */

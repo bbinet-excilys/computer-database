@@ -99,6 +99,9 @@ public class DAOComputer extends DAO<Computer> {
     catch (SQLException e) {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
+    catch (NullPointerException e) {
+      LOG.error("On object is null (probably connection : " + this.dbConnection);
+    }
     finally {
       if (mPreparedStatement != null) {
         try {

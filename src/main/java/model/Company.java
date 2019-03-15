@@ -32,4 +32,11 @@ public class Company extends Entity {
     return String.format("%5s | %30s", this.id, this.name);
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    // TODO Auto-generated method stub
+    Company company = (Company) obj;
+    return this.id == company.getId() && this.name == company.getName();
+  }
+
 }

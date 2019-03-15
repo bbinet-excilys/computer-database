@@ -1,0 +1,4 @@
+17:22:08.977 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
+17:23:25.128 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
+17:26:07.723 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
+17:26:54.742 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)

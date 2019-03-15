@@ -8,7 +8,7 @@
 <title>Computer</title>
 </head>
 <body>
-
+<h1>Computer List</h1>
 <c:forEach items="${computers}" var="computer" >
     ${computer.toString() }
 </c:forEach>
