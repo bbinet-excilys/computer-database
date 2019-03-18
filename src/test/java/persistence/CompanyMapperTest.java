@@ -35,8 +35,7 @@ public class CompanyMapperTest {
       Company       mCompany      = mock(Company.class);
       when(mCompany.getId()).thenReturn(this.ID);
       when(mCompany.getName()).thenReturn(this.NAME);
-      assertTrue(mCompany.equals(company));
-
+      assertTrue(company.equals(mCompany));
     }
     catch (SQLException e) {
       e.printStackTrace();

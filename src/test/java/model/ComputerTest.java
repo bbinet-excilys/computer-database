@@ -10,17 +10,17 @@ import org.junit.Test;
 
 public class ComputerTest {
 
-  private final Integer VALID_ID      = 0;
-  private final String  VALID_NAME    = "Computer";
-  private final Date    VALID_IN_DATE = new Date(0);
-  private final Date    VALID_DI_DATE = new Date(1);
-  private final Integer VALID_C_ID    = 0;
-  private final Company VALID_COMPANY = mock(Company.class);
+  public static final Integer VALID_ID      = 0;
+  public static final String  VALID_NAME    = "Computer";
+  public static final Date    VALID_IN_DATE = new Date(0);
+  public static final Date    VALID_DI_DATE = new Date(1);
+  public static final Integer VALID_C_ID    = 0;
+  public static final Company VALID_COMPANY = mock(Company.class);
 
-  private final Integer INVALID_ID      = -1;
-  private final String  INVALID_NAME    = " ";
-  private final Date    INVALID_DI_DATE = new Date(-1);
-  private final Integer INVALID_C_ID    = -1;
+  public static final Integer INVALID_ID      = -1;
+  public static final String  INVALID_NAME    = " ";
+  public static final Date    INVALID_DI_DATE = new Date(-1);
+  public static final Integer INVALID_C_ID    = -1;
 
   @Test
   public void Computer_Valid() {

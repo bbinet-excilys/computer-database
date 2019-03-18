@@ -7,11 +7,11 @@ import org.junit.Test;
 
 public class CompanyTest {
 
-  private final Integer VALID_ID   = 0;
-  private final String  VALID_NAME = "Company";
+  public static final Integer VALID_ID   = 0;
+  public static final String  VALID_NAME = "Company";
 
-  private final Integer INVALID_ID   = -1;
-  private final String  INVALID_NAME = " ";
+  public static final Integer INVALID_ID   = -1;
+  public static final String  INVALID_NAME = " ";
 
   @Test
   public void Company_Valid_NotNull() {
