@@ -25,11 +25,11 @@ public class DAOCompany extends DAO<Company> {
   }
 
   @Override
-  public boolean create(Company object) {
+  public boolean create(Company company) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
-      mPreparedStatement.setString(1, object.getName());
+      mPreparedStatement.setString(1, company.getName());
       mPreparedStatement.executeUpdate();
       return true;
     }
@@ -50,11 +50,11 @@ public class DAOCompany extends DAO<Company> {
   }
 
   @Override
-  public boolean delete(Company object) {
+  public boolean delete(Company company) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
-      mPreparedStatement.setInt(1, object.getId());
+      mPreparedStatement.setInt(1, company.getId());
       mPreparedStatement.executeUpdate();
       return true;
     }
@@ -150,12 +150,12 @@ public class DAOCompany extends DAO<Company> {
   }
 
   @Override
-  public boolean update(Company object) {
+  public boolean update(Company company) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
-      mPreparedStatement.setString(1, object.getName());
-      mPreparedStatement.setInt(2, object.getId());
+      mPreparedStatement.setString(1, company.getName());
+      mPreparedStatement.setInt(2, company.getId());
       mPreparedStatement.executeUpdate();
       return true;
     }

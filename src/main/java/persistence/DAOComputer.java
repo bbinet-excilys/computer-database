@@ -31,15 +31,15 @@ public class DAOComputer extends DAO<Computer> {
   }
 
   @Override
-  public boolean create(Computer object) {
+  public boolean create(Computer computer) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(
           String.format(INSERT_QUERY, "computer", "name, introduced, discontinued, company_id", "?,?,?,?"));
-      mPreparedStatement.setString(1, object.getName());
-      mPreparedStatement.setDate(2, object.getIntroduced());
-      mPreparedStatement.setDate(3, object.getDiscontinued());
-      mPreparedStatement.setObject(4, object.getCompanyId());
+      mPreparedStatement.setString(1, computer.getName());
+      mPreparedStatement.setDate(2, computer.getIntroduced());
+      mPreparedStatement.setDate(3, computer.getDiscontinued());
+      mPreparedStatement.setObject(4, computer.getCompanyId());
       mPreparedStatement.executeUpdate();
       return true;
     }
@@ -60,11 +60,11 @@ public class DAOComputer extends DAO<Computer> {
   }
 
   @Override
-  public boolean delete(Computer object) {
+  public boolean delete(Computer computer) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(DELETE_QUERY, "computer"));
-      mPreparedStatement.setInt(1, object.getId());
+      mPreparedStatement.setInt(1, computer.getId());
       mPreparedStatement.executeUpdate();
       return true;
     }
@@ -162,16 +162,16 @@ public class DAOComputer extends DAO<Computer> {
   }
 
   @Override
-  public boolean update(Computer object) {
+  public boolean update(Computer computer) {
     PreparedStatement mPreparedStatement = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(
           String.format(UPDATE_QUERY, "computer", "name=?, introduced=?, discontinued=?, company_id=?"));
-      mPreparedStatement.setString(1, object.getName());
-      mPreparedStatement.setDate(2, object.getIntroduced());
-      mPreparedStatement.setDate(3, object.getDiscontinued());
-      mPreparedStatement.setObject(4, object.getCompanyId());
-      mPreparedStatement.setInt(5, object.getId());
+      mPreparedStatement.setString(1, computer.getName());
+      mPreparedStatement.setDate(2, computer.getIntroduced());
+      mPreparedStatement.setDate(3, computer.getDiscontinued());
+      mPreparedStatement.setObject(4, computer.getCompanyId());
+      mPreparedStatement.setInt(5, computer.getId());
       mPreparedStatement.executeUpdate();
       return true;
     }

@@ -30,6 +30,9 @@ public class CompanyMapper extends Mapper<Company> {
     catch (SQLException e) {
       LOG.warn("Error in mapping : " + e.getMessage());
     }
+    catch (IllegalArgumentException e) {
+      LOG.warn("An argument used for the creation of the company is invalid : " + e.getMessage());
+    }
     return rCompany;
   }
 
@@ -47,6 +50,9 @@ public class CompanyMapper extends Mapper<Company> {
     }
     catch (SQLException e) {
       LOG.warn("Error in mappingList : " + e.getMessage());
+    }
+    catch (IllegalArgumentException e) {
+      LOG.warn("An argument used for the creation of a company is invalid : " + e.getMessage());
     }
     return rCompanyList;
   }

@@ -178,4 +178,23 @@ public class Computer extends Entity {
         (this.company != null) ? this.company.toString() : String.format("%5s", "null"));
   }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Computer)) {
+      return false;
+    }
+    else {
+      Computer computer = (Computer) obj;
+      return getId() == computer.getId() && getName() == computer.getName()
+          && getIntroduced() == computer.getIntroduced() && getDiscontinued() == computer.getDiscontinued()
+          && getCompanyId() == computer.getCompanyId() && getCompany().equals(computer.getCompany());
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return getId().hashCode() + getName().hashCode() + getIntroduced().hashCode() + getDiscontinued().hashCode()
+        + getCompany().hashCode();
+  }
+
 }
