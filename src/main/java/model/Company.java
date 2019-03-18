@@ -13,6 +13,26 @@ public class Company extends Entity {
   private String name;
 
   /**
+   * Basic parametered constructor.
+   *
+   * @param id
+   *             The id of the Company
+   * @param name
+   *             The name of the company to create
+   */
+  public Company(Integer id, String name) {
+    super();
+    setId(id);
+    setName(name);
+  }
+
+  /**
+   * Base constructor.
+   */
+  public Company() {
+  }
+
+  /**
    * @return The Name of the Company
    */
   public String getName() {
@@ -24,19 +44,17 @@ public class Company extends Entity {
    *             The name of the Company to set
    */
   public void setName(String name) {
+    if (name != null) {
+      if (name.trim().isEmpty()) {
+        throw new IllegalArgumentException();
+      }
+    }
     this.name = name;
   }
 
   @Override
   public String toString() {
-    return String.format("%5s | %30s", this.id, this.name);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    // TODO Auto-generated method stub
-    Company company = (Company) obj;
-    return this.id == company.getId() && this.name == company.getName();
+    return String.format("%5s | %30s", getId(), getName());
   }
 
 }

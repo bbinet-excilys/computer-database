@@ -15,15 +15,26 @@ public class EntityPage<T extends Entity> {
   /**
    * The number of elements a page displays.
    */
-  Integer pageSize;
+  private Integer pageSize;
   /**
    * The current offset of the page.
    */
-  Integer offset;
+  private Integer offset = 0;
   /**
    * The list of entities to paginate.
    */
-  List<T> entities;
+  private List<T> entities;
+
+  public EntityPage(Integer pageSize, Integer offset, List<T> entities) {
+    super();
+    setPageSize(pageSize);
+    setOffset(offset);
+    setEntities(entities);
+  }
+
+  public EntityPage() {
+    super();
+  }
 
   /**
    * @return The list of entities paginated
@@ -79,6 +90,12 @@ public class EntityPage<T extends Entity> {
    *                 The list of entities to paginate
    */
   public void setEntities(List<T> entities) {
+    if (entities == null) {
+      throw new IllegalArgumentException("List of Entities can't be null");
+    }
+    else if (entities.size() == 0) {
+      throw new IllegalArgumentException("List of Entities should contain at least one element");
+    }
     this.entities = entities;
   }
 
@@ -87,6 +104,9 @@ public class EntityPage<T extends Entity> {
    *               The current offset in the List of Entities
    */
   public void setOffset(Integer offset) {
+    if (offset == null) {
+      throw new IllegalArgumentException("Offset can't be null");
+    }
     this.offset = offset;
   }
 
@@ -96,6 +116,12 @@ public class EntityPage<T extends Entity> {
    *                 time)
    */
   public void setPageSize(Integer pageSize) {
+    if (pageSize == null) {
+      throw new IllegalArgumentException("PageSize can't be null");
+    }
+    else if (pageSize < 1) {
+      throw new IllegalArgumentException("PageSize must be at least 1");
+    }
     this.pageSize = pageSize;
   }
 

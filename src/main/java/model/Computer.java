@@ -2,6 +2,9 @@ package model;
 
 import java.sql.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * @author bbinet Model class for db computer entity
  */
@@ -27,6 +30,63 @@ public class Computer extends Entity {
    * Company object corresponding to the companyId field.
    */
   private Company company;
+
+  static final Logger LOG = LoggerFactory.getLogger(Computer.class);
+
+  /**
+   * Parametered constructor.
+   *
+   * @param id
+   * @param name
+   * @param introduced
+   * @param discontinued
+   * @param companyId
+   * @param company
+   */
+  public Computer(Integer id, String name, Date introduced, Date discontinued, Integer companyId, Company company) {
+    super();
+    setId(id);
+    if (name != null) {
+      this.name = (name.trim().isEmpty()) ? null : name.trim();
+    }
+    else {
+      this.name = name;
+    }
+    if (introduced != null && discontinued != null) {
+      if (introduced.before(discontinued)) {
+        this.introduced   = introduced;
+        this.discontinued = discontinued;
+      }
+      else {
+        LOG.warn("Discontinuation date cannot be before introduction date : introduced before discontinued :"
+            + introduced.before(discontinued));
+        this.introduced   = null;
+        this.discontinued = null;
+      }
+    }
+    else if (introduced == null && discontinued != null) {
+      LOG.warn("There can't be a discontinuation date without an introduction date");
+      this.introduced   = null;
+      this.discontinued = null;
+    }
+    else {
+      this.introduced   = introduced;
+      this.discontinued = discontinued;
+    }
+    if (companyId != null) {
+      this.companyId = (companyId < 0) ? null : companyId;
+    }
+    else {
+      this.companyId = companyId;
+    }
+    this.company = company;
+  }
+
+  /**
+   * Base constructor.
+   */
+  public Computer() {
+  }
 
   /**
    * @return The Company object the Computer belongs to
@@ -114,7 +174,7 @@ public class Computer extends Entity {
 
   @Override
   public String toString() {
-    return String.format("%5s | %30.30s | %10s | %10s | %s", this.id, this.name, this.introduced, this.discontinued,
+    return String.format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced, this.discontinued,
         (this.company != null) ? this.company.toString() : String.format("%5s", "null"));
   }
 
