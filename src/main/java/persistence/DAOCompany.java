@@ -1,5 +1,6 @@
 package persistence;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import model.Company;
 
-public class DAOCompany extends DAO<Company> {
+public class DAOCompany implements DAO<Company> {
 
   /**
    * Logger for the DAOCompany class.
@@ -18,11 +19,10 @@ public class DAOCompany extends DAO<Company> {
   static final Logger LOG = LoggerFactory.getLogger(DAOCompany.class);
 
   /**
-   * Initialization block to set the Mapper on DAOCompany instanciation.
+   * Set the Mapper on DAOCompany instanciation.
    */
-  {
-    this.mapper = new CompanyMapper();
-  }
+  Mapper<Company> mapper       = new CompanyMapper();
+  Connection      dbConnection = JDBCSingleton.INSTANCE.getConnection();
 
   @Override
   public boolean create(Company company) {
@@ -173,6 +173,39 @@ public class DAOCompany extends DAO<Company> {
       }
     }
     return false;
+  }
+
+  @Override
+  public Integer count() {
+    PreparedStatement mPreparedStatement = null;
+    Integer           count              = null;
+    ResultSet         mResultSet         = null;
+    try {
+      mPreparedStatement = this.dbConnection.prepareStatement(String.format(COUNT_QUERY, "company"));
+      mResultSet         = mPreparedStatement.executeQuery();
+      if (mResultSet.first()) {
+        count = mResultSet.getInt("count");
+      }
+    }
+    catch (SQLException e) {
+      LOG.warn("Couldn't execute count query : " + e.getMessage());
+    }
+    finally {
+      if (mPreparedStatement != null) {
+        try {
+          mPreparedStatement.close();
+        }
+        catch (SQLException e) {
+          LOG.warn("Couldn't close PreparedStatement : " + e.getMessage());
+        }
+      }
+    }
+    return count;
+  }
+
+  @Override
+  public void setConnection(Connection conn) {
+    this.dbConnection = conn;
   }
 
 }

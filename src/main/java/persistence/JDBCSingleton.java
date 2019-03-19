@@ -1,8 +1,8 @@
 package persistence;
 
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -28,7 +28,7 @@ public enum JDBCSingleton {
    * The path to the properties file, containing database parameters (driver, url,
    * username, password).
    */
-  private static final String PROPERTIES_FILE = "properties/jdbcSettings.properties";
+  private static final String PROPERTIES_FILE = "jdbcSettings.properties";
   /**
    * The logger for the JDBCSingleton enum.
    */
@@ -50,8 +50,9 @@ public enum JDBCSingleton {
   private JDBCSingleton() {
     Logger constructorLogger = LoggerFactory.getLogger(JDBCSingleton.class);
     try {
-      FileReader mFileReader = new FileReader(PROPERTIES_FILE);
-      this.jdbcProperties.load(mFileReader);
+      ClassLoader loader           = Thread.currentThread().getContextClassLoader();
+      InputStream propertiesStream = loader.getResourceAsStream(PROPERTIES_FILE);
+      this.jdbcProperties.load(propertiesStream);
       String dbDriver, dbURI, dbUsername, dbPassword;
       dbDriver   = this.jdbcProperties.getProperty("db.driver.class");
       dbURI      = this.jdbcProperties.getProperty("db.uri");
@@ -61,6 +62,7 @@ public enum JDBCSingleton {
         try {
           Class.forName(dbDriver);
           this.connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
+          constructorLogger.error("Setting connection");
         }
         catch (ClassNotFoundException e) {
           constructorLogger.error(

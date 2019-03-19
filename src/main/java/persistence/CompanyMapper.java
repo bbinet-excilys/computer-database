@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import model.Company;
 
-public class CompanyMapper extends Mapper<Company> {
+public class CompanyMapper implements Mapper<Company> {
 
   /**
    * Logger for the CompanyMapper class.

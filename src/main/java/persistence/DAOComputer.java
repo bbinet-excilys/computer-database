@@ -1,5 +1,6 @@
 package persistence;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import model.Computer;
 
-public class DAOComputer extends DAO<Computer> {
+public class DAOComputer implements DAO<Computer> {
 
   /**
    * Logger for the DAOComputer Class.
@@ -23,12 +24,8 @@ public class DAOComputer extends DAO<Computer> {
   static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.id, company.name \n"
       + "FROM computer\n" + "LEFT OUTER JOIN company\n" + "ON computer.company_id=company.id %s;";
 
-  /**
-   * Initializer block to create the Mapper on DAOComputer instanciation.
-   */
-  {
-    this.mapper = new ComputerMapper();
-  }
+  Mapper     mapper       = new ComputerMapper();
+  Connection dbConnection = JDBCSingleton.INSTANCE.getConnection();
 
   @Override
   public boolean create(Computer computer) {
@@ -100,7 +97,7 @@ public class DAOComputer extends DAO<Computer> {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
     catch (NullPointerException e) {
-      LOG.error("On object is null (probably connection : " + this.dbConnection);
+      LOG.error("An object is null (probably connection : " + this.dbConnection);
     }
     finally {
       if (mPreparedStatement != null) {
@@ -134,7 +131,7 @@ public class DAOComputer extends DAO<Computer> {
       mPreparedStatement.setInt(1, id);
       mResultSet = mPreparedStatement.executeQuery();
       if (mResultSet.first()) {
-        rComputer = this.mapper.map(mResultSet);
+        rComputer = (Computer) this.mapper.map(mResultSet);
       }
     }
     catch (SQLException e) {
@@ -192,4 +189,80 @@ public class DAOComputer extends DAO<Computer> {
     return false;
   }
 
+  public List<Computer> paginatedList(Integer size, Integer offset) {
+    List<Computer>    rComputerList      = null;
+    PreparedStatement mPreparedStatement = null;
+    ResultSet         mResultSet         = null;
+    try {
+      if (size != null && offset != null) {
+        mPreparedStatement = this.dbConnection
+            .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT ? OFFSET ?"));
+        mPreparedStatement.setInt(1, size);
+        mPreparedStatement.setInt(2, offset);
+        mResultSet = mPreparedStatement.executeQuery();
+        if (mResultSet.first()) {
+          rComputerList = this.mapper.mapList(mResultSet);
+        }
+      }
+    }
+    catch (SQLException e) {
+      LOG.warn("Couldn't execute select in list : " + e.getMessage());
+    }
+    catch (NullPointerException e) {
+      LOG.error("An object is null (probably connection : " + this.dbConnection);
+    }
+    finally {
+      if (mPreparedStatement != null) {
+        try {
+          mPreparedStatement.close();
+        }
+        catch (SQLException e) {
+          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+        }
+      }
+      if (mResultSet != null) {
+        try {
+          mResultSet.close();
+        }
+        catch (SQLException e) {
+          LOG.warn("Couldn't close resultSet : " + e.getMessage());
+        }
+      }
+    }
+    return rComputerList;
+  }
+
+  @Override
+  public Integer count() {
+    PreparedStatement mPreparedStatement = null;
+    Integer           count              = null;
+    ResultSet         mResultSet         = null;
+    try {
+      mPreparedStatement = this.dbConnection.prepareStatement(String.format(COUNT_QUERY, "computer"));
+      mResultSet         = mPreparedStatement.executeQuery();
+      if (mResultSet.first()) {
+        count = mResultSet.getInt("count");
+      }
+    }
+    catch (SQLException e) {
+      LOG.warn("Couldn't execute count query : " + e.getMessage());
+    }
+    finally {
+      if (mPreparedStatement != null) {
+        try {
+          mPreparedStatement.close();
+        }
+        catch (SQLException e) {
+          LOG.warn("Couldn't close PreparedStatement : " + e.getMessage());
+        }
+      }
+    }
+    return count;
+  }
+
+  @Override
+  public void setConnection(Connection conn) {
+    // TODO Auto-generated method stub
+    this.dbConnection = conn;
+  }
 }

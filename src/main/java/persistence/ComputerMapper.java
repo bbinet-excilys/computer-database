@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import model.Company;
 import model.Computer;
 
-public class ComputerMapper extends Mapper<Computer> {
+public class ComputerMapper implements Mapper<Computer> {
 
   /**
    * Logger for the ComputerMapper Factory.

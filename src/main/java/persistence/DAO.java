@@ -12,7 +12,7 @@ import model.Entity;
  * @param <T>
  *        Type of DAO, must extend Entity
  */
-public abstract class DAO<T extends Entity> {
+public interface DAO<T extends Entity> {
 
   /**
    * Static field to create standard INSERT queries.
@@ -56,27 +56,17 @@ public abstract class DAO<T extends Entity> {
   final static String DELETE_QUERY = "DELETE FROM %s WHERE id=?;";
 
   /**
+   * Static field to create standard COUNT queries.
+   * <ul>
+   * <li>The table in which the count will occur</li>
+   * </ul>
+   */
+  final static String COUNT_QUERY = "SELECT COUNT(*) as count FROM %s;";
+
+  /**
    * The logger for the DAO class.
    */
-//  static final Logger LOG = LoggerFactory.getLogger(DAO.class);
-
-  /**
-   * The object representing the connection to the database.
-   */
-  Connection dbConnection;
-
-  /**
-   * The mapper object to map data from a result set to the corresponding object.
-   */
-  Mapper<T> mapper;
-
-  /**
-   * Standard constructor.
-   */
-  public DAO() {
-    this.dbConnection = JDBCSingleton.INSTANCE.getConnection();
-//    LOG.info("Creating DAO");
-  }
+  // static final Logger LOG = LoggerFactory.getLogger(DAO.class);
 
   /**
    * Create a row for an object in database.
@@ -113,9 +103,7 @@ public abstract class DAO<T extends Entity> {
    */
   public abstract T read(Integer id);
 
-  public void setConnection(Connection conn) {
-    this.dbConnection = conn;
-  }
+  public void setConnection(Connection conn);
 
   /**
    * Update an object in database using its id.
@@ -125,4 +113,6 @@ public abstract class DAO<T extends Entity> {
    * @return true if query succeeded, false otherwise.
    */
   public abstract boolean update(T object);
+
+  public abstract Integer count();
 }
