@@ -24,84 +24,85 @@ public class ComputerTest {
 
   @Test
   public void Computer_Valid() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE,
-        this.VALID_C_ID, this.VALID_COMPANY);
-    assertEquals("ID :", this.VALID_ID, computer.getId());
-    assertEquals("Name : ", this.VALID_NAME, computer.getName());
-    assertEquals("Introduction Date :", this.VALID_IN_DATE, computer.getIntroduced());
-    assertEquals("Discontinuation Date :", this.VALID_DI_DATE, computer.getDiscontinued());
-    assertEquals("Company Id :", this.VALID_C_ID, computer.getCompanyId());
-    assertEquals("Company", this.VALID_COMPANY, computer.getCompany());
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
+    assertEquals("ID :", ComputerTest.VALID_ID, computer.getId());
+    assertEquals("Name : ", ComputerTest.VALID_NAME, computer.getName());
+    assertEquals("Introduction Date :", ComputerTest.VALID_IN_DATE, computer.getIntroduced());
+    assertEquals("Discontinuation Date :", ComputerTest.VALID_DI_DATE, computer.getDiscontinued());
+    assertEquals("Company Id :", ComputerTest.VALID_C_ID, computer.getCompanyId());
+    assertEquals("Company", ComputerTest.VALID_COMPANY, computer.getCompany());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void Computer_Id_Invalid() {
-    Computer computer = new Computer(this.INVALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE,
-        this.VALID_C_ID, this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.INVALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
   }
 
   @Test
   public void Computer_Name_Invalid() {
-    Computer computer = new Computer(this.VALID_ID, this.INVALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE,
-        this.VALID_C_ID, this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.INVALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getName());
   }
 
   @Test
   public void Computer_DiDate_BeforeInDate() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.INVALID_DI_DATE,
-        this.VALID_C_ID, this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.INVALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getDiscontinued());
 
   }
 
   @Test
   public void Computer_InDateNull_DiDateNotNull() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, null, this.INVALID_DI_DATE, this.VALID_C_ID,
-        this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, null, ComputerTest.INVALID_DI_DATE,
+        ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getIntroduced());
     assertNull(computer.getDiscontinued());
   }
 
   @Test
   public void Computer_InDateNull_DiDateNull() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, null, null, this.VALID_C_ID, this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, null, null,
+        ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getIntroduced());
     assertNull(computer.getDiscontinued());
   }
 
   @Test
   public void Computer_CId_Invalid() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE,
-        this.INVALID_C_ID, this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.INVALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getCompanyId());
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void Computer_IdNull() {
-    Computer computer = new Computer(null, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE, this.VALID_C_ID,
-        this.VALID_COMPANY);
+    Computer computer = new Computer(null, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getId());
   }
 
   @Test
   public void Computer_NameNull() {
-    Computer computer = new Computer(this.VALID_ID, null, this.VALID_IN_DATE, this.VALID_DI_DATE, this.VALID_C_ID,
-        this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, null, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, ComputerTest.VALID_COMPANY);
     assertNull(computer.getName());
   }
 
   @Test
   public void Computer_CIdNull() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE, null,
-        this.VALID_COMPANY);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, null, ComputerTest.VALID_COMPANY);
     assertNull(computer.getCompanyId());
   }
 
   @Test
   public void Computer_CompanyNull() {
-    Computer computer = new Computer(this.VALID_ID, this.VALID_NAME, this.VALID_IN_DATE, this.VALID_DI_DATE,
-        this.VALID_C_ID, null);
+    Computer computer = new Computer(ComputerTest.VALID_ID, ComputerTest.VALID_NAME, ComputerTest.VALID_IN_DATE,
+        ComputerTest.VALID_DI_DATE, ComputerTest.VALID_C_ID, null);
     assertNull(computer.getCompany());
   }
 
