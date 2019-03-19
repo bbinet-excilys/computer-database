@@ -1,4 +1,228 @@
-17:22:08.977 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
-17:23:25.128 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
-17:26:07.723 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
-17:26:54.742 [main] ERROR persistence.JDBCSingleton - Couldn't find file ../../properties/jdbcSettings.properties : ../../properties/jdbcSettings.properties (No such file or directory)
+
+10:56:17.310 [main] WARN  model.Computer - ID<0:false this id :0
+10:56:17.314 [main] WARN  model.Computer - ID<0:false this id :0
+10:56:17.314 [main] WARN  model.Computer - ID<0:false this id :0
+10:56:17.318 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+10:56:17.319 [main] WARN  model.Computer - ID<0:false this id :0
+10:56:17.319 [main] WARN  model.Computer - ID<0:false this id :0
+10:56:17.322 [main] WARN  model.Computer - ID<0:true this id :null
+10:57:19.402 [main] WARN  model.Computer - ID<0:false this id :null
+10:57:19.405 [main] WARN  model.Computer - ID<0:false this id :null
+10:57:19.406 [main] WARN  model.Computer - ID<0:false this id :null
+10:57:19.410 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+10:57:19.410 [main] WARN  model.Computer - ID<0:false this id :null
+10:57:19.410 [main] WARN  model.Computer - ID<0:false this id :null
+10:57:19.412 [main] WARN  model.Computer - ID<0:true this id :null
+10:58:15.531 [main] WARN  model.Computer - ID<0:false this id :0
+10:58:15.534 [main] WARN  model.Computer - ID<0:false this id :0
+10:58:15.535 [main] WARN  model.Computer - ID<0:false this id :0
+10:58:15.536 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+10:58:15.536 [main] WARN  model.Computer - ID<0:false this id :0
+10:58:15.537 [main] WARN  model.Computer - ID<0:false this id :0
+10:58:15.542 [main] WARN  model.Computer - ID<0:true this id :null
+10:59:15.966 [main] WARN  model.Computer - ID<0:false this id :null
+10:59:15.972 [main] WARN  model.Computer - ID<0:false this id :null
+10:59:15.973 [main] WARN  model.Computer - ID<0:false this id :null
+10:59:15.978 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+10:59:15.978 [main] WARN  model.Computer - ID<0:false this id :null
+10:59:15.979 [main] WARN  model.Computer - ID<0:false this id :null
+10:59:15.982 [main] WARN  model.Computer - ID<0:true this id :null
+11:01:33.118 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:33.122 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:33.122 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:33.123 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+11:01:33.123 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:33.124 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:46.146 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:46.150 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:46.151 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:46.152 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date
+11:01:46.152 [main] WARN  model.Computer - ID<0:false this id :0
+11:01:46.153 [main] WARN  model.Computer - ID<0:false this id :0
+11:06:47.776 [main] WARN  model.Computer - ID<0:false this id :0
+11:06:47.779 [main] WARN  model.Computer - ID<0:false this id :0
+11:06:47.780 [main] WARN  model.Computer - ID<0:false this id :0
+11:06:47.781 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:06:47.781 [main] WARN  model.Computer - ID<0:false this id :0
+11:07:50.463 [main] WARN  model.Computer - ID<0:false this id :0
+11:07:50.467 [main] WARN  model.Computer - ID<0:false this id :0
+11:07:50.467 [main] WARN  model.Computer - ID<0:false this id :0
+11:07:50.468 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:07:50.468 [main] WARN  model.Computer - ID<0:false this id :0
+11:12:59.432 [main] WARN  model.Computer - ID<0:false this id :0
+11:12:59.435 [main] WARN  model.Computer - ID<0:false this id :0
+11:12:59.436 [main] WARN  model.Computer - ID<0:false this id :0
+11:12:59.436 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:12:59.436 [main] WARN  model.Computer - ID<0:false this id :0
+11:14:08.395 [main] WARN  model.Computer - ID<0:false this id :null
+11:14:08.398 [main] WARN  model.Computer - ID<0:false this id :null
+11:14:08.399 [main] WARN  model.Computer - ID<0:false this id :null
+11:14:08.404 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:14:08.405 [main] WARN  model.Computer - ID<0:false this id :null
+11:14:47.287 [main] WARN  model.Computer - ID<0:false this id :0
+11:14:47.292 [main] WARN  model.Computer - ID<0:false this id :0
+11:14:47.292 [main] WARN  model.Computer - ID<0:false this id :0
+11:14:47.293 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:14:47.293 [main] WARN  model.Computer - ID<0:false this id :0
+11:14:47.294 [main] WARN  model.Computer - ID<0:true this id :null
+12:21:19.099 [main] WARN  model.Computer - ID<0:false this id :0
+12:21:19.104 [main] WARN  model.Computer - ID<0:false this id :0
+12:21:19.105 [main] WARN  model.Computer - ID<0:false this id :0
+12:21:19.105 [main] WARN  model.Computer - ID<0:true this id :null
+12:21:19.106 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:21:19.106 [main] WARN  model.Computer - ID<0:false this id :0
+12:21:19.107 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:21:19.107 [main] WARN  model.Computer - ID<0:false this id :0
+12:21:19.108 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.429 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.433 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.434 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.439 [main] WARN  model.Computer - ID<0:true this id :null
+12:24:25.439 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:24:25.439 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.443 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:24:25.443 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:25.444 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.264 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.266 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.267 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.272 [main] WARN  model.Computer - ID<0:true this id :null
+12:24:34.273 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:24:34.273 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.273 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:24:34.274 [main] WARN  model.Computer - ID<0:false this id :0
+12:24:34.274 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.479 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.483 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.483 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.490 [main] WARN  model.Computer - ID<0:true this id :null
+12:25:04.490 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:25:04.491 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.491 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:25:04.491 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:04.492 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.850 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.855 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.855 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.860 [main] WARN  model.Computer - ID<0:true this id :null
+12:25:22.862 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:25:22.865 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.866 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:25:22.866 [main] WARN  model.Computer - ID<0:false this id :0
+12:25:22.866 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.618 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.624 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.625 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.630 [main] WARN  model.Computer - ID<0:true this id :null
+12:26:06.630 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:26:06.630 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.630 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:26:06.630 [main] WARN  model.Computer - ID<0:false this id :0
+12:26:06.631 [main] WARN  model.Computer - ID<0:false this id :0
+12:27:15.356 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:27:15.358 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:29:40.558 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:29:40.562 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:30:43.900 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:30:43.904 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:31:14.187 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:31:14.190 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:15:24.732 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:15:24.735 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:44:19.207 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:44:19.211 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:45:51.595 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:45:51.598 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:52:04.735 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:52:04.739 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:52:43.440 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:52:43.445 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:56:45.968 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:56:45.972 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:56:53.790 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:56:53.796 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+15:13:56.230 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+15:13:56.235 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+15:13:56.242 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+15:15:45.517 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+15:15:45.520 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+15:15:45.525 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+15:17:29.708 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+15:17:29.712 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+15:17:29.718 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+15:18:31.511 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+15:18:31.515 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+15:18:31.520 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+17:48:39.421 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+17:48:39.425 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+17:48:39.801 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+17:48:58.091 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+17:48:58.098 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+17:48:58.912 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+11:17:47.033 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+11:17:47.037 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+11:17:47.040 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+11:17:47.090 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+12:04:06.400 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:04:06.404 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:04:06.407 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+12:04:06.463 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+12:04:06.608 [main] ERROR persistence.DAOComputer - Creating dao computer
+12:09:46.028 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:09:46.032 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:09:46.044 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+12:09:46.205 [main] ERROR persistence.JDBCSingleton - Setting connection
+12:09:46.308 [main] ERROR persistence.DAOComputer - Creating dao computer
+12:27:43.467 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+12:27:43.469 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+12:27:43.874 [main] ERROR persistence.JDBCSingleton - Setting connection
+12:27:43.879 [main] ERROR persistence.DAOComputer - Creating dao computer
+12:27:43.974 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:07:37.834 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:07:37.838 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:07:37.974 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:07:37.977 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:07:38.045 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:10:41.044 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:10:41.048 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:10:41.052 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:10:41.211 [main] ERROR persistence.JDBCSingleton - Setting connection
+13:10:41.309 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:38:23.575 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:38:23.581 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:38:23.586 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:38:23.613 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:38:23.870 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:39:12.429 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:39:12.433 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:39:12.449 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:39:12.524 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:39:12.704 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:40:22.137 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:40:22.141 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:40:22.147 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:40:22.178 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:40:22.378 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:57:43.425 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:57:43.429 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:57:43.435 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:57:43.477 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:57:43.625 [main] ERROR persistence.DAOComputer - Creating dao computer
+13:57:53.289 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+13:57:53.293 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+13:57:53.297 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+13:57:53.351 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+13:57:53.505 [main] ERROR persistence.DAOComputer - Creating dao computer
+14:03:12.990 [main] ERROR persistence.JDBCSingleton - Couldn't find file computerdatabase/properties/jdbcSettings.properties : computerdatabase/properties/jdbcSettings.properties (No such file or directory)
+14:03:12.994 [main] ERROR persistence.DAOComputer - Creating dao computer
+14:03:26.184 [main] ERROR persistence.JDBCSingleton - Couldn't find file properties/jdbcSettings.properties : properties/jdbcSettings.properties (No such file or directory)
+14:03:26.193 [main] ERROR persistence.DAOComputer - Creating dao computer
+14:03:54.262 [main] ERROR persistence.JDBCSingleton - Couldn't find file resources/jdbcSettings.properties : resources/jdbcSettings.properties (No such file or directory)
+14:03:54.265 [main] ERROR persistence.DAOComputer - Creating dao computer
+14:17:12.554 [main] ERROR persistence.JDBCSingleton - Setting connection
+14:17:12.558 [main] ERROR persistence.DAOComputer - Creating dao computer
+14:21:30.257 [main] WARN  model.Computer - There can't be a discontinuation date without an introduction date
+14:21:30.261 [main] WARN  model.Computer - Discontinuation date cannot be before introduction date : introduced before discontinued :false
+14:21:30.265 [main] WARN  model.Company - Tried to set the name of the company to an empty string
+14:21:30.439 [main] ERROR persistence.JDBCSingleton - Setting connection
+14:21:30.541 [main] ERROR persistence.DAOComputer - Creating dao computer
