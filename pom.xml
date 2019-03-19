@@ -97,34 +97,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>3.2.2</version>
-                <configuration>
-                    <webXml>WebContent/WEB-INF/web.xml</webXml>
-                    <webResources>
-                        <resource>
-                            <directory>resources</directory>
-                        </resource>
-                    </webResources>
-                </configuration>
-                <dependencies>
-                    <!-- SLF4J API -->
-                    <dependency>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                        <version>${slf4j.version}</version>
-                    </dependency>
-                    <!-- LogBack -->
-                    <dependency>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-classic</artifactId>
-                        <version>${logback.version}</version>
-                    </dependency>
-                    <!-- LogBack Core -->
-                    <dependency>
-                        <groupId>ch.qos.logback</groupId>
-                        <artifactId>logback-core</artifactId>
-                        <version>${logback.version}</version>
-                    </dependency>
-                </dependencies>
+                
             </plugin>
         </plugins>
         <testSourceDirectory>src/test/java/</testSourceDirectory>
