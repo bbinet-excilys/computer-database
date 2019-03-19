@@ -10,7 +10,7 @@ import java.util.List;
  * @param <T>
  *        Class of the entity (must extend Entity)
  */
-public class EntityPage<T extends Entity> {
+public abstract class EntityPage<T extends Entity> {
 
   /**
    * The number of elements a page displays.
@@ -77,6 +77,8 @@ public class EntityPage<T extends Entity> {
     }
     return rEntityList;
   }
+
+  public abstract List<T> getPageN(int page);
 
   /**
    * @return The size of a page (number of elements displayed at the same time)
