@@ -137,9 +137,7 @@ public class DAOComputer extends DAO {
           .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE computer.id=?"));
       mPreparedStatement.setInt(1, id);
       mResultSet = mPreparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        rComputer = this.mapper.map(mResultSet);
-      }
+      rComputer  = this.mapper.map(mResultSet);
     }
     catch (SQLException e) {
       LOG.warn("Coudn't execute select query :" + e.getMessage());
@@ -210,11 +208,8 @@ public class DAOComputer extends DAO {
             .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT ? OFFSET ?"));
         mPreparedStatement.setInt(1, size);
         mPreparedStatement.setInt(2, offset);
-        System.out.println(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT " + size + " OFFSET " + offset));
-        mResultSet = mPreparedStatement.executeQuery();
-        if (mResultSet.first()) {
-          rComputerList = this.mapper.mapList(mResultSet);
-        }
+        mResultSet    = mPreparedStatement.executeQuery();
+        rComputerList = this.mapper.mapList(mResultSet);
       }
     }
     catch (SQLException e) {

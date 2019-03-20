@@ -35,17 +35,25 @@ public class ComputerServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     List<Entity> computers = DAOFactory.COMPUTER.getDAO().list();
-    String       sPage     = request.getParameter("page");
-    Integer      page      = 1;
-    if (sPage != null && !sPage.trim().isEmpty()) {
-      page = Integer.parseInt(sPage);
+    Integer      page      = (request.getParameter("page") == null) ? 1
+        : Integer.parseInt(request.getParameter("page"));
+    Integer      pageSize  = (request.getParameter("pageSize") == null) ? 10
+        : Integer.parseInt(request.getParameter("pageSize"));
+    Integer      cCount    = DAOFactory.COMPUTER.getDAO().count();
+    if (page * pageSize < cCount) {
+      ComputerPage cPage = new ComputerPage();
+      cPage.setPageSize(pageSize);
+      computers = cPage.getPageN(page);
+      Integer pageMax = (cCount / cPage.getPageSize()) + 1;
+      request.setAttribute("computers", computers);
+      request.setAttribute("page", page);
+      request.setAttribute("pageMax", pageMax);
+      getServletContext().getRequestDispatcher("/Views/dashboard.jsp").forward(request, response);
     }
-    ComputerPage cPage = new ComputerPage();
-    cPage.setPageSize(10);
-    computers = cPage.getPageN(page);
-    request.setAttribute("computers", computers);
-    request.setAttribute("page", page);
-    getServletContext().getRequestDispatcher("/Views/dashboard.jsp").forward(request, response);
+    else {
+      getServletContext().getRequestDispatcher("/Views/403.jsp").forward(request, response);
+    }
+
   }
 
   /**

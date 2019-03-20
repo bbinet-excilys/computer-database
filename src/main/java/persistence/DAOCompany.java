@@ -89,9 +89,7 @@ public class DAOCompany extends DAO {
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
       mResultSet         = mPreparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        rCompanyList = this.mapper.mapList(mResultSet);
-      }
+      rCompanyList       = this.mapper.mapList(mResultSet);
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute select query : " + e.getMessage());
@@ -127,9 +125,7 @@ public class DAOCompany extends DAO {
           .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
       mPreparedStatement.setInt(1, id);
       mResultSet = mPreparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        rCompany = this.mapper.map(mResultSet);
-      }
+      rCompany   = this.mapper.map(mResultSet);
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute select query : " + e.getMessage());
