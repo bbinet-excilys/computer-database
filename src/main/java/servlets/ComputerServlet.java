@@ -16,7 +16,7 @@ import persistence.DAOFactory;
 /**
  * Servlet implementation class ComputerServlet
  */
-@WebServlet("/ComputerServlet")
+@WebServlet("/dashboard")
 public class ComputerServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
@@ -51,7 +51,7 @@ public class ComputerServlet extends HttpServlet {
       getServletContext().getRequestDispatcher("/Views/dashboard.jsp").forward(request, response);
     }
     else {
-      getServletContext().getRequestDispatcher("/Views/403.jsp").forward(request, response);
+      getServletContext().getRequestDispatcher("/Views/404.jsp").forward(request, response);
     }
 
   }
