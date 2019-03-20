@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import model.Company;
 import model.Computer;
+import model.Entity;
 
 public class ComputerMapperTest {
 
@@ -42,7 +43,7 @@ public class ComputerMapperTest {
       when(rSet.getString("company.name")).thenReturn(this.COM_NAME);
 
       ComputerMapper computerMapper = new ComputerMapper();
-      Computer       computer       = computerMapper.map(rSet);
+      Entity         computer       = computerMapper.map(rSet);
 
       Computer mComputer = mock(Computer.class);
       when(mComputer.getId()).thenReturn(this.ID);
