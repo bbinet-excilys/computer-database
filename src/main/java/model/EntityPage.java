@@ -78,7 +78,7 @@ public abstract class EntityPage<T extends Entity> {
     return rEntityList;
   }
 
-  public abstract List<T> getPageN(int page);
+  public abstract List<Entity> getPageN(int page);
 
   /**
    * @return The size of a page (number of elements displayed at the same time)
