@@ -71,6 +71,10 @@
       </div>
     </section>
 
+    <form>
+      <input type="hidden" name="pageSize" value="${pageSize }" />
+    </form>
+
     <footer>
       <div class="navbar navbar-expand-lg fixed-bottom navbar-dark bg-dark">
         <div class="container justify-content-md-center">
