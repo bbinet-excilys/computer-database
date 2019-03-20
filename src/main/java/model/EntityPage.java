@@ -10,22 +10,22 @@ import java.util.List;
  * @param <T>
  *        Class of the entity (must extend Entity)
  */
-public abstract class EntityPage<T extends Entity> {
+public abstract class EntityPage {
 
   /**
    * The number of elements a page displays.
    */
-  private Integer pageSize;
+  private Integer      pageSize;
   /**
    * The current offset of the page.
    */
-  private Integer offset = 0;
+  private Integer      offset = 0;
   /**
    * The list of entities to paginate.
    */
-  private List<T> entities;
+  private List<Entity> entities;
 
-  public EntityPage(Integer pageSize, Integer offset, List<T> entities) {
+  public EntityPage(Integer pageSize, Integer offset, List<Entity> entities) {
     super();
     setPageSize(pageSize);
     setOffset(offset);
@@ -39,7 +39,7 @@ public abstract class EntityPage<T extends Entity> {
   /**
    * @return The list of entities paginated
    */
-  public List<T> getEntities() {
+  public List<Entity> getEntities() {
     return this.entities;
   }
 
@@ -67,8 +67,8 @@ public abstract class EntityPage<T extends Entity> {
    *                  </ul>
    * @return The List of Entities to display
    */
-  public List<T> getPage(int direction) {
-    List<T> rEntityList = new ArrayList<T>();
+  public List<Entity> getPage(int direction) {
+    List<Entity> rEntityList = new ArrayList<Entity>();
     this.offset = this.offset + (direction * this.pageSize);
     int index = (this.offset % this.entities.size() + this.entities.size()) % this.entities.size();
     for (int i = 0; i < this.pageSize; i++) {
@@ -91,7 +91,7 @@ public abstract class EntityPage<T extends Entity> {
    * @param entities
    *                 The list of entities to paginate
    */
-  public void setEntities(List<T> entities) {
+  public void setEntities(List<Entity> entities) {
     if (entities == null) {
       throw new IllegalArgumentException("List of Entities can't be null");
     }

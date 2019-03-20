@@ -14,7 +14,7 @@ public class ComputerPage extends EntityPage {
     DAO          dao       = DAOFactory.COMPUTER.getDAO();
     Integer      offset    = getPageSize() * (page - 1);
     if (offset < dao.count()) {
-      lComputer = dao.paginatedList(getPageSize(), offset);
+      lComputer = dao.paginatedList(getPageSize() + 1, offset);
     }
     return lComputer;
   }

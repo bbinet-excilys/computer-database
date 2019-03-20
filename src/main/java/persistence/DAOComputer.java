@@ -210,6 +210,7 @@ public class DAOComputer extends DAO {
             .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT ? OFFSET ?"));
         mPreparedStatement.setInt(1, size);
         mPreparedStatement.setInt(2, offset);
+        System.out.println(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT " + size + " OFFSET " + offset));
         mResultSet = mPreparedStatement.executeQuery();
         if (mResultSet.first()) {
           rComputerList = this.mapper.mapList(mResultSet);
