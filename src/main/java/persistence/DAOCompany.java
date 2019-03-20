@@ -1,6 +1,5 @@
 package persistence;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,8 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.Company;
+import model.Entity;
 
-public class DAOCompany implements DAO<Company> {
+public class DAOCompany extends DAO {
 
   /**
    * Logger for the DAOCompany class.
@@ -21,28 +21,31 @@ public class DAOCompany implements DAO<Company> {
   /**
    * Set the Mapper on DAOCompany instanciation.
    */
-  Mapper<Company> mapper       = new CompanyMapper();
-  Connection      dbConnection = JDBCSingleton.INSTANCE.getConnection();
+  Mapper mapper = new CompanyMapper();
 
   @Override
-  public boolean create(Company company) {
+  public boolean create(Entity entity) {
     PreparedStatement mPreparedStatement = null;
-    try {
-      mPreparedStatement = this.dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
-      mPreparedStatement.setString(1, company.getName());
-      mPreparedStatement.executeUpdate();
-      return true;
-    }
-    catch (SQLException e) {
-      LOG.error("Error in Create query : " + e.getMessage());
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+    if (entity instanceof Company) {
+      Company company = (Company) entity;
+      try {
+        mPreparedStatement = this.dbConnection.prepareStatement(String.format(INSERT_QUERY, "company", "name", "?"));
+        mPreparedStatement.setString(1, company.getName());
+        mPreparedStatement.executeUpdate();
+        return true;
+      }
+      catch (SQLException e) {
+        LOG.error("Error in Create query : " + e.getMessage());
+        return false;
+      }
+      finally {
+        if (mPreparedStatement != null) {
+          try {
+            mPreparedStatement.close();
+          }
+          catch (SQLException e) {
+            LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+          }
         }
       }
     }
@@ -50,36 +53,39 @@ public class DAOCompany implements DAO<Company> {
   }
 
   @Override
-  public boolean delete(Company company) {
-    PreparedStatement mPreparedStatement = null;
-    try {
-      mPreparedStatement = this.dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
-      mPreparedStatement.setInt(1, company.getId());
-      mPreparedStatement.executeUpdate();
-      return true;
-    }
-    catch (SQLException e) {
-      LOG.warn("Couldn't execute delete query: " + e.getMessage());
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+  public boolean delete(Entity entity) {
+    if (entity instanceof Company) {
+      Company           company            = (Company) entity;
+      PreparedStatement mPreparedStatement = null;
+      try {
+        mPreparedStatement = this.dbConnection.prepareStatement(String.format(DELETE_QUERY, "company"));
+        mPreparedStatement.setInt(1, company.getId());
+        mPreparedStatement.executeUpdate();
+        return true;
+      }
+      catch (SQLException e) {
+        LOG.warn("Couldn't execute delete query: " + e.getMessage());
+        return false;
+      }
+      finally {
+        if (mPreparedStatement != null) {
+          try {
+            mPreparedStatement.close();
+          }
+          catch (SQLException e) {
+            LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+          }
         }
       }
     }
-
     return false;
   }
 
   @Override
-  public List<Company> list() {
+  public List<Entity> list() {
     PreparedStatement mPreparedStatement = null;
     ResultSet         mResultSet         = null;
-    List<Company>     rCompanyList       = null;
+    List<Entity>      rCompanyList       = null;
     try {
       mPreparedStatement = this.dbConnection.prepareStatement(String.format(SELECT_QUERY, "id, name", "company", ""));
       mResultSet         = mPreparedStatement.executeQuery();
@@ -112,10 +118,10 @@ public class DAOCompany implements DAO<Company> {
   }
 
   @Override
-  public Company read(Integer id) {
+  public Entity read(Integer id) {
     PreparedStatement mPreparedStatement = null;
     ResultSet         mResultSet         = null;
-    Company           rCompany           = null;
+    Entity            rCompany           = null;
     try {
       mPreparedStatement = this.dbConnection
           .prepareStatement(String.format(SELECT_QUERY, "id, name", "company", "WHERE id=?"));
@@ -150,25 +156,30 @@ public class DAOCompany implements DAO<Company> {
   }
 
   @Override
-  public boolean update(Company company) {
-    PreparedStatement mPreparedStatement = null;
-    try {
-      mPreparedStatement = this.dbConnection.prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
-      mPreparedStatement.setString(1, company.getName());
-      mPreparedStatement.setInt(2, company.getId());
-      mPreparedStatement.executeUpdate();
-      return true;
-    }
-    catch (SQLException e) {
-      LOG.warn("Couldn't execute update query : " + e.getMessage());
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+  public boolean update(Entity entity) {
+    if (entity instanceof Company) {
+      Company           company            = (Company) entity;
+      PreparedStatement mPreparedStatement = null;
+      try {
+        mPreparedStatement = this.dbConnection
+            .prepareStatement(String.format(UPDATE_QUERY, "company", "name=?", "id=?"));
+        mPreparedStatement.setString(1, company.getName());
+        mPreparedStatement.setInt(2, company.getId());
+        mPreparedStatement.executeUpdate();
+        return true;
+      }
+      catch (SQLException e) {
+        LOG.warn("Couldn't execute update query : " + e.getMessage());
+        return false;
+      }
+      finally {
+        if (mPreparedStatement != null) {
+          try {
+            mPreparedStatement.close();
+          }
+          catch (SQLException e) {
+            LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
+          }
         }
       }
     }
@@ -204,8 +215,9 @@ public class DAOCompany implements DAO<Company> {
   }
 
   @Override
-  public void setConnection(Connection conn) {
-    this.dbConnection = conn;
+  public List<Entity> paginatedList(Integer size, Integer offset) {
+    // TODO Auto-generated method stub
+    return null;
   }
 
 }

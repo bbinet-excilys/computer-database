@@ -10,8 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import model.Company;
 import model.Computer;
+import model.Entity;
 
-public class ComputerMapper implements Mapper<Computer> {
+public class ComputerMapper implements Mapper {
 
   /**
    * Logger for the ComputerMapper Factory.
@@ -19,7 +20,7 @@ public class ComputerMapper implements Mapper<Computer> {
   static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
 
   @Override
-  public Computer map(ResultSet resultSet) {
+  public Entity map(ResultSet resultSet) {
     Computer rComputer = null;
     try {
       if (resultSet.first()) {
@@ -43,10 +44,10 @@ public class ComputerMapper implements Mapper<Computer> {
   }
 
   @Override
-  public List<Computer> mapList(ResultSet resultSet) {
-    List<Computer> rComputerList = null;
+  public List<Entity> mapList(ResultSet resultSet) {
+    List<Entity> rComputerList = null;
     try {
-      rComputerList = new ArrayList<Computer>();
+      rComputerList = new ArrayList<Entity>();
       while (resultSet.next()) {
         Computer rComputer = new Computer();
         Company  rCompany  = new Company();
