@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Computer;
 import model.ComputerPage;
+import model.Entity;
 import persistence.DAOFactory;
 
 /**
@@ -34,9 +34,9 @@ public class ComputerServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    List<Computer> computers = DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER).list();
-    String         sPage     = request.getParameter("page");
-    Integer        page      = 1;
+    List<Entity> computers = DAOFactory.COMPUTER.getDAO().list();
+    String       sPage     = request.getParameter("page");
+    Integer      page      = 1;
     if (sPage != null && !sPage.trim().isEmpty()) {
       page = Integer.parseInt(sPage);
     }
