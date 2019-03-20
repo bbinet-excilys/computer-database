@@ -5,10 +5,9 @@ import java.sql.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import model.Company;
 import model.Computer;
+import model.Entity;
 import persistence.DAO;
-import persistence.DAOCompany;
 import persistence.DAOFactory;
 import ui.UIHelper;
 
@@ -17,7 +16,7 @@ import ui.UIHelper;
  *
  * @author bbinet Computer entity controller with specific DAO of type computer
  */
-public class ComputerController extends EntityController<Computer> {
+public class ComputerController extends EntityController {
 
   /**
    * Logger for the ComputerController class.
@@ -29,7 +28,7 @@ public class ComputerController extends EntityController<Computer> {
    * DAOFactory.
    */
   public ComputerController() {
-    this.dao = (DAO<Computer>) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPUTER);
+    this.dao = DAOFactory.COMPUTER.getDAO();
   }
 
   @Override
@@ -64,7 +63,7 @@ public class ComputerController extends EntityController<Computer> {
     do {
       cId = UIHelper.promptInt("Enter the ID of the computer to delete :");
     } while (cId == null);
-    Computer cComputer = this.dao.read(cId);
+    Entity cComputer = this.dao.read(cId);
     if (cComputer != null) {
       if (UIHelper.promptValidation("Are you sure ? (y/N)")) {
         this.dao.delete(cComputer);
@@ -81,7 +80,7 @@ public class ComputerController extends EntityController<Computer> {
     do {
       cId = UIHelper.promptInt("Enter the ID of the computer to display :");
     } while (cId == null);
-    Computer cComputer = this.dao.read(cId);
+    Entity cComputer = this.dao.read(cId);
     if (cComputer != null) {
       this.entityUI.print(cComputer);
     }
@@ -96,11 +95,11 @@ public class ComputerController extends EntityController<Computer> {
     do {
       cId = UIHelper.promptInt("Enter the ID of the computer to update :");
     } while (cId == null);
-    Computer cComputer     = this.dao.read(cId);
-    String   cName         = null;
-    Date     cIntroduced   = null;
-    Date     cDiscontinued = null;
-    Integer  cCompanyId    = null;
+    Entity  cComputer     = this.dao.read(cId);
+    String  cName         = null;
+    Date    cIntroduced   = null;
+    Date    cDiscontinued = null;
+    Integer cCompanyId    = null;
     this.entityUI.print(cComputer);
     cName       = UIHelper.promptString("Enter computer name :");
     cIntroduced = UIHelper.promptDate("Enter date of introduction (YYYY-MM-DD) :");
@@ -111,12 +110,14 @@ public class ComputerController extends EntityController<Computer> {
 
     }
     cCompanyId = UIHelper.promptInt("Enter Company ID :");
-
-    cComputer.setName(cName);
-    cComputer.setIntroduced(cIntroduced);
-    cComputer.setDiscontinued(cDiscontinued);
-    cComputer.setCompanyId(cCompanyId);
-    this.dao.update(cComputer);
+    if (cComputer instanceof Computer) {
+      Computer computer = (Computer) cComputer;
+      computer.setName(cName);
+      computer.setIntroduced(cIntroduced);
+      computer.setDiscontinued(cDiscontinued);
+      computer.setCompanyId(cCompanyId);
+      this.dao.update(computer);
+    }
   }
 
   /**
@@ -127,12 +128,18 @@ public class ComputerController extends EntityController<Computer> {
    * @return Either the companyId or null
    */
   public Integer verifyCompanyId(Integer companyId) {
-    DAOCompany daoCompany = (DAOCompany) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
-    Company    vCompany   = daoCompany.read(companyId);
+    DAO    daoCompany = DAOFactory.COMPANY.getDAO();
+    Entity vCompany   = daoCompany.read(companyId);
     if (vCompany != null) {
       return vCompany.getId();
     }
     return null;
+  }
+
+  @Override
+  public void pagedList() {
+    // TODO Auto-generated method stub
+
   }
 
 }

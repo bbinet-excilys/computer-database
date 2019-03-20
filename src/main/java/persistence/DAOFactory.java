@@ -9,37 +9,29 @@ public enum DAOFactory {
   /**
    * The unique instance of DAOFactory.
    */
-  INSTANCE;
+  COMPUTER {
+    private DAO dao = null;
 
-  /**
-   * Value for a ComputerDAO.
-   */
-  public static final byte DAO_COMPUTER = 0;
-  /**
-   * Value for a CompanyDAO.
-   */
-  public static final byte DAO_COMPANY  = 1;
-
-  /**
-   * Private constructor to avoid external instanciation.
-   */
-  private DAOFactory() {
-  }
-
-  /**
-   * Getter for the right DAO.
-   */
-  public DAO getDao(int type) {
-    DAO rDAO = null;
-    switch (type) {
-      case DAO_COMPUTER:
-        rDAO = new DAOComputer();
-        break;
-      case DAO_COMPANY:
-        rDAO = new DAOCompany();
-      default:
-        break;
+    @Override
+    public DAO getDAO() {
+      if (this.dao == null) {
+        this.dao = new DAOComputer();
+      }
+      return this.dao;
     }
-    return rDAO;
-  }
+  },
+  COMPANY {
+    private DAO dao = null;
+
+    @Override
+    public DAO getDAO() {
+      if (this.dao == null) {
+        this.dao = new DAOCompany();
+      }
+      return this.dao;
+    }
+  };
+
+  public abstract DAO getDAO();
+
 }

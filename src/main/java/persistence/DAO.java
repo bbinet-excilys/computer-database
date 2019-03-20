@@ -12,7 +12,7 @@ import model.Entity;
  * @param <T>
  *        Type of DAO, must extend Entity
  */
-public interface DAO<T extends Entity> {
+public abstract class DAO {
 
   /**
    * Static field to create standard INSERT queries.
@@ -69,29 +69,28 @@ public interface DAO<T extends Entity> {
   // static final Logger LOG = LoggerFactory.getLogger(DAO.class);
 
   /**
+   * The DAO's connection object.
+   */
+  Connection dbConnection = JDBCSingleton.INSTANCE.getConnection();
+
+  /**
+   * Sets the DAO's connection.
+   *
+   * @param conn
+   *             The connection to the DB.
+   */
+  public void setConnection(Connection conn) {
+    this.dbConnection = conn;
+  }
+
+  /**
    * Create a row for an object in database.
    *
    * @param object
    *               The object to create.
    * @return true if query succeeded, false otherwise.
    */
-  public abstract boolean create(T object);
-
-  /**
-   * Delete an object from the database.
-   *
-   * @param object
-   *               The object to delete
-   * @return true if query succeeded, false otherwise.
-   */
-  public abstract boolean delete(T object);
-
-  /**
-   * Fetch the whole list of object from database.
-   *
-   * @return A List containing all entities from database.
-   */
-  public abstract List<T> list();
+  public abstract boolean create(Entity entity);
 
   /**
    * Find a row with an id.
@@ -101,9 +100,7 @@ public interface DAO<T extends Entity> {
    * @return An instance of the object initialized with the values in the
    *         database.
    */
-  public abstract T read(Integer id);
-
-  public void setConnection(Connection conn);
+  public abstract Entity read(Integer id);
 
   /**
    * Update an object in database using its id.
@@ -112,7 +109,39 @@ public interface DAO<T extends Entity> {
    *               The object to update.
    * @return true if query succeeded, false otherwise.
    */
-  public abstract boolean update(T object);
+  public abstract boolean update(Entity entity);
 
+  /**
+   * Delete an object from the database.
+   *
+   * @param object
+   *               The object to delete
+   * @return true if query succeeded, false otherwise.
+   */
+  public abstract boolean delete(Entity entity);
+
+  /**
+   * Fetch the whole list of object from database.
+   *
+   * @return A List containing all entities from database.
+   */
+  public abstract List<Entity> list();
+
+  /**
+   * Gets the List of Entities of <Size> from the <Offset>.
+   *
+   * @param size
+   *               The size of the page.
+   * @param offset
+   *               The offset from which the Entities will be fetched.
+   * @return The page of size <Size> from the offset <Offset>
+   */
+  public abstract List<Entity> paginatedList(Integer size, Integer offset);
+
+  /**
+   * Gets the number of entities.
+   *
+   * @return Count of entities.
+   */
   public abstract Integer count();
 }

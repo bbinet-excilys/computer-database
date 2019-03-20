@@ -9,8 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.Company;
+import model.Entity;
 
-public class CompanyMapper implements Mapper<Company> {
+public class CompanyMapper implements Mapper {
 
   /**
    * Logger for the CompanyMapper class.
@@ -37,10 +38,10 @@ public class CompanyMapper implements Mapper<Company> {
   }
 
   @Override
-  public List<Company> mapList(ResultSet resultSet) {
-    List<Company> rCompanyList = null;
+  public List<Entity> mapList(ResultSet resultSet) {
+    List<Entity> rCompanyList = null;
     try {
-      rCompanyList = new ArrayList<Company>();
+      rCompanyList = new ArrayList<Entity>();
       while (resultSet.next()) {
         Company tCompany = new Company();
         tCompany.setId(resultSet.getInt("id"));

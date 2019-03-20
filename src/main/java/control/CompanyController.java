@@ -1,7 +1,5 @@
 package control;
 
-import model.Company;
-import persistence.DAO;
 import persistence.DAOFactory;
 
 /**
@@ -12,14 +10,14 @@ import persistence.DAOFactory;
 
 // TODO : Implement CRUD methods
 
-public class CompanyController extends EntityController<Company> {
+public class CompanyController extends EntityController {
 
   /**
    * Basic Controller for Company entities. Sets the dao attribute using the dao
    * factory.
    */
   public CompanyController() {
-    this.dao = (DAO<Company>) DAOFactory.INSTANCE.getDao(DAOFactory.DAO_COMPANY);
+    this.dao = DAOFactory.COMPANY.getDAO();
   }
 
   @Override
@@ -42,6 +40,12 @@ public class CompanyController extends EntityController<Company> {
 
   @Override
   public void update() {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void pagedList() {
     // TODO Auto-generated method stub
 
   }
