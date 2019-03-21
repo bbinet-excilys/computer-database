@@ -9,14 +9,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.Computer;
 import model.ComputerPage;
-import model.Entity;
 import persistence.DAOFactory;
 
 /**
  * Servlet implementation class ComputerServlet
  */
-@WebServlet("/dashboard")
+@WebServlet("/Dashboard")
 public class ComputerServlet extends HttpServlet {
   private static final long serialVersionUID = 1L;
 
@@ -34,12 +34,12 @@ public class ComputerServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    List<Entity> computers = DAOFactory.COMPUTER.getDAO().list();
-    Integer      page      = (request.getParameter("page") == null) ? 1
+    List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
+    Integer        page      = (request.getParameter("page") == null) ? 1
         : Integer.parseInt(request.getParameter("page"));
-    Integer      pageSize  = (request.getParameter("pageSize") == null) ? 10
+    Integer        pageSize  = (request.getParameter("pageSize") == null) ? 10
         : Integer.parseInt(request.getParameter("pageSize"));
-    Integer      cCount    = DAOFactory.COMPUTER.getDAO().count();
+    Integer        cCount    = DAOFactory.INSTANCE.getDAOComputer().count();
     if (page * pageSize < cCount) {
       ComputerPage cPage = new ComputerPage();
       cPage.setPageSize(pageSize);
