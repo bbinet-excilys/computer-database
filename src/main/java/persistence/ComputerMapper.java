@@ -9,32 +9,32 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.Company;
+import model.Company.CompanyBuilder;
 import model.Computer;
-import model.Entity;
+import model.Computer.ComputerBuilder;
 
-public class ComputerMapper implements Mapper {
+public class ComputerMapper {
 
   /**
    * Logger for the ComputerMapper Factory.
    */
   static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
 
-  @Override
-  public Entity map(ResultSet resultSet) {
+  public Computer map(ResultSet resultSet) {
     Computer rComputer = null;
     try {
       if (resultSet.first()) {
-        rComputer = new Computer();
-        Company rCompany = new Company();
-        rComputer.setId(resultSet.getInt("computer.id"));
-        rComputer.setName(resultSet.getString("computer.name"));
-        rComputer.setIntroduced(resultSet.getDate("computer.introduced"));
-        rComputer.setDiscontinued(resultSet.getDate("computer.discontinued"));
-        rComputer.setCompanyId(resultSet.getInt("computer.company_id"));
-        rCompany = new Company();
-        rCompany.setId(resultSet.getInt("company.id"));
-        rCompany.setName(resultSet.getString("company.name"));
-        rComputer.setCompany(rCompany);
+        ComputerBuilder computerBuilder = new ComputerBuilder();
+        computerBuilder.setId(resultSet.getLong("computer.id"));
+        computerBuilder.setName(resultSet.getString("computer.name"));
+        computerBuilder.setIntroduced(resultSet.getDate("computer.introduced"));
+        computerBuilder.setDiscontinued(resultSet.getDate("computer.discontinued"));
+        CompanyBuilder companyBuilder = new CompanyBuilder();
+        companyBuilder.setId(resultSet.getLong("company.id"));
+        companyBuilder.setName(resultSet.getString("company.name"));
+        Company rCompany = companyBuilder.build();
+        computerBuilder.setCompany(rCompany);
+        rComputer = computerBuilder.build();
       }
     }
     catch (SQLException e) {
@@ -43,24 +43,22 @@ public class ComputerMapper implements Mapper {
     return rComputer;
   }
 
-  @Override
-  public List<Entity> mapList(ResultSet resultSet) {
-    List<Entity> rComputerList = null;
+  public List<Computer> mapList(ResultSet resultSet) {
+    List<Computer> rComputerList = null;
     try {
-      rComputerList = new ArrayList<Entity>();
+      rComputerList = new ArrayList<Computer>();
       while (resultSet.next()) {
-        Computer rComputer = new Computer();
-        Company  rCompany  = new Company();
-        rComputer.setId(resultSet.getInt("computer.id"));
-        rComputer.setName(resultSet.getString("computer.name"));
-        rComputer.setIntroduced(resultSet.getDate("computer.introduced"));
-        rComputer.setDiscontinued(resultSet.getDate("computer.discontinued"));
-        rComputer.setCompanyId(resultSet.getInt("computer.company_id"));
-        rCompany = new Company();
-        rCompany.setId(resultSet.getInt("company.id"));
-        rCompany.setName(resultSet.getString("company.name"));
-        rComputer.setCompany(rCompany);
-        rComputerList.add(rComputer);
+        ComputerBuilder computerBuilder = new ComputerBuilder();
+        computerBuilder.setId(resultSet.getLong("computer.id"));
+        computerBuilder.setName(resultSet.getString("computer.name"));
+        computerBuilder.setIntroduced(resultSet.getDate("computer.introduced"));
+        computerBuilder.setDiscontinued(resultSet.getDate("computer.discontinued"));
+        CompanyBuilder companyBuilder = new CompanyBuilder();
+        companyBuilder.setId(resultSet.getLong("company.id"));
+        companyBuilder.setName(resultSet.getString("company.name"));
+        Company rCompany = companyBuilder.build();
+        computerBuilder.setCompany(rCompany);
+        rComputerList.add(computerBuilder.build());
       }
     }
     catch (SQLException e) {

@@ -6,32 +6,15 @@ package persistence;
  * @author bbinet
  */
 public enum DAOFactory {
-  /**
-   * The unique instance of DAOFactory.
-   */
-  COMPUTER {
-    private DAO dao = null;
 
-    @Override
-    public DAO getDAO() {
-      if (this.dao == null) {
-        this.dao = new DAOComputer();
-      }
-      return this.dao;
-    }
-  },
-  COMPANY {
-    private DAO dao = null;
+  INSTANCE;
 
-    @Override
-    public DAO getDAO() {
-      if (this.dao == null) {
-        this.dao = new DAOCompany();
-      }
-      return this.dao;
-    }
-  };
+  public DAOComputer getDAOComputer() {
+    return new DAOComputer();
+  }
 
-  public abstract DAO getDAO();
+  public DAOCompany getDAOCompany() {
+    return new DAOCompany();
+  }
 
 }

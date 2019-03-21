@@ -1,5 +1,6 @@
 package persistence;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,93 +10,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.Computer;
-import model.Entity;
 
-public class DAOComputer extends DAO {
+public class DAOComputer {
 
   /**
    * Logger for the DAOComputer Class.
    */
-  static final Logger LOG = LoggerFactory.getLogger(DAOComputer.class);
+  static final Logger  LOG            = LoggerFactory.getLogger(DAOComputer.class);
+  private final String SELECT         = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id;";
+  private final String CREATE         = "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES(?);";
+  private final String UPDATE         = "UPDATE computer SET name=?, introduced=?, dicsontinued=?, company_id=? WHERE id=?;";
+  private final String DELETE         = "DELETE FROM computer WHERE id=?;";
+  private final String SELECT_WHEREID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id WHERE computer.id=?;";
+  private final String COUNT          = "SELECT count(*) as count FROM computer;";
 
-  /**
-   * SELECT query for a computer. Uses a join to fetch company informations.
-   */
-  static final String SELECT_COMPUTER_AND_COMPANY = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, computer.company_id, company.id, company.name \n"
-      + "FROM computer\n" + "LEFT OUTER JOIN company\n" + "ON computer.company_id=company.id %s;";
+  ComputerMapper mapper = new ComputerMapper();
 
-  Mapper mapper = new ComputerMapper();
-
-  @Override
-  public boolean create(Entity entity) {
-    if (entity instanceof Computer) {
-      Computer          computer           = (Computer) entity;
-      PreparedStatement mPreparedStatement = null;
-      try {
-        mPreparedStatement = this.dbConnection.prepareStatement(
-            String.format(INSERT_QUERY, "computer", "name, introduced, discontinued, company_id", "?,?,?,?"));
-        mPreparedStatement.setString(1, computer.getName());
-        mPreparedStatement.setDate(2, computer.getIntroduced());
-        mPreparedStatement.setDate(3, computer.getDiscontinued());
-        mPreparedStatement.setObject(4, computer.getCompanyId());
-        mPreparedStatement.executeUpdate();
-        return true;
-      }
-      catch (SQLException e) {
-        LOG.warn("Couldn't execute insert query : " + e.getMessage());
-        return false;
-      }
-      finally {
-        if (mPreparedStatement != null) {
-          try {
-            mPreparedStatement.close();
-          }
-          catch (SQLException e) {
-            LOG.warn("Couldn't close PreparedStatement : " + e.getMessage());
-          }
-        }
-      }
+  public boolean create(Computer computer) {
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.CREATE)) {
+      preparedStatement.setString(1, computer.getName());
+      preparedStatement.setDate(2, computer.getIntroduced());
+      preparedStatement.setDate(3, computer.getDiscontinued());
+      preparedStatement.setObject(4, computer.getCompany().getId());
+      preparedStatement.executeUpdate();
+      return true;
     }
-    return false;
+    catch (SQLException e) {
+      LOG.warn("Couldn't execute insert query : " + e.getMessage());
+      return false;
+    }
+
   }
 
-  @Override
-  public boolean delete(Entity entity) {
-    if (entity instanceof Computer) {
-      Computer          computer           = (Computer) entity;
-      PreparedStatement mPreparedStatement = null;
-      try {
-        mPreparedStatement = this.dbConnection.prepareStatement(String.format(DELETE_QUERY, "computer"));
-        mPreparedStatement.setInt(1, computer.getId());
-        mPreparedStatement.executeUpdate();
-        return true;
-      }
-      catch (SQLException e) {
-        LOG.warn("Couldn't execute delete query : " + e.getMessage());
-        return false;
-      }
-      finally {
-        if (mPreparedStatement != null) {
-          try {
-            mPreparedStatement.close();
-          }
-          catch (SQLException e) {
-            LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
-          }
-        }
-      }
+  public boolean delete(Computer computer) {
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.DELETE)) {
+      preparedStatement.setLong(1, computer.getId());
+      preparedStatement.executeUpdate();
+      return true;
     }
-    return false;
+    catch (SQLException e) {
+      LOG.warn("Couldn't execute delete query : " + e.getMessage());
+      return false;
+    }
   }
 
-  @Override
-  public List<Entity> list() {
-    List<Entity>      rComputerList      = null;
-    PreparedStatement mPreparedStatement = null;
-    ResultSet         mResultSet         = null;
-    try {
-      mPreparedStatement = this.dbConnection.prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, ""));
-      mResultSet         = mPreparedStatement.executeQuery();
+  public List<Computer> list() {
+    List<Computer> rComputerList = null;
+    ResultSet      mResultSet    = null;
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)) {
+      mResultSet = preparedStatement.executeQuery();
       if (mResultSet.first()) {
         rComputerList = this.mapper.mapList(mResultSet);
       }
@@ -104,111 +70,52 @@ public class DAOComputer extends DAO {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
     catch (NullPointerException e) {
-      LOG.error("An object is null (probably connection : " + this.dbConnection);
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
-        }
-      }
-      if (mResultSet != null) {
-        try {
-          mResultSet.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close resultSet : " + e.getMessage());
-        }
-      }
+      LOG.error("An object is null (probably connection) : ");
     }
     return rComputerList;
   }
 
-  @Override
-  public Entity read(Integer id) {
-    Entity            rComputer          = null;
-    PreparedStatement mPreparedStatement = null;
-    ResultSet         mResultSet         = null;
-    try {
-      mPreparedStatement = this.dbConnection
-          .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "WHERE computer.id=?"));
-      mPreparedStatement.setInt(1, id);
-      mResultSet = mPreparedStatement.executeQuery();
-      rComputer  = this.mapper.map(mResultSet);
+  public Computer read(Long id) {
+    Computer rComputer = null;
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_WHEREID);
+        ResultSet resultSet = preparedStatement.executeQuery();) {
+      preparedStatement.setLong(1, id);
+      rComputer = this.mapper.map(resultSet);
     }
     catch (SQLException e) {
       LOG.warn("Coudn't execute select query :" + e.getMessage());
     }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close select preparedStatement : " + e.getMessage());
-        }
-      }
-      if (mResultSet != null) {
-        try {
-          mResultSet.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close select resultSet : " + e.getMessage());
-        }
-      }
-    }
     return rComputer;
   }
 
-  @Override
-  public boolean update(Entity entity) {
-    if (entity instanceof Computer) {
-      Computer          computer           = (Computer) entity;
-      PreparedStatement mPreparedStatement = null;
-      try {
-        mPreparedStatement = this.dbConnection.prepareStatement(
-            String.format(UPDATE_QUERY, "computer", "name=?, introduced=?, discontinued=?, company_id=?"));
-        mPreparedStatement.setString(1, computer.getName());
-        mPreparedStatement.setDate(2, computer.getIntroduced());
-        mPreparedStatement.setDate(3, computer.getDiscontinued());
-        mPreparedStatement.setObject(4, computer.getCompanyId());
-        mPreparedStatement.setInt(5, computer.getId());
-        mPreparedStatement.executeUpdate();
-        return true;
-      }
-      catch (SQLException e) {
-        LOG.warn("Couldn't update : " + e.getMessage());
-        return false;
-      }
-      finally {
-        if (mPreparedStatement != null) {
-          try {
-            mPreparedStatement.close();
-          }
-          catch (SQLException e) {
-            LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
-          }
-        }
-      }
+  public boolean update(Computer computer) {
+    PreparedStatement mPreparedStatement = null;
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.UPDATE)) {
+      preparedStatement.setString(1, computer.getName());
+      preparedStatement.setDate(2, computer.getIntroduced());
+      preparedStatement.setDate(3, computer.getDiscontinued());
+      preparedStatement.setObject(4, computer.getCompany().getId());
+      preparedStatement.setLong(5, computer.getId());
+      preparedStatement.executeUpdate();
+      return true;
     }
-    return false;
+    catch (SQLException e) {
+      LOG.warn("Couldn't update : " + e.getMessage());
+      return false;
+    }
   }
 
-  @Override
-  public List<Entity> paginatedList(Integer size, Integer offset) {
-    List<Entity>      rComputerList      = null;
-    PreparedStatement mPreparedStatement = null;
-    ResultSet         mResultSet         = null;
-    try {
+  public List<Computer> paginatedList(Integer size, Integer offset) {
+    List<Computer> rComputerList = null;
+    ResultSet      mResultSet    = null;
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)) {
       if (size != null && offset != null) {
-        mPreparedStatement = this.dbConnection
-            .prepareStatement(String.format(SELECT_COMPUTER_AND_COMPANY, "LIMIT ? OFFSET ?"));
-        mPreparedStatement.setInt(1, size);
-        mPreparedStatement.setInt(2, offset);
-        mResultSet    = mPreparedStatement.executeQuery();
+        preparedStatement.setInt(1, size);
+        preparedStatement.setInt(2, offset);
+        mResultSet    = preparedStatement.executeQuery();
         rComputerList = this.mapper.mapList(mResultSet);
       }
     }
@@ -216,53 +123,22 @@ public class DAOComputer extends DAO {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
     catch (NullPointerException e) {
-      LOG.error("An object is null (probably connection : " + this.dbConnection);
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close preparedStatement : " + e.getMessage());
-        }
-      }
-      if (mResultSet != null) {
-        try {
-          mResultSet.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close resultSet : " + e.getMessage());
-        }
-      }
+      LOG.error("An object is null (probably connection) ");
     }
     return rComputerList;
   }
 
-  @Override
   public Integer count() {
-    PreparedStatement mPreparedStatement = null;
-    Integer           count              = null;
-    ResultSet         mResultSet         = null;
-    try {
-      mPreparedStatement = this.dbConnection.prepareStatement(String.format(COUNT_QUERY, "computer"));
-      mResultSet         = mPreparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        count = mResultSet.getInt("count");
+    Integer count = null;
+    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.COUNT);
+        ResultSet resultSet = preparedStatement.executeQuery();) {
+      if (resultSet.first()) {
+        count = resultSet.getInt("count");
       }
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute count query : " + e.getMessage());
-    }
-    finally {
-      if (mPreparedStatement != null) {
-        try {
-          mPreparedStatement.close();
-        }
-        catch (SQLException e) {
-          LOG.warn("Couldn't close PreparedStatement : " + e.getMessage());
-        }
-      }
     }
     return count;
   }

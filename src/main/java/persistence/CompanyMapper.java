@@ -9,23 +9,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import model.Company;
-import model.Entity;
+import model.Company.CompanyBuilder;
 
-public class CompanyMapper implements Mapper {
+public class CompanyMapper {
 
   /**
    * Logger for the CompanyMapper class.
    */
   static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
 
-  @Override
   public Company map(ResultSet result) {
     Company rCompany = null;
     try {
       if (result.first()) {
-        rCompany = new Company();
-        rCompany.setId(result.getInt("id"));
-        rCompany.setName(result.getString("name"));
+        CompanyBuilder companyBuilder = new CompanyBuilder();
+        companyBuilder.setId(result.getLong("id"));
+        companyBuilder.setName(result.getString("name"));
+        rCompany = companyBuilder.build();
       }
     }
     catch (SQLException e) {
@@ -37,16 +37,15 @@ public class CompanyMapper implements Mapper {
     return rCompany;
   }
 
-  @Override
-  public List<Entity> mapList(ResultSet resultSet) {
-    List<Entity> rCompanyList = null;
+  public List<Company> mapList(ResultSet resultSet) {
+    List<Company> rCompanyList = null;
     try {
-      rCompanyList = new ArrayList<Entity>();
+      rCompanyList = new ArrayList<Company>();
       while (resultSet.next()) {
-        Company tCompany = new Company();
-        tCompany.setId(resultSet.getInt("id"));
-        tCompany.setName(resultSet.getString("name"));
-        rCompanyList.add(tCompany);
+        CompanyBuilder companyBuilder = new CompanyBuilder();
+        companyBuilder.setId(resultSet.getLong("id"));
+        companyBuilder.setName(resultSet.getString("name"));
+        rCompanyList.add(companyBuilder.build());
       }
     }
     catch (SQLException e) {
