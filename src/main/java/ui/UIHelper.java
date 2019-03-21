@@ -3,6 +3,7 @@ package ui;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Optional;
 import java.util.Scanner;
 
 import control.MenuEnum;
@@ -24,15 +25,18 @@ public class UIHelper {
    *         carriage return was typed). May return null if it was empty or not a
    *         numeric.
    */
+  public static Optional<Long> promptLong(String message) {
+    Scanner mScanner = new Scanner(System.in);
+    String  mString  = mScanner.nextLine();
+    System.out.println(message);
+    return Optional.ofNullable(Long.parseLong(mString));
+  }
+
   public static Integer promptInt(String message) {
     Scanner mScanner = new Scanner(System.in);
     Integer rInt     = null;
     System.out.println(message);
-    try {
-      rInt = Integer.parseInt(mScanner.nextLine());
-    }
-    catch (Exception e) {
-    }
+    rInt = Integer.parseInt(mScanner.nextLine());
     return rInt;
   }
 
