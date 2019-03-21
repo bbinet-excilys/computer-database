@@ -1,14 +1,19 @@
 package control;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import model.Company.CompanyBuilder;
 import model.Computer;
+import model.Computer.ComputerBuilder;
 import model.Entity;
-import persistence.DAO;
+import persistence.DAOCompany;
+import persistence.DAOComputer;
 import persistence.DAOFactory;
+import ui.EntityUI;
 import ui.UIHelper;
 
 /**
@@ -16,27 +21,21 @@ import ui.UIHelper;
  *
  * @author bbinet Computer entity controller with specific DAO of type computer
  */
-public class ComputerController extends EntityController {
+public class ComputerController {
 
   /**
    * Logger for the ComputerController class.
    */
   static final Logger LOG = LoggerFactory.getLogger(ComputerController.class);
 
-  /**
-   * Basic constructor for ComputerController. Get a DAOComputer from the
-   * DAOFactory.
-   */
-  public ComputerController() {
-    this.dao = DAOFactory.COMPUTER.getDAO();
-  }
+  private DAOComputer dao      = new DAOComputer();
+  private EntityUI    entityUI = new EntityUI();
 
-  @Override
   public void create() {
-    String  cName         = null;
-    Date    cIntroduced   = null;
-    Date    cDiscontinued = null;
-    Integer cCompanyId    = null;
+    String         cName         = null;
+    Date           cIntroduced   = null;
+    Date           cDiscontinued = null;
+    Optional<Long> cCompanyId    = null;
     do {
       cName = UIHelper.promptString("Enter computer name :");
     } while (cName == null);
@@ -47,23 +46,26 @@ public class ComputerController extends EntityController {
       } while (!cDiscontinued.after(cIntroduced));
 
     }
-    cCompanyId = UIHelper.promptInt("Enter Company ID :");
-    cCompanyId = verifyCompanyId(cCompanyId);
-    Computer tComputer = new Computer();
-    tComputer.setName(cName);
-    tComputer.setIntroduced(cIntroduced);
-    tComputer.setDiscontinued(cDiscontinued);
-    tComputer.setCompanyId(cCompanyId);
-    this.dao.create(tComputer);
+//    Computer tComputer = new Computer();
+    ComputerBuilder computerBuilder = new ComputerBuilder();
+    CompanyBuilder  companyBuilder  = new CompanyBuilder();
+    cCompanyId = UIHelper.promptLong("Enter Company ID :");
+    cCompanyId.ifPresent(companyId -> {
+      computerBuilder.setCompany(DAOFactory.INSTANCE.getDAOCompany().read(companyId));
+
+    });
+    computerBuilder.setName(cName);
+    computerBuilder.setIntroduced(cIntroduced);
+    computerBuilder.setDiscontinued(cDiscontinued);
+    this.dao.create(computerBuilder.build());
   }
 
-  @Override
   public void delete() {
-    Integer cId = null;
+    Long cId = null;
     do {
-      cId = UIHelper.promptInt("Enter the ID of the computer to delete :");
+      cId = UIHelper.promptLong("Enter the ID of the computer to delete :");
     } while (cId == null);
-    Entity cComputer = this.dao.read(cId);
+    Computer cComputer = this.dao.read(cId);
     if (cComputer != null) {
       if (UIHelper.promptValidation("Are you sure ? (y/N)")) {
         this.dao.delete(cComputer);
@@ -74,13 +76,12 @@ public class ComputerController extends EntityController {
     }
   }
 
-  @Override
   public void read() {
-    Integer cId = null;
+    Long cId = null;
     do {
-      cId = UIHelper.promptInt("Enter the ID of the computer to display :");
+      cId = UIHelper.promptLong("Enter the ID of the computer to display :");
     } while (cId == null);
-    Entity cComputer = this.dao.read(cId);
+    Computer cComputer = this.dao.read(cId);
     if (cComputer != null) {
       this.entityUI.print(cComputer);
     }
@@ -89,17 +90,16 @@ public class ComputerController extends EntityController {
     }
   }
 
-  @Override
   public void update() {
-    Integer cId = null;
+    Long cId = null;
     do {
-      cId = UIHelper.promptInt("Enter the ID of the computer to update :");
+      cId = UIHelper.promptLong("Enter the ID of the computer to update :");
     } while (cId == null);
-    Entity  cComputer     = this.dao.read(cId);
-    String  cName         = null;
-    Date    cIntroduced   = null;
-    Date    cDiscontinued = null;
-    Integer cCompanyId    = null;
+    Entity cComputer     = this.dao.read(cId);
+    String cName         = null;
+    Date   cIntroduced   = null;
+    Date   cDiscontinued = null;
+    Long   cCompanyId    = null;
     this.entityUI.print(cComputer);
     cName       = UIHelper.promptString("Enter computer name :");
     cIntroduced = UIHelper.promptDate("Enter date of introduction (YYYY-MM-DD) :");
@@ -109,14 +109,16 @@ public class ComputerController extends EntityController {
       } while (!cDiscontinued.after(cIntroduced));
 
     }
-    cCompanyId = UIHelper.promptInt("Enter Company ID :");
+    cCompanyId = UIHelper.promptLong("Enter Company ID :");
     if (cComputer instanceof Computer) {
-      Computer computer = (Computer) cComputer;
-      computer.setName(cName);
-      computer.setIntroduced(cIntroduced);
-      computer.setDiscontinued(cDiscontinued);
-      computer.setCompanyId(cCompanyId);
-      this.dao.update(computer);
+      ComputerBuilder computerBuilder = new ComputerBuilder();
+
+      computerBuilder.setName(cName);
+      computerBuilder.setIntroduced(cIntroduced);
+      computerBuilder.setDiscontinued(cDiscontinued);
+      CompanyController companyController = new CompanyController();
+      computerBuilder.setCompany(DAOFactory.INSTANCE.getDAOCompany().read(cCompanyId));
+      this.dao.update(computerBuilder.build());
     }
   }
 
@@ -127,16 +129,20 @@ public class ComputerController extends EntityController {
    *                  The id that requires checking.
    * @return Either the companyId or null
    */
-  public Integer verifyCompanyId(Integer companyId) {
-    DAO    daoCompany = DAOFactory.COMPANY.getDAO();
-    Entity vCompany   = daoCompany.read(companyId);
+  public Long verifyCompanyId(Long companyId) {
+    DAOCompany daoCompany = DAOFactory.INSTANCE.getDAOCompany();
+    Entity     vCompany   = daoCompany.read(companyId);
     if (vCompany != null) {
       return vCompany.getId();
     }
     return null;
   }
 
-  @Override
+  public void list() {
+    // TODO Auto-generated method stub
+
+  }
+
   public void pagedList() {
     // TODO Auto-generated method stub
 
