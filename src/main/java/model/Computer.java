@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory;
 public class Computer extends Entity {
 
   /**
-   * The name of the computer.
-   */
-  private String  name;
-  /**
    * Date of introduction of the computer.
    */
   private Date    introduced;
@@ -22,10 +18,6 @@ public class Computer extends Entity {
    * Date of discontinuation of the computer.
    */
   private Date    discontinued;
-  /**
-   * ID of the company the computer belongs to.
-   */
-  private Integer companyId;
   /**
    * Company object corresponding to the companyId field.
    */
@@ -40,12 +32,11 @@ public class Computer extends Entity {
    * @param name
    * @param introduced
    * @param discontinued
-   * @param companyId
    * @param company
    */
-  public Computer(Integer id, String name, Date introduced, Date discontinued, Integer companyId, Company company) {
+  public Computer(Long id, String name, Date introduced, Date discontinued, Company company) {
     super();
-    setId(id);
+    this.id = id;
     if (name != null) {
       this.name = (name.trim().isEmpty()) ? null : name.trim();
     }
@@ -73,12 +64,6 @@ public class Computer extends Entity {
       this.introduced   = introduced;
       this.discontinued = discontinued;
     }
-    if (companyId != null) {
-      this.companyId = (companyId < 0) ? null : companyId;
-    }
-    else {
-      this.companyId = companyId;
-    }
     this.company = company;
   }
 
@@ -96,13 +81,6 @@ public class Computer extends Entity {
   }
 
   /**
-   * @return The ID of the Company the computer belongs to
-   */
-  public Integer getCompanyId() {
-    return this.companyId;
-  }
-
-  /**
    * @return The java.sql.Date object of discontinuation of the Computer
    */
   public Date getDiscontinued() {
@@ -117,28 +95,11 @@ public class Computer extends Entity {
   }
 
   /**
-   * @return The name of the Computer
-   */
-  public String getName() {
-    return this.name;
-  }
-
-  /**
    * @param company
    *                The Company object the Computer belongs to
    */
   public void setCompany(Company company) {
     this.company = company;
-  }
-
-  /**
-   * @param companyId
-   *                  The ID of the Company the computer belongs to
-   */
-  public void setCompanyId(Integer companyId) {
-    if (companyId != null) {
-      this.companyId = companyId;
-    }
   }
 
   /**
@@ -162,16 +123,6 @@ public class Computer extends Entity {
     }
   }
 
-  /**
-   * @param name
-   *             The name of the Computer
-   */
-  public void setName(String name) {
-    if (name != null) {
-      this.name = name;
-    }
-  }
-
   @Override
   public String toString() {
     return String.format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced, this.discontinued,
@@ -187,7 +138,7 @@ public class Computer extends Entity {
       Computer computer = (Computer) obj;
       return getId() == computer.getId() && getName() == computer.getName()
           && getIntroduced() == computer.getIntroduced() && getDiscontinued() == computer.getDiscontinued()
-          && getCompanyId() == computer.getCompanyId() && getCompany().equals(computer.getCompany());
+          && getCompany().equals(computer.getCompany());
     }
   }
 
@@ -197,4 +148,36 @@ public class Computer extends Entity {
         + getCompany().hashCode();
   }
 
+  public static class ComputerBuilder {
+    private Long    id;
+    private String  name;
+    private Date    introduced;
+    private Date    discontinued;
+    private Company company;
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+
+    public void setIntroduced(Date introduced) {
+      this.introduced = introduced;
+    }
+
+    public void setDiscontinued(Date discontinued) {
+      this.discontinued = discontinued;
+    }
+
+    public void setCompany(Company company) {
+      this.company = company;
+    }
+
+    public Computer build() {
+      return new Computer(this.id, this.name, this.introduced, this.discontinued, this.company);
+    }
+
+  }
 }

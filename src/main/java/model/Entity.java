@@ -9,12 +9,17 @@ public abstract class Entity {
   /**
    * The id of the entity in the database.
    */
-  private Integer id;
+  protected Long id;
+
+  /**
+   * The name of the computer.
+   */
+  protected String name;
 
   /**
    * @return The Entity ID
    */
-  public Integer getId() {
+  public Long getId() {
     return this.id;
   }
 
@@ -22,7 +27,7 @@ public abstract class Entity {
    * @param id
    *           The Entity ID to set
    */
-  public void setId(Integer id) {
+  public void setId(Long id) {
     if (id != null) {
       if (id < 0) {
         throw new IllegalArgumentException("The id of an Entity should be positive (>0)");
@@ -33,6 +38,23 @@ public abstract class Entity {
     }
     else {
       throw new IllegalArgumentException("The Id of an Entity shouldn't be null");
+    }
+  }
+
+  /**
+   * @return The name of the Computer
+   */
+  public String getName() {
+    return this.name;
+  }
+
+  /**
+   * @param name
+   *             The name of the Entity
+   */
+  public void setName(String name) {
+    if (name != null) {
+      this.name = name;
     }
   }
 
