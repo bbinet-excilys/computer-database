@@ -5,8 +5,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
-import control.MenuEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import service.MenuEnum;
 
 /**
  * Class containing static methods for user interactions (mostly prompts and
@@ -15,6 +19,8 @@ import control.MenuEnum;
  * @author bbinet
  */
 public class UIHelper {
+
+  private static Logger logger = LoggerFactory.getLogger("ui");
 
   /**
    * Prompts the user for an Integer.
@@ -27,17 +33,24 @@ public class UIHelper {
    */
   public static Optional<Long> promptLong(String message) {
     Scanner mScanner = new Scanner(System.in);
-    String  mString  = mScanner.nextLine();
     System.out.println(message);
-    return Optional.ofNullable(Long.parseLong(mString));
+    String         tString = mScanner.nextLine();
+    Optional<Long> oLong   = Optional.empty();
+    if (!tString.isBlank() && tString.matches("[0-9]*")) {
+      oLong = Optional.of(Long.parseLong(tString));
+    }
+    return oLong;
   }
 
-  public static Integer promptInt(String message) {
+  public static Optional<Integer> promptInt(String message) {
     Scanner mScanner = new Scanner(System.in);
-    Integer rInt     = null;
     System.out.println(message);
-    rInt = Integer.parseInt(mScanner.nextLine());
-    return rInt;
+    String            tString = mScanner.nextLine();
+    Optional<Integer> rOInt   = Optional.empty();
+    if (!tString.isBlank() && tString.matches("[0-9]*")) {
+      rOInt = Optional.of(Integer.parseInt(tString));
+    }
+    return rOInt;
   }
 
   /**
@@ -48,11 +61,14 @@ public class UIHelper {
    * @return the String object corresponding to what the user typed (until
    *         carriage return was typed). Null if it was empty.
    */
-  public static String promptString(String message) {
+  public static Optional<String> promptString(String message) {
     Scanner mScanner = new Scanner(System.in);
     System.out.println(message);
-    String rString = mScanner.nextLine().trim();
-    return rString.isEmpty() ? null : rString;
+    String tString = mScanner.nextLine().trim();
+    if (tString.isBlank()) {
+      return Optional.empty();
+    }
+    return Optional.of(tString);
   }
 
   /**
@@ -60,23 +76,27 @@ public class UIHelper {
    *
    * @param message
    *                The message to Display
-   * @return Tries to parse the user input to a sql.Date. Returns null if the
-   *         input couldn't be parsed.
+   * @return Tries to parse the user input to a sql.Date
    */
-  public static Date promptDate(String message) {
-    Date             date     = null;
+  public static Optional<Date> promptDate(String message) {
     SimpleDateFormat sdf      = new SimpleDateFormat("yyyy-MM-dd");
     Scanner          mScanner = new Scanner(System.in);
     System.out.println(message);
-    if (mScanner.hasNextLine()) {
-      String input = mScanner.nextLine();
+    Date   date    = null;
+    String tString = mScanner.nextLine().trim();
+    if (!tString.isBlank()) {
       try {
-        date = new Date(sdf.parse(input).getTime());
+        Long time = sdf.parse(tString).getTime();
+        date = new Date(time);
+        logger.debug(time.toString());
+        logger.debug(date.getClass().toString());
       }
       catch (ParseException e) {
+        displayError("Couldn't parse the date");
+        logger.warn("Uparsable date :" + tString);
       }
     }
-    return date;
+    return Optional.ofNullable(date);
   }
 
   /**
@@ -84,9 +104,8 @@ public class UIHelper {
    */
   public static void displayMenu() {
     System.out.println("========== Computer DataBase ==========");
-    for (MenuEnum item : MenuEnum.values()) {
-      System.out.println(String.format("%d - %s", item.ordinal(), item.toString()));
-    }
+    Stream.of(MenuEnum.values()).forEach(
+        item -> System.out.println(String.format("%d - %s", item.ordinal(), item.toString())));
   }
 
   /**
@@ -109,8 +128,8 @@ public class UIHelper {
   public static boolean promptValidation(String message) {
     System.out.println(message);
     Scanner mScanner = new Scanner(System.in);
-    String  tString  = mScanner.nextLine();
-    return tString.matches("^[yY]");
+    String  tString  = mScanner.nextLine().trim().toLowerCase();
+    return tString.matches("^[y]");
   }
 
   /**
@@ -128,11 +147,11 @@ public class UIHelper {
     System.out.println("<- p | p." + page + " | n ->");
     System.out.println(" anything else to exit ");
     Scanner mScanner = new Scanner(System.in);
-    String  rString  = mScanner.nextLine().trim();
-    if (rString.matches("^[pP]")) {
+    String  rString  = mScanner.nextLine().trim().toLowerCase();
+    if (rString.matches("^[p]")) {
       return -1;
     }
-    if (rString.matches("^[nN]")) {
+    if (rString.matches("^[n]")) {
       return 1;
     }
     return 0;

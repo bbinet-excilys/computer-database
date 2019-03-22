@@ -2,6 +2,8 @@ package ui;
 
 import java.util.List;
 
+import model.Company;
+import model.Computer;
 import model.Entity;
 
 /**
@@ -19,7 +21,7 @@ public class EntityUI {
    * @param object
    *               The object to print.
    */
-  public void print(Entity object) {
+  public static void print(Entity object) {
     System.out.println(object.toString());
   }
 
@@ -34,6 +36,14 @@ public class EntityUI {
     for (Entity tObject : objectList) {
       print(tObject);
     }
+  }
+
+  public static void printComputerList(List<Computer> computerList) {
+    computerList.stream().forEach(EntityUI::print);
+  }
+
+  public static void printCompanyList(List<Company> companylist) {
+    companylist.stream().forEach(EntityUI::print);
   }
 
 }
