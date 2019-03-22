@@ -1,6 +1,19 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  font-size: 80%;
+  font-family: 'Roboto', sans-serif;
+  font-size: 90%;
+}
+
+.uk-table th {
+  color: black;
+}
+
+.uk-light .uk-navbar-nav>li>a {
+  color: white;
+}
+
+.uk-pagination>*>* {
+  color: black;
 }

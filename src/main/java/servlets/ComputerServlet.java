@@ -37,13 +37,17 @@ public class ComputerServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
-    Integer        page      = Optional.ofNullable(Integer.parseInt(request.getParameter("page")))
-        .orElse(1);
-    Integer        pageSize  = Optional
-        .ofNullable(Integer.parseInt(request.getParameter("pageSize"))).orElse(10);
+    Integer        page      = Integer
+        .parseInt(Optional.ofNullable(request.getParameter("page")).orElseGet(() -> {
+                                   return "1";
+                                 }));
+    Integer        pageSize  = Integer
+        .parseInt(Optional.ofNullable(request.getParameter("pageSize")).orElseGet(() -> {
+                                   return "10";
+                                 }));
     Integer        cCount    = DAOFactory.INSTANCE.getDAOComputer().count();
-    Integer        pageMax   = cCount / pageSize;
-    if (page < pageMax && page > 0) {
+    Integer        pageMax   = (cCount / pageSize) + 1;
+    if (page <= pageMax && page > 0) {
       ComputerPage cPage = new ComputerPage(pageSize);
       cPage.setPage(page);
       computers = cPage.getCurrentPage();

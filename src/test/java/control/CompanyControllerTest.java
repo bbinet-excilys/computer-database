@@ -14,7 +14,7 @@ import persistence.DAOFactory;
 
 public class CompanyControllerTest {
 
-  CompanyController cController = new CompanyController();
+  CompanyService cController = new CompanyService();
 
   @Test
   public void controllerConstructorTest() {

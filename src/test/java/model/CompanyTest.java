@@ -15,28 +15,28 @@ public class CompanyTest {
 
   @Test
   public void Company_Valid_NotNull() {
-    Company company = new Company(this.VALID_ID, this.VALID_NAME);
+    Company company = new Company(CompanyTest.VALID_ID, CompanyTest.VALID_NAME);
     assertNotNull(company);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void Company_InvalidId() {
-    Company company = new Company(this.INVALID_ID, this.VALID_NAME);
+    Company company = new Company(CompanyTest.INVALID_ID, CompanyTest.VALID_NAME);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void Company_InvalidName_Null() {
-    Company company = new Company(this.VALID_ID, this.INVALID_NAME);
+    Company company = new Company(CompanyTest.VALID_ID, CompanyTest.INVALID_NAME);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void Company_IdNull() {
-    Company company = new Company(null, this.VALID_NAME);
+    Company company = new Company(null, CompanyTest.VALID_NAME);
   }
 
   @Test
   public void Company_NameNull() {
-    Company company = new Company(this.VALID_ID, null);
+    Company company = new Company(CompanyTest.VALID_ID, null);
     assertNull(company.getName());
   }
 
