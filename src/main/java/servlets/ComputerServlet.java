@@ -2,6 +2,7 @@ package servlets;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -33,21 +34,23 @@ public class ComputerServlet extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
     List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
-    Integer        page      = (request.getParameter("page") == null) ? 1
-        : Integer.parseInt(request.getParameter("page"));
-    Integer        pageSize  = (request.getParameter("pageSize") == null) ? 10
-        : Integer.parseInt(request.getParameter("pageSize"));
+    Integer        page      = Optional.ofNullable(Integer.parseInt(request.getParameter("page")))
+        .orElse(1);
+    Integer        pageSize  = Optional
+        .ofNullable(Integer.parseInt(request.getParameter("pageSize"))).orElse(10);
     Integer        cCount    = DAOFactory.INSTANCE.getDAOComputer().count();
-    if (page * pageSize < cCount) {
-      ComputerPage cPage = new ComputerPage();
-      cPage.setPageSize(pageSize);
-      computers = cPage.getPageN(page);
-      Integer pageMax = (cCount / cPage.getPageSize()) + 1;
+    Integer        pageMax   = cCount / pageSize;
+    if (page < pageMax && page > 0) {
+      ComputerPage cPage = new ComputerPage(pageSize);
+      cPage.setPage(page);
+      computers = cPage.getCurrentPage();
       request.setAttribute("computers", computers);
       request.setAttribute("page", page);
       request.setAttribute("pageMax", pageMax);
+      request.setAttribute("pageSize", pageSize);
       getServletContext().getRequestDispatcher("/Views/dashboard.jsp").forward(request, response);
     }
     else {
@@ -61,7 +64,8 @@ public class ComputerServlet extends HttpServlet {
    *      response)
    */
   @Override
-  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
     // TODO Auto-generated method stub
     doGet(request, response);
   }

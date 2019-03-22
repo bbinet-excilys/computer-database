@@ -2,9 +2,9 @@
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import control.ControllerFactory;
-import control.MenuController;
+import controller.MenuController;
 import persistence.JDBCSingleton;
+import service.ServiceFactory;
 
 /**
  * Main class of the application.
@@ -23,8 +23,7 @@ public class Main {
    */
   public static void main(String[] args) {
     LOG.trace("Starting main method");
-    MenuController menuController = (MenuController) ControllerFactory.INSTANCE
-        .getController(ControllerFactory.MENU_CONTROLLER);
+    MenuController menuController = ServiceFactory.INSTANCE.getMenuService();
     menuController.runMenu();
     JDBCSingleton.INSTANCE.closeConnection();
   }
