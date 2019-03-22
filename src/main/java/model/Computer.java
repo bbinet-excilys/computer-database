@@ -49,14 +49,11 @@ public class Computer extends Entity {
         this.discontinued = discontinued;
       }
       else {
-        LOG.warn("Discontinuation date cannot be before introduction date : introduced before discontinued :"
-            + introduced.before(discontinued));
         this.introduced   = null;
         this.discontinued = null;
       }
     }
     else if (introduced == null && discontinued != null) {
-      LOG.warn("There can't be a discontinuation date without an introduction date");
       this.introduced   = null;
       this.discontinued = null;
     }
@@ -125,7 +122,8 @@ public class Computer extends Entity {
 
   @Override
   public String toString() {
-    return String.format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced, this.discontinued,
+    return String.format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced,
+        this.discontinued,
         (this.company != null) ? this.company.toString() : String.format("%5s", "null"));
   }
 
@@ -137,15 +135,16 @@ public class Computer extends Entity {
     else {
       Computer computer = (Computer) obj;
       return getId() == computer.getId() && getName() == computer.getName()
-          && getIntroduced() == computer.getIntroduced() && getDiscontinued() == computer.getDiscontinued()
+          && getIntroduced() == computer.getIntroduced()
+          && getDiscontinued() == computer.getDiscontinued()
           && getCompany().equals(computer.getCompany());
     }
   }
 
   @Override
   public int hashCode() {
-    return getId().hashCode() + getName().hashCode() + getIntroduced().hashCode() + getDiscontinued().hashCode()
-        + getCompany().hashCode();
+    return getId().hashCode() + getName().hashCode() + getIntroduced().hashCode()
+        + getDiscontinued().hashCode() + getCompany().hashCode();
   }
 
   public static class ComputerBuilder {
