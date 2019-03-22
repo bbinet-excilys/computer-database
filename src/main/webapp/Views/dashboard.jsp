@@ -10,7 +10,9 @@
   <meta charset="utf-8">
   <!-- Bootstrap -->
   <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
-  <link href="css/font-awesome.css" rel="stylesheet" media="screen">
+  <!-- <link href="css/font-awesome.css" rel="stylesheet" media="screen"> -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
   <link href="css/main.css" rel="stylesheet">
 </head>
 
@@ -23,6 +25,7 @@
     </header>
 
     <section id="main" class="mt-6">
+
       <div class="container-fluid pt-5 mt-5">
         <div id="actions" class="form-horizontal">
           <div class="pull-left">
@@ -32,18 +35,20 @@
             </form>
           </div>
           <div class="pull-right">
-            <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> <a class="btn btn-default"
-              id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+            <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> <a
+              class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
           </div>
         </div>
       </div>
+
       <div class="container-fluid py-3">
         <table class="table table-striped my-3">
           <thead class="thead-dark">
             <tr>
               <th class="editMode" scope="col">
                 <div>
-                  <input type="checkbox" id="selectall" /> - <a href="#" id="deleteSelected" onclick="$.fn.deleteSelected();">
+                  <input type="checkbox" id="selectall" /> - <a href="#" id="deleteSelected"
+                    onclick="$.fn.deleteSelected();">
                     <i class="fa fa-trash-o fa-lg"></i>
                   </a>
                 </div>
@@ -71,26 +76,29 @@
       </div>
     </section>
 
-    <form>
-      <input type="hidden" name="pageSize" value="${pageSize }" />
-    </form>
-
     <footer>
       <div class="navbar navbar-expand-lg fixed-bottom navbar-dark bg-dark">
-        <div class="container justify-content-md-center">
-          <div class="row">
-            <c:if test="${page > 1}">
-              <div class="col"><a href="?page=${page - 1}"><i class="fa fa-backward" aria-hidden="true" aria-label="Previous"></i></a></div>
+        <div class="container text-center">
+          <ul class="pagination">
+            <c:if test="${page>1}">
+              <li class="page-item"><a class="page-link" href="?page=${page-1}&pageSize=${pageSize}"><i
+                    class="fas fa-caret-left"></i></a>
+              </li>
             </c:if>
-            <div class="col"><a href="?page=${page + 1}"><i class="fa fa-forward" aria-hidden="true" aria-label="Next"></i></a></div>
+            <li class="page-item"><a class="page-link" href="?page=1&pageSize=${pageSize}">First</a></li>
+            <li class="page-item"><a class="page-link" href="?page=${pageMax}&pageSize=${pageSize}">Last</a>
+            </li>
+            <c:if test="${page<pageMax}">
+              <li class="page-item"><a class="page-link" href="?page=${page+1}&pageSize=${pageSize}"><i
+                    class="fas fa-caret-right"></i></a>
+              </li>
+            </c:if>
+          </ul>
+          <div class="btn-group btn-group-sm pull-right" role="group">
+            <button type="button" class="btn btn-light">10</button>
+            <button type="button" class="btn btn-light">50</button>
+            <button type="button" class="btn btn-light">100</button>
           </div>
-          <!-- <div class="row">
-              <div class="btn-group btn-group-sm pull-right col" role="group">
-                <button type="button" class="btn btn-primary ">10</button>
-                <button type="button" class="btn btn-primary ">50</button>
-                <button type="button" class="btn btn-primary ">100</button>
-              </div>
-            </div> -->
         </div>
       </div>
 
