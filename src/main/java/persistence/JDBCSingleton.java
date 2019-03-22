@@ -54,15 +54,16 @@ public enum JDBCSingleton {
           try {
             Class.forName(dbDriver);
             this.connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
-            constructorLogger.error("Setting connection");
+            constructorLogger.info("Setting connection");
           }
           catch (ClassNotFoundException e) {
-            constructorLogger.error("Couldn't find the Driver Class. Check parameters value in " + PROPERTIES_FILE
-                + " : " + e.getMessage());
+            constructorLogger.error("Couldn't find the Driver Class. Check parameters value in "
+                + PROPERTIES_FILE + " : " + e.getMessage());
           }
           catch (SQLException e) {
-            constructorLogger.error("Couldn't getConnection from the DriverManager. Check parameters value in "
-                + PROPERTIES_FILE + " : " + e.getMessage());
+            constructorLogger
+                .error("Couldn't getConnection from the DriverManager. Check parameters value in "
+                    + PROPERTIES_FILE + " : " + e.getMessage());
           }
         }
       }
@@ -82,6 +83,7 @@ public enum JDBCSingleton {
       if (this.connection != null) {
         try {
           this.connection.close();
+          this.connection = null;
         }
         catch (SQLException e) {
         }
@@ -95,9 +97,7 @@ public enum JDBCSingleton {
      */
     @Override
     public Connection getConnection() {
-      if (this.connection == null) {
-        setConnection();
-      }
+      setConnection();
       return this.connection;
     }
   };

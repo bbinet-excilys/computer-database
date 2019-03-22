@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +19,14 @@ public class CompanyMapper {
    */
   static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
 
-  public Company map(ResultSet result) {
-    Company rCompany = null;
+  public Optional<Company> map(ResultSet result) {
+    Optional<Company> oCompany = Optional.empty();
     try {
       if (result.first()) {
         CompanyBuilder companyBuilder = new CompanyBuilder();
         companyBuilder.setId(result.getLong("id"));
         companyBuilder.setName(result.getString("name"));
-        rCompany = companyBuilder.build();
+        oCompany = Optional.of(companyBuilder.build());
       }
     }
     catch (SQLException e) {
@@ -34,7 +35,7 @@ public class CompanyMapper {
     catch (IllegalArgumentException e) {
       LOG.warn("An argument used for the creation of the company is invalid : " + e.getMessage());
     }
-    return rCompany;
+    return oCompany;
   }
 
   public List<Company> mapList(ResultSet resultSet) {

@@ -4,11 +4,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exception.DAOUnexecutedQuery;
 import model.Computer;
 
 public class DAOComputer {
@@ -18,49 +21,57 @@ public class DAOComputer {
    */
   static final Logger  LOG            = LoggerFactory.getLogger(DAOComputer.class);
   private final String SELECT         = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id;";
-  private final String CREATE         = "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES(?);";
-  private final String UPDATE         = "UPDATE computer SET name=?, introduced=?, dicsontinued=?, company_id=? WHERE id=?;";
+  private final String SELECT_LIMIT   = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id LIMIT ? OFFSET ?;";
+  private final String CREATE         = "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES(?,?,?,?);";
+  private final String UPDATE         = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;";
   private final String DELETE         = "DELETE FROM computer WHERE id=?;";
   private final String SELECT_WHEREID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id WHERE computer.id=?;";
   private final String COUNT          = "SELECT count(*) as count FROM computer;";
 
   ComputerMapper mapper = new ComputerMapper();
 
-  public boolean create(Computer computer) {
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.CREATE)) {
+  public void create(Computer computer) {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.CREATE)
+    ) {
       preparedStatement.setString(1, computer.getName());
       preparedStatement.setDate(2, computer.getIntroduced());
       preparedStatement.setDate(3, computer.getDiscontinued());
       preparedStatement.setObject(4, computer.getCompany().getId());
       preparedStatement.executeUpdate();
-      return true;
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute insert query : " + e.getMessage());
-      return false;
     }
-
   }
 
-  public boolean delete(Computer computer) {
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.DELETE)) {
-      preparedStatement.setLong(1, computer.getId());
+  public void delete(Computer computer) throws DAOUnexecutedQuery {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = prepareDeleteStatement(connection, computer.getId());
+    ) {
       preparedStatement.executeUpdate();
-      return true;
     }
     catch (SQLException e) {
-      LOG.warn("Couldn't execute delete query : " + e.getMessage());
-      return false;
+      throw new DAOUnexecutedQuery("Couldn't execute delete query", e);
     }
+  }
+
+  private PreparedStatement prepareDeleteStatement(Connection connection, Long id)
+      throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(this.DELETE);
+    preparedStatement.setLong(1, id);
+    return preparedStatement;
   }
 
   public List<Computer> list() {
-    List<Computer> rComputerList = null;
+    List<Computer> rComputerList = new ArrayList<Computer>();
     ResultSet      mResultSet    = null;
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)) {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)
+    ) {
       mResultSet = preparedStatement.executeQuery();
       if (mResultSet.first()) {
         rComputerList = this.mapper.mapList(mResultSet);
@@ -70,52 +81,59 @@ public class DAOComputer {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
     catch (NullPointerException e) {
-      LOG.error("An object is null (probably connection) : ");
+      LOG.error("An object is null (probably connection)");
     }
     return rComputerList;
   }
 
-  public Computer read(Long id) {
-    Computer rComputer = null;
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_WHEREID);
-        ResultSet resultSet = preparedStatement.executeQuery();) {
-      preparedStatement.setLong(1, id);
-      rComputer = this.mapper.map(resultSet);
+  public Optional<Computer> read(Long id) {
+    Optional<Computer> oComputer = Optional.empty();
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = prepareReadStatement(connection, id);
+        ResultSet resultSet = preparedStatement.executeQuery();
+    ) {
+      oComputer = this.mapper.map(resultSet);
     }
     catch (SQLException e) {
-      LOG.warn("Coudn't execute select query :" + e.getMessage());
+      LOG.error("Couldn't execute the select query.");
     }
-    return rComputer;
+    return oComputer;
   }
 
-  public boolean update(Computer computer) {
-    PreparedStatement mPreparedStatement = null;
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.UPDATE)) {
+  private PreparedStatement prepareReadStatement(Connection connection, Long id)
+      throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_WHEREID);
+    preparedStatement.setLong(1, id);
+    return preparedStatement;
+  }
+
+  public void update(Computer computer) {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(this.UPDATE)
+    ) {
       preparedStatement.setString(1, computer.getName());
       preparedStatement.setDate(2, computer.getIntroduced());
       preparedStatement.setDate(3, computer.getDiscontinued());
       preparedStatement.setObject(4, computer.getCompany().getId());
       preparedStatement.setLong(5, computer.getId());
       preparedStatement.executeUpdate();
-      return true;
     }
     catch (SQLException e) {
       LOG.warn("Couldn't update : " + e.getMessage());
-      return false;
     }
   }
 
   public List<Computer> paginatedList(Integer size, Integer offset) {
     List<Computer> rComputerList = null;
-    ResultSet      mResultSet    = null;
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)) {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
+            offset);
+        ResultSet mResultSet = preparedStatement.executeQuery();
+    ) {
       if (size != null && offset != null) {
-        preparedStatement.setInt(1, size);
-        preparedStatement.setInt(2, offset);
-        mResultSet    = preparedStatement.executeQuery();
         rComputerList = this.mapper.mapList(mResultSet);
       }
     }
@@ -128,11 +146,21 @@ public class DAOComputer {
     return rComputerList;
   }
 
+  private PreparedStatement preparedSelectLimitStatement(Connection connection, Integer size,
+      Integer offset) throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_LIMIT);
+    preparedStatement.setInt(1, size);
+    preparedStatement.setInt(2, offset);
+    return preparedStatement;
+  }
+
   public Integer count() {
     Integer count = null;
-    try (Connection connection = JDBCSingleton.INSTANCE.getConnection();
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(this.COUNT);
-        ResultSet resultSet = preparedStatement.executeQuery();) {
+        ResultSet resultSet = preparedStatement.executeQuery();
+    ) {
       if (resultSet.first()) {
         count = resultSet.getInt("count");
       }

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,8 @@ public class ComputerMapper {
    */
   static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
 
-  public Computer map(ResultSet resultSet) {
-    Computer rComputer = null;
+  public Optional<Computer> map(ResultSet resultSet) {
+    Optional<Computer> oComputer = Optional.empty();
     try {
       if (resultSet.first()) {
         ComputerBuilder computerBuilder = new ComputerBuilder();
@@ -34,13 +35,13 @@ public class ComputerMapper {
         companyBuilder.setName(resultSet.getString("company.name"));
         Company rCompany = companyBuilder.build();
         computerBuilder.setCompany(rCompany);
-        rComputer = computerBuilder.build();
+        oComputer = Optional.of(computerBuilder.build());
       }
     }
     catch (SQLException e) {
       LOG.warn("Error in mapping : " + e.getMessage());
     }
-    return rComputer;
+    return oComputer;
   }
 
   public List<Computer> mapList(ResultSet resultSet) {
