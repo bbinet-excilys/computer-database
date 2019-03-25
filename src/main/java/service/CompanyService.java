@@ -1,6 +1,7 @@
 package service;
 
 import java.util.List;
+import java.util.Optional;
 
 import model.Company;
 import persistence.DAOCompany;
@@ -20,6 +21,11 @@ public class CompanyService {
 
   public List<Company> list() {
     return this.dao.list();
+  }
+
+  public Optional<Company> read(Long id) {
+    // TODO Auto-generated method stub
+    return this.dao.read(id);
   }
 
 }

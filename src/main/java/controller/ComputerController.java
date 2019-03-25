@@ -39,7 +39,12 @@ public class ComputerController {
         Company company = DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElse(null);
         computerBuilder.setCompany(company);
       });
-      this.computerService.create(computerBuilder.build());
+      try {
+        this.computerService.create(computerBuilder.build());
+      }
+      catch (DAOUnexecutedQuery e) {
+        UIHelper.displayError(e.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("The computer must have a name");
     });
@@ -48,17 +53,23 @@ public class ComputerController {
   public void delete() {
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to delete :");
     oId.ifPresentOrElse(id -> {
-      Optional<Computer> oComputer = this.computerService.read(id);
-      oComputer.ifPresentOrElse(computer -> {
-        try {
-          this.computerService.delete(computer);
-        }
-        catch (DAOUnexecutedQuery e) {
-          UIHelper.displayError("The computer has not been deleted.\n" + e.getMessage());
-        }
-      }, () -> {
-        UIHelper.displayError("This computer ID doesn't exist");
-      });
+      Optional<Computer> oComputer;
+      try {
+        oComputer = this.computerService.read(id);
+        oComputer.ifPresentOrElse(computer -> {
+          try {
+            this.computerService.delete(computer);
+          }
+          catch (DAOUnexecutedQuery e) {
+            UIHelper.displayError("The computer has not been deleted.\n" + e.getMessage());
+          }
+        }, () -> {
+          UIHelper.displayError("This computer ID doesn't exist");
+        });
+      }
+      catch (DAOUnexecutedQuery e1) {
+        UIHelper.displayError(e1.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("Please enter a valid ID.");
     });
@@ -68,12 +79,17 @@ public class ComputerController {
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to display :");
     oId.ifPresentOrElse(id -> {
       Optional<Computer> oComputer;
-      oComputer = this.computerService.read(id);
-      oComputer.ifPresentOrElse(computer -> {
-        EntityUI.print(computer);
-      }, () -> {
-        UIHelper.displayError("No computer with this ID exist in database.");
-      });
+      try {
+        oComputer = this.computerService.read(id);
+        oComputer.ifPresentOrElse(computer -> {
+          EntityUI.print(computer);
+        }, () -> {
+          UIHelper.displayError("No computer with this ID exist in database.");
+        });
+      }
+      catch (DAOUnexecutedQuery e) {
+        UIHelper.displayError(e.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("Please enter à valid ID.");
     });
@@ -83,28 +99,34 @@ public class ComputerController {
 
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to update :");
     oId.ifPresentOrElse(id -> {
-      Optional<Computer> oComputer = this.computerService.read(id);
-      oComputer.ifPresentOrElse(computer -> {
-        EntityUI.print(computer);
-        computer.setName(
-            UIHelper.promptString("Enter the new name of the computer (or empty to keep it) :")
-                .orElseGet(computer::getName));
-        computer.setIntroduced(UIHelper
-            .promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
-            .orElseGet(computer::getIntroduced));
-        computer.setDiscontinued(UIHelper
-            .promptDate(
-                "Enter the new date of discontinuation of the computer (or empty to keep it) :")
-            .orElseGet(computer::getDiscontinued));
-        Long companyId = UIHelper
-            .promptLong("Enter the id of the new company (or empty to keep it):")
-            .orElse(computer.getCompany().getId());
-        computer.setCompany(
-            DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElseGet(computer::getCompany));
-        this.computerService.update(computer);
-      }, () -> {
-        UIHelper.displayError("This computer ID doesn't exist in database");
-      });
+      Optional<Computer> oComputer;
+      try {
+        oComputer = this.computerService.read(id);
+        oComputer.ifPresentOrElse(computer -> {
+          EntityUI.print(computer);
+          computer.setName(
+              UIHelper.promptString("Enter the new name of the computer (or empty to keep it) :")
+                  .orElseGet(computer::getName));
+          computer.setIntroduced(UIHelper
+              .promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
+              .orElseGet(computer::getIntroduced));
+          computer.setDiscontinued(UIHelper
+              .promptDate(
+                  "Enter the new date of discontinuation of the computer (or empty to keep it) :")
+              .orElseGet(computer::getDiscontinued));
+          Long companyId = UIHelper
+              .promptLong("Enter the id of the new company (or empty to keep it):")
+              .orElse(computer.getCompany().getId());
+          computer.setCompany(
+              DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElseGet(computer::getCompany));
+          this.computerService.update(computer);
+        }, () -> {
+          UIHelper.displayError("This computer ID doesn't exist in database");
+        });
+      }
+      catch (DAOUnexecutedQuery e) {
+        UIHelper.displayError(e.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("Please enter a valid ID.");
     });

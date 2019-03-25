@@ -24,11 +24,11 @@ public class ComputerService {
 
   private DAOComputer dao = new DAOComputer();
 
-  public void create(Computer computer) {
+  public void create(Computer computer) throws DAOUnexecutedQuery {
     this.dao.create(computer);
   }
 
-  public Optional<Computer> read(Long id) {
+  public Optional<Computer> read(Long id) throws DAOUnexecutedQuery {
     return this.dao.read(id);
 
   }
