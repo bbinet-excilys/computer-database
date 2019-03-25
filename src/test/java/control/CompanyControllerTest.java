@@ -18,7 +18,7 @@ public class CompanyControllerTest {
 
   @Test
   public void controllerConstructorTest() {
-    assertEquals(DAOFactory.COMPANY.getDAO().getClass(), this.cController.dao.getClass());
+    assertEquals(DAOFactory.COMPANY.getDAO().getClass(), this.cController.computerService.getClass());
   }
 
 }
