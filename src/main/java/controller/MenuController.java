@@ -1,9 +1,6 @@
 package controller;
 
-import service.CompanyService;
-import service.ComputerService;
 import service.MenuEnum;
-import service.ServiceFactory;
 import ui.UIHelper;
 
 /**
@@ -17,9 +14,9 @@ public class MenuController {
    * Factory and calls corresponding methods.
    */
   public void runMenu() {
-    boolean         loop             = true;
-    ComputerService mComputerService = ServiceFactory.INSTANCE.getComputerService();
-    CompanyService  mCompanyService  = ServiceFactory.INSTANCE.getCompanyService();
+    boolean            loop                = true;
+    ComputerController mComputerController = new ComputerController();
+    CompanyController  mCompanyController  = new CompanyController();
     do {
       UIHelper.displayMenu();
       MenuEnum choice;
@@ -39,28 +36,28 @@ public class MenuController {
           loop = false;
           break;
         case LIST_COMPANIES:
-          mCompanyService.list();
+          mCompanyController.list();
           break;
         case LIST_COMPUTERS:
-          mComputerService.list();
+          mComputerController.list();
           break;
         case CREATE_COMPUTER:
-          mComputerService.create();
+          mComputerController.create();
           break;
         case READ_COMPUTER:
-          mComputerService.read();
+          mComputerController.read();
           break;
         case UPDATE_COMPUTER:
-          mComputerService.update();
+          mComputerController.update();
           break;
         case DELETE_COMPUTER:
-          mComputerService.delete();
+          mComputerController.delete();
           break;
         case PAGED_COMPANIES:
-          mCompanyService.pagedList();
+          mCompanyController.pagedList();
           break;
         case PAGED_COMPUTERS:
-          mComputerService.pagedList();
+          mComputerController.pagedList();
           break;
         default:
           UIHelper.displayError("Not available");
