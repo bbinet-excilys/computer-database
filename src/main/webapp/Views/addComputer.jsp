@@ -18,9 +18,8 @@
 </head>
 
 <body>
-  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-    <nav class="uk-navbar uk-navbar-attached uk-background-secondary uk-dark uk-margin-large-bottom"
-      uk-navbar="mode: click; boundary-align:true">
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
       <div class="uk-navbar-left">
         <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
@@ -64,29 +63,31 @@
     </c:if>
 
     <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
-      <form class="uk-width-1-2" method="POST">
+      <form class="uk-width-1-2" method="POST" id="addComputerForm">
         <fieldset class="uk-fieldset">
           <div class="uk-margin">
             <div class="uk-inline uk-width-1-1">
               <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: desktop"></span>
-              <input class="uk-input" required placeholder="Computer Name" type="text" id="name" name="name">
+              <input class="uk-input" placeholder="Computer Name" type="text" id="computerName" name="computerName">
             </div>
           </div>
           <div class="uk-margin">
             <div class="uk-inline uk-width-1-1">
               <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-              <input class="uk-input" placeholder="Introdction Date" type="date" id="introduced" name="introduced">
+              <input class="uk-input" placeholder="Introdction Date" type="date" id="computerIntroduced"
+                name="computerIntroduced">
             </div>
           </div>
           <div class="uk-margin">
             <div class="uk-inline uk-width-1-1">
               <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-              <input class="uk-input" placeholder="Discontinued Date" type="date" id="discontinued" name="discontinued">
+              <input class="uk-input" placeholder="Discontinued Date" type="date" id="computerDiscontinued"
+                name="computerDiscontinued">
             </div>
           </div>
           <div class="uk-margin">
-            <select class="uk-select" name="companyId" id="companyId">
-              <option value="" disabled selected>Company</option>
+            <select class="uk-select" name="computerCompanyId" id="computerCompanyId">
+              <option value="">Company</option>
               <c:forEach items="${companies}" var="company">
                 <option value="${company.id}">${company.id} - ${company.name}</option>
               </c:forEach>
@@ -99,8 +100,10 @@
     </div>
   </div>
   <script src="js/jquery.min.js"></script>
+  <script src="js/jquery.validate.min.js"></script>
   <script src="js/uikit.min.js"></script>
   <script src="js/uikit-icons.min.js"></script>
+  <script src="js/addComputer.js"></script>
 </body>
 
 </html>

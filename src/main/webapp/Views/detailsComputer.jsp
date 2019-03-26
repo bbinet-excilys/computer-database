@@ -18,9 +18,8 @@
 </head>
 
 <body>
-  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-    <nav class="uk-navbar uk-navbar-attached uk-background-secondary uk-dark uk-margin-large-bottom"
-      uk-navbar="mode: click; boundary-align:true">
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
       <div class="uk-navbar-left">
         <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>

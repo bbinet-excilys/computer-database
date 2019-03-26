@@ -18,9 +18,8 @@
 </head>
 
 <body>
-  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-    <nav class="uk-navbar uk-navbar-attached uk-background-secondary uk-dark uk-margin-large-bottom"
-      uk-navbar="mode: click; boundary-align:true">
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
       <div class="uk-navbar-left">
         <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
@@ -63,16 +62,16 @@
       </div>
     </c:if>
 
-    <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
+    <div class="uk-grid uk-flex-center uk-flex-middle uk-margin" uk-grid>
       <form method="POST" class="uk-width-1-2">
-        <fieldset class="uk-form-fieldset">
+        <fieldset class="uk-fieldset">
           <select class="uk-select uk-width-1-1" name="computerId" id="computerId">
             <c:forEach items="${computers}" var="computer">
               <option value="${computer.id}">${computer.id} - ${computer.name}</option>
             </c:forEach>
           </select>
         </fieldset>
-        <div class="uk-grid uk-flex-right" uk-grid>
+        <div class="uk-grid uk-flex-right uk-margin" uk-grid>
           <input type="submit" class="uk-button uk-button-danger uk-text-center" value="Delete" />
         </div>
       </form>

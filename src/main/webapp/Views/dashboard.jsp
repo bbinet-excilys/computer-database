@@ -18,9 +18,8 @@
 </head>
 
 <body>
-  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-    <nav class="uk-navbar uk-navbar-attached uk-background-secondary uk-dark uk-margin-large-bottom"
-      uk-navbar="mode: click; boundary-align:true">
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
       <div class="uk-navbar-left">
         <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
@@ -56,8 +55,8 @@
       </div>
     </div>
 
-    <div class="uk-grid uk-text-center">
-      <div class="uk-width-expand">
+    <div class="uk-grid uk-flex-left" uk-grid>
+      <div class="uk-width-5-6">
         <form class="uk-form-horizontal">
           <div>
             <label class="uk-form-label" for="searchComputerByName">Search by Name </label>
@@ -66,8 +65,8 @@
           </div>
         </form>
       </div>
-      <div class="uk-width-1-4">
-        <a class=" uk-button uk-button-primary uk-button-small" href="addComputer">Add Computer</a>
+      <div class="uk-width-1-6">
+        <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addComputer">Add Computer</a>
       </div>
     </div>
 
@@ -120,7 +119,7 @@
             <li><a href="?page=${page-1}&pageSize=${pageSize}"><span uk-pagination-previous></span></a></li>
           </c:if>
           <c:if test="${!(page>1)}">
-            <li class="uk-disabled"><a><span uk-pagination-previous></a></span></li>
+            <li class="uk-disabled"><a><span uk-pagination-previous></span></a></li>
           </c:if>
           <li><a href="?page=1&pageSize=${pageSize}">First</a></li>
           <li><a href="?page=${pageMax}&pageSize=${pageSize}">Last</a></li>
