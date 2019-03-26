@@ -5,17 +5,17 @@ $(function () {
 
   // Click on "selectall" box
   $("#selectall").click(function () {
-    $('.cb').prop('checked', this.checked);
+    $('.uk-checkbox').prop('checked', this.checked);
   });
 
   // Click on a checkbox
-  $(".cb").click(function () {
-    if ($(".cb").length == $(".cb:checked").length) {
+  $(".uk-checkbox").click(function () {
+    if ($(".uk-checkbox").length == $(".uk-checkbox:checked").length) {
       $("#selectall").prop("checked", true);
     } else {
       $("#selectall").prop("checked", false);
     }
-    if ($(".cb:checked").length != 0) {
+    if ($(".uk-checkbox:checked").length != 0) {
       $("#deleteSelected").enable();
     } else {
       $("#deleteSelected").disable();
@@ -62,7 +62,7 @@ $(function () {
 (function ($) {
   $.fn.deleteSelected = function () {
     if (confirm("Are you sure you want to delete the selected computers?")) {
-      $('#deleteForm input[name=selection]').setCheckboxValues('selection', 'cb');
+      $('#deleteForm input[name=selection]').setCheckboxValues('selection', 'uk-checkbox');
       $('#deleteForm').submit();
     }
   };
@@ -77,7 +77,7 @@ $(document).keydown(function (e) {
   switch (e.keyCode) {
     //DEL key
     case 46:
-      if ($(".editMode").is(":visible") && $(".cb:checked").length != 0) {
+      if ($(".editMode").is(":visible") && $(".uk-checkbox:checked").length != 0) {
         $.fn.deleteSelected();
       }
       break;

@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exception.DAOUnexecutedQuery;
+import model.Company;
 import model.Computer;
 
 public class DAOComputer {
@@ -30,7 +31,7 @@ public class DAOComputer {
 
   ComputerMapper mapper = new ComputerMapper();
 
-  public void create(Computer computer) {
+  public void create(Computer computer) throws DAOUnexecutedQuery {
     try (
         Connection connection = JDBCSingleton.INSTANCE.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(this.CREATE)
@@ -38,11 +39,14 @@ public class DAOComputer {
       preparedStatement.setString(1, computer.getName());
       preparedStatement.setDate(2, computer.getIntroduced());
       preparedStatement.setDate(3, computer.getDiscontinued());
-      preparedStatement.setObject(4, computer.getCompany().getId());
+      Optional<Company> oCompany  = Optional.ofNullable(computer.getCompany());
+      Long              companyId = oCompany.map(Company::getId).orElse(null);
+      preparedStatement.setObject(4, companyId);
       preparedStatement.executeUpdate();
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute insert query : " + e.getMessage());
+      throw new DAOUnexecutedQuery("Couldn't create computer", e);
     }
   }
 
@@ -72,10 +76,9 @@ public class DAOComputer {
         Connection connection = JDBCSingleton.INSTANCE.getConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)
     ) {
-      mResultSet = preparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        rComputerList = this.mapper.mapList(mResultSet);
-      }
+      mResultSet    = preparedStatement.executeQuery();
+      rComputerList = this.mapper.mapList(mResultSet);
+
     }
     catch (SQLException e) {
       LOG.warn("Couldn't execute select in list : " + e.getMessage());
@@ -86,7 +89,7 @@ public class DAOComputer {
     return rComputerList;
   }
 
-  public Optional<Computer> read(Long id) {
+  public Optional<Computer> read(Long id) throws DAOUnexecutedQuery {
     Optional<Computer> oComputer = Optional.empty();
     try (
         Connection connection = JDBCSingleton.INSTANCE.getConnection();
@@ -97,6 +100,7 @@ public class DAOComputer {
     }
     catch (SQLException e) {
       LOG.error("Couldn't execute the select query.");
+      throw new DAOUnexecutedQuery("Couldn't execute the select query", e);
     }
     return oComputer;
   }

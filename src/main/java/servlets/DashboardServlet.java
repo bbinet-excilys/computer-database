@@ -17,14 +17,17 @@ import persistence.DAOFactory;
 /**
  * Servlet implementation class ComputerServlet
  */
-@WebServlet("/Dashboard")
-public class ComputerServlet extends HttpServlet {
-  private static final long serialVersionUID = 1L;
+@WebServlet(
+    name = "dashboard",
+    urlPatterns = { "/Dashboard",
+        "/dashboard" },
+    description = "The main page of the WebUI")
+public class DashboardServlet extends HttpServlet {
 
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public ComputerServlet() {
+  public DashboardServlet() {
     super();
     // TODO Auto-generated constructor stub
   }
@@ -37,13 +40,17 @@ public class ComputerServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
-    Integer        page      = Optional.ofNullable(Integer.parseInt(request.getParameter("page")))
-        .orElse(1);
-    Integer        pageSize  = Optional
-        .ofNullable(Integer.parseInt(request.getParameter("pageSize"))).orElse(10);
-    Integer        cCount    = DAOFactory.INSTANCE.getDAOComputer().count();
-    Integer        pageMax   = cCount / pageSize;
-    if (page < pageMax && page > 0) {
+    Integer        page      = Integer
+        .parseInt(Optional.ofNullable(request.getParameter("page")).orElseGet(() -> {
+                                   return "1";
+                                 }));
+    Integer        pageSize  = Integer
+        .parseInt(Optional.ofNullable(request.getParameter("pageSize")).orElseGet(() -> {
+                                   return "10";
+                                 }));
+    Double         cCount    = (double) DAOFactory.INSTANCE.getDAOComputer().count();
+    Integer        pageMax   = (int) Math.ceil((cCount / pageSize));
+    if (page <= pageMax && page > 0) {
       ComputerPage cPage = new ComputerPage(pageSize);
       cPage.setPage(page);
       computers = cPage.getCurrentPage();

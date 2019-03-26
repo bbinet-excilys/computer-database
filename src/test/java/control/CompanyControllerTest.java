@@ -14,11 +14,11 @@ import persistence.DAOFactory;
 
 public class CompanyControllerTest {
 
-  CompanyController cController = new CompanyController();
+  CompanyService cController = new CompanyService();
 
   @Test
   public void controllerConstructorTest() {
-    assertEquals(DAOFactory.COMPANY.getDAO().getClass(), this.cController.dao.getClass());
+    assertEquals(DAOFactory.COMPANY.getDAO().getClass(), this.cController.computerService.getClass());
   }
 
 }

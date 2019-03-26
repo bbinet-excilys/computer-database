@@ -9,7 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <!-- Bootstrap -->
-  <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
+  <link href="css/uikit.min.css" rel="stylesheet" media="screen">
   <!-- <link href="css/font-awesome.css" rel="stylesheet" media="screen"> -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
     integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
@@ -17,97 +18,126 @@
 </head>
 
 <body>
-  <div class="container-fluid">
-    <header>
-      <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark">
-        <a class="navbar-brand" href="Dashboard">Computer DB</a>
-      </nav>
-    </header>
-
-    <section id="main" class="mt-6">
-
-      <div class="container-fluid pt-5 mt-5">
-        <div id="actions" class="form-horizontal">
-          <div class="pull-left">
-            <form id="searchForm" action="#" method="GET" class="form-inline">
-              <input type="search" id="searchbox" name="search" class="form-control" placeholder="Search name" />
-              <input type="submit" id="searchsubmit" value="Filter by name" class="btn btn-primary" />
-            </form>
-          </div>
-          <div class="pull-right">
-            <a class="btn btn-success" id="addComputer" href="addComputer.html">Add Computer</a> <a
-              class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
-          </div>
-        </div>
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
+      <div class="uk-navbar-left">
+        <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
+          DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
+        <ul class="uk-navbar-nav">
+          <li>
+            <a href="Dashboard">Computer</a>
+            <div uk-dropdown>
+              <ul class="uk-nav uk-dropdown-nav">
+                <li><a href="Dashboard">List</a></li>
+                <li><a href="addComputer">Add</a></li>
+                <li><a href="deleteComputer">Delete</a></li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <a href="listCompany">Company</a>
+            <div uk-dropdown>
+              <ul class="uk-nav uk-dropdown-nav">
+                <li><a href="listCompany">List</a></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
       </div>
+    </nav>
+  </div>
+  <div class="uk-container uk-container-center uk-margin-large-bottom">
 
-      <div class="container-fluid py-3">
-        <table class="table table-striped my-3">
-          <thead class="thead-dark">
+
+    <div class="uk-grid">
+      <div class="uk-width-1-1">
+        <h1>Computer list</h1>
+      </div>
+    </div>
+
+    <div class="uk-grid uk-flex-left" uk-grid>
+      <div class="uk-width-5-6">
+        <form class="uk-form-horizontal">
+          <div>
+            <label class="uk-form-label" for="searchComputerByName">Search by Name </label>
+            <div class="uk-form-controls uk-form-controls-text">
+              <input class="uk-input uk-form-width-medium uk-form-small" type="text" id="searchComputerByName" /></div>
+          </div>
+        </form>
+      </div>
+      <div class="uk-width-1-6">
+        <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addComputer">Add Computer</a>
+      </div>
+    </div>
+
+    <div class="uk-grid">
+      <div class="uk-width-1-1">
+        <table class="uk-table uk-table-striped uk-margin uk-padding">
+          <thead class=" uk-background-secondary">
             <tr>
-              <th class="editMode" scope="col">
-                <div>
-                  <input type="checkbox" id="selectall" /> - <a href="#" id="deleteSelected"
-                    onclick="$.fn.deleteSelected();">
-                    <i class="fa fa-trash-o fa-lg"></i>
-                  </a>
-                </div>
+              <th class="uk-width-small  uk-text-primary">ID</th>
+              <th class="uk-width-medium uk-text-primary">Name</th>
+              <th class="uk-width-medium uk-text-primary">Introduction Date</th>
+              <th class="uk-width-medium uk-text-primary">Discontinuation Date</th>
+              <th class="uk-width-medium uk-text-primary">Company</th>
+              <th class="uk-width-small  uk-text-primary"></th>
+              <th class="uk-width-small  uk-text-primary">
+                <button class="uk-button uk-button-danger uk-button-small uk-padding-small-left"><span
+                    uk-icon="icon: trash"></span></button>
               </th>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Introduction Date</th>
-              <th scope="col">Discontinuation Date</th>
-              <th scope="col">Company</th>
+              <th class="uk-width-small">
+                <input class="uk-checkbox" type="checkbox" id="selectall" />
+              </th>
             </tr>
           </thead>
           <tbody>
             <c:forEach items="${computers }" var="computer">
               <tr>
-                <td class="editMode"><input type="checkbox" name="cb" class="cb" value="${computer.id}"></td>
-                <th scope="row">${computer.id}</th>
-                <td>${computer.name}</td>
+                <td style="font-weight: bold; color:black">${computer.id}</td>
+                <td><a href="detailsComputer?computerId=${computer.id}" class="uk-link-heading">${computer.name}</a>
+                </td>
                 <td>${computer.introduced}</td>
                 <td>${computer.discontinued}</td>
                 <td>${computer.company.name}</td>
+                <td><button class="uk-button uk-button-primary uk-button-small uk-padding-small-left"><span
+                      uk-icon="icon: pencil"></span></button></td>
+                <td><button class="uk-button uk-button-danger uk-button-small uk-padding-small-left"><span
+                      uk-icon="icon: trash"></span></button></td>
+                <td>
+                  <input type="checkbox" name="cb" class="uk-checkbox" value="${computer.id}">
+                </td>
+                <!-- <td class="editMode"><input type="checkbox" name="cb" class="cb" value="${computer.id}"></td> -->
               </tr>
             </c:forEach>
           </tbody>
         </table>
       </div>
-    </section>
 
-    <footer>
-      <div class="navbar navbar-expand-lg fixed-bottom navbar-dark bg-dark">
-        <div class="container text-center">
-          <ul class="pagination">
-            <c:if test="${page>1}">
-              <li class="page-item"><a class="page-link" href="?page=${page-1}&pageSize=${pageSize}"><i
-                    class="fas fa-caret-left"></i></a>
-              </li>
-            </c:if>
-            <li class="page-item"><a class="page-link" href="?page=1&pageSize=${pageSize}">First</a></li>
-            <li class="page-item"><a class="page-link" href="?page=${pageMax}&pageSize=${pageSize}">Last</a>
-            </li>
-            <c:if test="${page<pageMax}">
-              <li class="page-item"><a class="page-link" href="?page=${page+1}&pageSize=${pageSize}"><i
-                    class="fas fa-caret-right"></i></a>
-              </li>
-            </c:if>
-          </ul>
-          <div class="btn-group btn-group-sm pull-right" role="group">
-            <button type="button" class="btn btn-light">10</button>
-            <button type="button" class="btn btn-light">50</button>
-            <button type="button" class="btn btn-light">100</button>
-          </div>
-        </div>
+      <div class="uk-width-1-1">
+        <ul class="uk-pagination uk-flex-center">
+          <c:if test="${page>1}">
+            <li><a href="?page=${page-1}&pageSize=${pageSize}"><span uk-pagination-previous></span></a></li>
+          </c:if>
+          <c:if test="${!(page>1)}">
+            <li class="uk-disabled"><a><span uk-pagination-previous></span></a></li>
+          </c:if>
+          <li><a href="?page=1&pageSize=${pageSize}">First</a></li>
+          <li><a href="?page=${pageMax}&pageSize=${pageSize}">Last</a></li>
+          <c:if test="${page<pageMax}">
+            <li><a href="?page=${page+1}&pageSize=${pageSize}"><span uk-pagination-next></span></a></li>
+          </c:if>
+          <c:if test="${!(page<pageMax)}">
+            <li class="uk-disabled"><a><span uk-pagination-next></span></a></li>
+          </c:if>
+        </ul>
       </div>
+    </div>
 
-    </footer>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/uikit.min.js"></script>
+    <script src="js/uikit-icons.min.js"></script>
+    <script src="js/dashboard.js"></script>
   </div>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/bootstrap.min.js"></script>
-  <script src="js/dashboard.js"></script>
-
 </body>
 
 </html>
