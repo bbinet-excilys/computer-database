@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exception.DAOUnexecutedQuery;
+import mapping.ComputerMapper;
 import model.Company;
 import model.Computer;
 

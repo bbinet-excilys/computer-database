@@ -70,7 +70,7 @@ public class AddComputer extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Optional<Object>  oName       = Optional.ofNullable(request.getParameter("name"));
+    Optional<Object>  oName       = Optional.ofNullable(request.getParameter("computerName"));
     MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
     oName.ifPresentOrElse(name -> {
       String          sName    = (String) name;
@@ -79,7 +79,8 @@ public class AddComputer extends HttpServlet {
 
       DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-      Optional<String> oIntroduced = Optional.ofNullable(request.getParameter("introduced"));
+      Optional<String> oIntroduced = Optional
+          .ofNullable(request.getParameter("computerIntroduced"));
       oIntroduced
           .filter(Predicate.not(String::isBlank))
           .filter(str -> str.matches("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}"))
@@ -90,7 +91,8 @@ public class AddComputer extends HttpServlet {
             cBuilder.setIntroduced(introduced);
           });
 
-      Optional<String> oDiscontinued = Optional.ofNullable(request.getParameter("discontinued"));
+      Optional<String> oDiscontinued = Optional
+          .ofNullable(request.getParameter("computerDiscontinued"));
       oDiscontinued
           .filter(Predicate.not(String::isBlank))
           .filter(str -> str.matches("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}"))
@@ -101,7 +103,7 @@ public class AddComputer extends HttpServlet {
             cBuilder.setDiscontinued(discontinued);
           });
 
-      Optional<String> oCompanyId = Optional.ofNullable(request.getParameter("companyId"));
+      Optional<String> oCompanyId = Optional.ofNullable(request.getParameter("computerCompanyId"));
       oCompanyId.filter(Predicate.not(String::isBlank)).ifPresent(sCompanyId -> {
         Long              id       = Long.parseLong(sCompanyId);
         Optional<Company> oCompany = this.companyService.read(id);
