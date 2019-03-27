@@ -5,13 +5,11 @@
   <artifactId>computerdatabase</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>computerdatabase Maven Webapp</name>
+  <name>computerdatabase Webapp</name>
   <url>http://maven.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.target>1.11</maven.compiler.target>
-    <maven.compiler.source>1.11</maven.compiler.source>
     <junit.version>4.12</junit.version>
     <mariadb.version>2.4.0</mariadb.version>
     <mockito.version>1.10.19</mockito.version>
@@ -20,7 +18,7 @@
     <slf4j.version>1.7.26</slf4j.version>
     <logback.version>1.2.3</logback.version>
     <powermock.version>1.7.4</powermock.version>
-    <jackson.version>2.9.8</jackson.version>
+    <apache-commons.version>1.6</apache-commons.version>
   </properties>
 
   <dependencies>
@@ -80,11 +78,11 @@
       <artifactId>logback-core</artifactId>
       <version>${logback.version}</version>
     </dependency>
-    <!-- Jackson -->
+    <!-- Apache Date Validator -->
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson.version}</version>
+        <groupId>commons-validator</groupId>
+        <artifactId>commons-validator</artifactId>
+        <version>${apache-commons.version}</version>
     </dependency>
   </dependencies>
 
@@ -116,7 +114,7 @@
           <dependency>
             <groupId>org.ow2.asm</groupId>
             <artifactId>asm</artifactId>
-            <version>7.1</version>            <!-- Use newer version of ASM -->
+            <version>7.1</version>
           </dependency>
         </dependencies>
       </plugin>
