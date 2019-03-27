@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import exception.DAOUnexecutedQuery;
 import model.Computer;
 import persistence.DAOComputer;
+import validation.CompanyValidator;
+import validation.ComputerValidator;
 
 /**
  * Controller for Computers (basic CRUD and list methods).
@@ -24,26 +26,34 @@ public class ComputerService {
 
   private DAOComputer dao = new DAOComputer();
 
-  public void create(Computer computer) throws DAOUnexecutedQuery {
-    this.dao.create(computer);
+  public void create(Computer computer) throws DAOUnexecutedQuery, IllegalArgumentException {
+    if (computer.getCompany() != null) {
+      CompanyValidator.companyIsValid(computer.getCompany());
+    }
+    ComputerValidator.computerIsValid(computer);
+    dao.create(computer);
   }
 
   public Optional<Computer> read(Long id) throws DAOUnexecutedQuery {
-    return this.dao.read(id);
+    return dao.read(id);
 
   }
 
   public void delete(Computer computer) throws DAOUnexecutedQuery {
-    this.dao.delete(computer);
+    dao.delete(computer);
 
   }
 
-  public void update(Computer computer) {
-    this.dao.update(computer);
+  public void update(Computer computer) throws IllegalArgumentException {
+    if (computer.getCompany() != null) {
+      CompanyValidator.companyIsValid(computer.getCompany());
+    }
+    ComputerValidator.computerIsValid(computer);
+    dao.update(computer);
   }
 
   public List<Computer> list() {
-    return this.dao.list();
+    return dao.list();
   }
 
 }

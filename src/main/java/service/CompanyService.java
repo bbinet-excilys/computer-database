@@ -24,7 +24,6 @@ public class CompanyService {
   }
 
   public Optional<Company> read(Long id) {
-    // TODO Auto-generated method stub
     return this.dao.read(id);
   }
 
