@@ -1,4 +1,4 @@
-package persistence;
+package mapping;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +9,8 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dto.CompanyDTO;
+import dto.CompanyDTO.CompanyDTOBuilder;
 import model.Company;
 import model.Company.CompanyBuilder;
 
@@ -23,9 +25,9 @@ public class CompanyMapper {
     Optional<Company> oCompany = Optional.empty();
     try {
       if (result.first()) {
-        CompanyBuilder companyBuilder = new CompanyBuilder();
-        companyBuilder.setId(result.getLong("id"));
-        companyBuilder.setName(result.getString("name"));
+        CompanyBuilder companyBuilder = Company.builder();
+        companyBuilder.withId(result.getLong("id"));
+        companyBuilder.withName(result.getString("name"));
         oCompany = Optional.of(companyBuilder.build());
       }
     }
@@ -43,9 +45,9 @@ public class CompanyMapper {
     try {
       rCompanyList = new ArrayList<Company>();
       while (resultSet.next()) {
-        CompanyBuilder companyBuilder = new CompanyBuilder();
-        companyBuilder.setId(resultSet.getLong("id"));
-        companyBuilder.setName(resultSet.getString("name"));
+        CompanyBuilder companyBuilder = Company.builder();
+        companyBuilder.withId(resultSet.getLong("id"));
+        companyBuilder.withName(resultSet.getString("name"));
         rCompanyList.add(companyBuilder.build());
       }
     }
@@ -58,4 +60,17 @@ public class CompanyMapper {
     return rCompanyList;
   }
 
+  public CompanyDTO companyToDTO(Company company) {
+    CompanyDTOBuilder cDTOBuilder = CompanyDTO.builder();
+    cDTOBuilder.withId(company.getId());
+    cDTOBuilder.withName(company.getName());
+    return cDTOBuilder.build();
+  }
+
+  public Company companyFromDTO(CompanyDTO companyDTO) {
+    CompanyBuilder cBuilder = Company.builder();
+    cBuilder.withId(companyDTO.getId());
+    cBuilder.withName(companyDTO.getName());
+    return cBuilder.build();
+  }
 }

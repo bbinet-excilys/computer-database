@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import mapping.CompanyMapper;
 import model.Company;
 
 public class DAOCompany {
@@ -106,7 +107,7 @@ public class DAOCompany {
     try (
         Connection connection = JDBCSingleton.INSTANCE.getConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
-            offset);
+                                                                           offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
     ) {
       if (size != null && offset != null) {

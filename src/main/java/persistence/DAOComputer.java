@@ -135,7 +135,7 @@ public class DAOComputer {
     try (
         Connection connection = JDBCSingleton.INSTANCE.getConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
-            offset);
+                                                                           offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
     ) {
       if (size != null && offset != null) {

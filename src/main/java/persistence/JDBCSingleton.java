@@ -57,13 +57,14 @@ public enum JDBCSingleton {
             constructorLogger.info("Setting connection");
           }
           catch (ClassNotFoundException e) {
-            constructorLogger.error("Couldn't find the Driver Class. Check parameters value in "
-                + PROPERTIES_FILE + " : " + e.getMessage());
+            constructorLogger
+                             .error("Couldn't find the Driver Class. Check parameters value in "
+                                 + PROPERTIES_FILE + " : " + e.getMessage());
           }
           catch (SQLException e) {
             constructorLogger
-                .error("Couldn't getConnection from the DriverManager. Check parameters value in "
-                    + PROPERTIES_FILE + " : " + e.getMessage());
+                             .error("Couldn't getConnection from the DriverManager. Check parameters value in "
+                                 + PROPERTIES_FILE + " : " + e.getMessage());
           }
         }
       }
