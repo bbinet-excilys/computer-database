@@ -20,11 +20,16 @@ import service.ComputerService;
  * Servlet implementation class DetailsComputer
  */
 @WebServlet(
-    name = "detailsComputer",
-    urlPatterns = { "/detailsComputer", "/detailscomputer" },
-    description = "Computer details page")
+  name = "detailsComputer",
+  urlPatterns = { "/detailsComputer", "/detailscomputer" },
+  description = "Computer details page")
 
 public class DetailsComputer extends HttpServlet {
+
+  /**
+   *
+   */
+  private static final long serialVersionUID = 1L;
 
   ComputerService computerService = new ComputerService();
 
@@ -40,11 +45,10 @@ public class DetailsComputer extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Optional<Long>    oComputerId = Optional
-        .of(request.getParameter("computerId"))
-        .filter(Predicate.not(String::isBlank))
-        .map(Long::parseLong);
-    MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
+    Optional<Long>    oComputerId = Optional.of(request.getParameter("computerId"))
+                                            .filter(Predicate.not(String::isBlank))
+                                            .map(Long::parseLong);
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
     oComputerId.ifPresentOrElse(computerId -> {
       try {
         Optional<Computer> oComputer = this.computerService.read(computerId);
@@ -53,18 +57,17 @@ public class DetailsComputer extends HttpServlet {
         });
       }
       catch (DAOUnexecutedQuery e) {
-        mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-        mDTOBuilder.setTitle("Database error");
-        mDTOBuilder.setContent("The computer has not been found " + e.getMessage());
+        mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+        mDTOBuilder.withTitle("Database error");
+        mDTOBuilder.withContent("The computer has not been found " + e.getMessage());
       }
     }, () -> {
-      mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-      mDTOBuilder.setTitle("Parameter error");
-      mDTOBuilder.setContent("Couldn't parse the id or parameter not found");
+      mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+      mDTOBuilder.withTitle("Parameter error");
+      mDTOBuilder.withContent("Couldn't parse the id or parameter not found");
     });
-    getServletContext()
-        .getRequestDispatcher("/Views/detailsComputer.jsp")
-        .forward(request, response);
+    getServletContext().getRequestDispatcher("/Views/detailsComputer.jsp")
+                       .forward(request, response);
   }
 
   /**

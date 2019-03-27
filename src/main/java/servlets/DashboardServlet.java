@@ -18,18 +18,19 @@ import persistence.DAOFactory;
  * Servlet implementation class ComputerServlet
  */
 @WebServlet(
-    name = "dashboard",
-    urlPatterns = { "/Dashboard",
-        "/dashboard" },
-    description = "The main page of the WebUI")
+  name = "dashboard",
+  urlPatterns = { "/Dashboard",
+      "/dashboard" },
+  description = "The main page of the WebUI")
 public class DashboardServlet extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    * @see HttpServlet#HttpServlet()
    */
   public DashboardServlet() {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -40,14 +41,10 @@ public class DashboardServlet extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
-    Integer        page      = Integer
-        .parseInt(Optional.ofNullable(request.getParameter("page")).orElseGet(() -> {
-                                   return "1";
-                                 }));
-    Integer        pageSize  = Integer
-        .parseInt(Optional.ofNullable(request.getParameter("pageSize")).orElseGet(() -> {
-                                   return "10";
-                                 }));
+    Integer        page      = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
+                                                        .orElse("1"));
+    Integer        pageSize  = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
+                                                        .orElse("10"));
     Double         cCount    = (double) DAOFactory.INSTANCE.getDAOComputer().count();
     Integer        pageMax   = (int) Math.ceil((cCount / pageSize));
     if (page <= pageMax && page > 0) {
@@ -73,7 +70,6 @@ public class DashboardServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    // TODO Auto-generated method stub
     doGet(request, response);
   }
 

@@ -20,10 +20,12 @@ import service.ComputerService;
  * Servlet implementation class DeleteComputer
  */
 @WebServlet(
-    name = "deleteComputer",
-    urlPatterns = { "/deleteComputer", "/deletecomputer" },
-    description = "Deletion computer page")
+  name = "deleteComputer",
+  urlPatterns = { "/deleteComputer", "/deletecomputer" },
+  description = "Deletion computer page")
 public class DeleteComputer extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
 
   private ComputerService computerService = new ComputerService();
 
@@ -41,8 +43,8 @@ public class DeleteComputer extends HttpServlet {
       throws ServletException, IOException {
     request.setAttribute("computers", this.computerService.list());
     getServletContext()
-        .getRequestDispatcher("/Views/deleteComputer.jsp")
-        .forward(request, response);
+                       .getRequestDispatcher("/Views/deleteComputer.jsp")
+                       .forward(request, response);
   }
 
   /**
@@ -54,13 +56,13 @@ public class DeleteComputer extends HttpServlet {
       throws ServletException, IOException {
 
     Optional<Long>    oComputerId = Optional
-        .of(request.getParameter("computerId"))
-        .filter(Predicate.not(String::isBlank))
-        .map(param -> Optional.of(Long.parseLong(param)))
-        .get();
-    MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
-    mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-    mDTOBuilder.setTitle("Error");
+                                            .of(request.getParameter("computerId"))
+                                            .filter(Predicate.not(String::isBlank))
+                                            .map(param -> Optional.of(Long.parseLong(param)))
+                                            .get();
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+    mDTOBuilder.withTitle("Error");
     oComputerId.ifPresent(computerId -> {
       Optional<Computer> oComputer;
       try {
@@ -68,22 +70,19 @@ public class DeleteComputer extends HttpServlet {
         oComputer.ifPresent(computer -> {
           try {
             this.computerService.delete(computer);
-            mDTOBuilder.setType(MessageDTO.SUCCESS_TYPE);
-            mDTOBuilder.setTitle("Success");
-            mDTOBuilder
-                .setContent("Computer " + computer.getName() + " has successfully been deleted");
+            mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
+            mDTOBuilder.withTitle("Success");
+            mDTOBuilder.withContent("Computer " + computer.getName()
+                + " has successfully been deleted");
           }
           catch (DAOUnexecutedQuery e) {
-            mDTOBuilder
-                .setContent(
-                    "Computer " + computer.getName() + " has not been deleted " + e.getMessage());
+            mDTOBuilder.withContent("Computer " + computer.getName() + " has not been deleted "
+                + e.getMessage());
           }
         });
       }
       catch (DAOUnexecutedQuery e) {
-        mDTOBuilder
-            .setContent(
-                "Computer has not been found " + e.getMessage());
+        mDTOBuilder.withContent("Computer has not been found " + e.getMessage());
       }
     });
     doGet(request, response);
