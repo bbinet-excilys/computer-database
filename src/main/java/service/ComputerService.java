@@ -38,15 +38,9 @@ public class ComputerService {
     dao.create(computer);
   }
 
-  public Optional<ComputerDTO> read(Long id)
+  public Optional<Computer> read(Long id)
       throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    Optional<Computer>    oComputer = dao.read(id);
-    Optional<ComputerDTO> oCDTO     = Optional.empty();
-    if (oComputer.isPresent()) {
-      Computer computer = oComputer.get();
-      oCDTO = Optional.of(ComputerMapper.computerToDTO(computer));
-    }
-    return oCDTO;
+    return dao.read(id);
   }
 
   public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
