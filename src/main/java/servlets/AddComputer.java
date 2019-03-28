@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
+import exception.PropertiesNotFoundException;
 import model.Company;
 import model.Computer;
 import model.Computer.ComputerBuilder;
@@ -42,8 +43,6 @@ public class AddComputer extends HttpServlet {
   CompanyService  companyService  = new CompanyService();
 
   private static DateValidator dValidator = new DateValidator();
-
-  MessageDTO message;
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -93,6 +92,9 @@ public class AddComputer extends HttpServlet {
 
       Optional<String> oCompanyId = Optional.ofNullable(request.getParameter("computerCompanyId"));
       oCompanyId.filter(Predicate.not(String::isBlank))
+                .filter(str -> {
+                  return str.matches("\\d+");
+                })
                 .ifPresent(sCompanyId -> {
                   Long    id       = Long.parseLong(sCompanyId);
                   Optional<Company> oCompany = companyService.read(id);
@@ -103,39 +105,42 @@ public class AddComputer extends HttpServlet {
       ComputerService cService = new ComputerService();
       try {
         cService.create(cBuilder.build());
-        setSuccessMessage("Success !",
+        setSuccessMessage(request, "Success !",
                           String.format("Computer %s created", sName));
       }
       catch (DAOUnexecutedQuery e) {
-        setErrorMessage("Unexecuted Query",
+        setErrorMessage(request, "Unexecuted Query",
                         "An error occured, the computer has not been created : " + e.getMessage());
       }
       catch (IllegalArgumentException e) {
-        setErrorMessage("Illegal Argument",
+        setErrorMessage(request, "Illegal Argument",
                         "An error occured, the computer has not been created : " + e.getMessage());
       }
+      catch (PropertiesNotFoundException e) {
+        setErrorMessage(request, "Connection Error",
+                        "The connection to the database could not be established");
+      }
     }, () -> {
-      setErrorMessage("Computer not created",
-                      "An error occured, the computer has not been created");
+      setErrorMessage(request, "Computer not created",
+                      "The name field was empty :'(");
     });
-    request.setAttribute("message", message);
     doGet(request, response);
   }
 
-  public void setErrorMessage(String title, String message) {
+  public void setErrorMessage(HttpServletRequest request, String title, String message) {
     MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
     mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
     mDTOBuilder.withTitle(title);
     mDTOBuilder.withContent(message);
-    this.message = mDTOBuilder.build();
+    request.setAttribute("message", mDTOBuilder.build());
   }
 
-  public void setSuccessMessage(String title, String message) {
+  public void setSuccessMessage(HttpServletRequest request, String title, String message) {
     MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
     mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
     mDTOBuilder.withTitle(title);
     mDTOBuilder.withContent(message);
-    this.message = mDTOBuilder.build();
+    request.setAttribute("message", mDTOBuilder.build());
   }
 
 }

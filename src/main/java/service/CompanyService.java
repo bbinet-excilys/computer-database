@@ -13,8 +13,6 @@ import persistence.DAOFactory;
  * @author bbinet
  */
 
-// TODO : Implement CRUD methods
-
 public class CompanyService {
 
   private DAOCompany dao = DAOFactory.INSTANCE.getDAOCompany();
