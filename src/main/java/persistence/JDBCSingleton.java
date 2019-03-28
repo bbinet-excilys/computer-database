@@ -11,6 +11,11 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import exception.PropertiesNotFoundException;
+
 /**
  * Singleton implementation of a JDBC connector. Uses parameters for a mariadb
  * database (can be easily changed to a mysql driver).
@@ -22,89 +27,109 @@ public enum JDBCSingleton {
   /**
    * The unique instance of the JDBCSingleton (Connection to the database).
    */
-  INSTANCE {
-    /**
-     * The path to the properties file, containing database parameters (driver, url,
-     * username, password).
-     */
-    private static final String PROPERTIES_FILE = "jdbcSettings.properties";
+  INSTANCE;
+  /**
+   * The path to the properties file, containing database parameters (driver, url,
+   * username, password).
+   */
+  private static final String JDBC_PROPERTIES_FILE = "properties/jdbcSettings.properties";
+  private static final String HIKARI_PROPERTIES    = "properties/hikari.properties";
 
-    /**
-     * The properties file as a Property object to ease the parsing of the
-     * parameters.
-     */
-    private Properties jdbcProperties = new Properties();
-    /**
-     * The connection to the database.
-     */
-    private Connection connection;
+  private static final Logger LOGGER = LoggerFactory.getLogger(JDBCSingleton.class);
 
-    private void setConnection() {
-      Logger constructorLogger = LoggerFactory.getLogger(JDBCSingleton.class);
-      try {
-        ClassLoader loader           = Thread.currentThread().getContextClassLoader();
-        InputStream propertiesStream = loader.getResourceAsStream(PROPERTIES_FILE);
-        this.jdbcProperties.load(propertiesStream);
-        String dbDriver, dbURI, dbUsername, dbPassword;
-        dbDriver   = this.jdbcProperties.getProperty("db.driver.class");
-        dbURI      = this.jdbcProperties.getProperty("db.uri");
-        dbUsername = this.jdbcProperties.getProperty("db.username");
-        dbPassword = this.jdbcProperties.getProperty("db.password");
-        if (!dbDriver.isEmpty() && !dbURI.isEmpty()) {
-          try {
-            Class.forName(dbDriver);
-            this.connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
-            constructorLogger.info("Setting connection");
-          }
-          catch (ClassNotFoundException e) {
-            constructorLogger
-                             .error("Couldn't find the Driver Class. Check parameters value in "
-                                 + PROPERTIES_FILE + " : " + e.getMessage());
-          }
-          catch (SQLException e) {
-            constructorLogger
-                             .error("Couldn't getConnection from the DriverManager. Check parameters value in "
-                                 + PROPERTIES_FILE + " : " + e.getMessage());
-          }
-        }
-      }
-      catch (FileNotFoundException e) {
-        constructorLogger.error("Couldn't find file " + PROPERTIES_FILE + " : " + e.getMessage());
-      }
-      catch (IOException e) {
-        constructorLogger.error("Couldn't read file " + PROPERTIES_FILE + " : " + e.getMessage());
-      }
-    }
+  /**
+   * The properties file as a Property object to ease the parsing of the
+   * parameters.
+   */
+  private Properties       jdbcProperties = new Properties();
+  /**
+   * The connection to the database.
+   */
+  private Connection       connection;
+  private HikariDataSource dataSource;
 
-    /**
-     * Closes the connection instance.
-     */
-    @Override
-    public void closeConnection() {
-      if (this.connection != null) {
+  private void setJDBCConnection() {
+    Logger constructorLogger = LoggerFactory.getLogger(JDBCSingleton.class);
+    try {
+      ClassLoader loader           = Thread.currentThread().getContextClassLoader();
+      InputStream propertiesStream = loader.getResourceAsStream(JDBC_PROPERTIES_FILE);
+      jdbcProperties.load(propertiesStream);
+      String dbDriver, dbURI, dbUsername, dbPassword;
+      dbDriver   = jdbcProperties.getProperty("db.driver.class");
+      dbURI      = jdbcProperties.getProperty("db.uri");
+      dbUsername = jdbcProperties.getProperty("db.username");
+      dbPassword = jdbcProperties.getProperty("db.password");
+      if (!dbDriver.isEmpty() && !dbURI.isEmpty()) {
         try {
-          this.connection.close();
-          this.connection = null;
+          Class.forName(dbDriver);
+          connection = DriverManager.getConnection(dbURI, dbUsername, dbPassword);
+          constructorLogger.info("Setting connection");
+        }
+        catch (ClassNotFoundException e) {
+          constructorLogger.error("Couldn't find the Driver Class. Check parameters value in "
+              + JDBC_PROPERTIES_FILE
+              + " : " + e.getMessage());
         }
         catch (SQLException e) {
+          constructorLogger.error("Couldn't getConnection from the DriverManager. Check parameters value in "
+              + JDBC_PROPERTIES_FILE + " : " + e.getMessage());
         }
       }
     }
-
-    /**
-     * Method to get the connection from the JDBCSingleton instance.
-     *
-     * @return The instance of the connection.
-     */
-    @Override
-    public Connection getConnection() {
-      setConnection();
-      return this.connection;
+    catch (FileNotFoundException e) {
+      constructorLogger.error("Couldn't find file " + JDBC_PROPERTIES_FILE + " : "
+          + e.getMessage());
     }
-  };
+    catch (IOException e) {
+      constructorLogger.error("Couldn't read file " + JDBC_PROPERTIES_FILE + " : "
+          + e.getMessage());
+    }
+  }
 
-  public abstract Connection getConnection();
+  private void setHikariConnectionPool() throws PropertiesNotFoundException {
+    try {
+      ClassLoader loader           = Thread.currentThread().getContextClassLoader();
+      InputStream propertiesStream = loader.getResourceAsStream(HIKARI_PROPERTIES);
+      Properties  hikariProperties = new Properties();
+      hikariProperties.load(propertiesStream);
+      HikariConfig config = new HikariConfig(hikariProperties);
+      dataSource = new HikariDataSource(config);
+    }
+    catch (IOException e) {
+      throw new PropertiesNotFoundException("Error reading Hikari properties file :"
+          + e.getMessage());
+    }
+  }
 
-  public abstract void closeConnection();
+  public Connection getHikariConnection() throws SQLException, PropertiesNotFoundException {
+    if (dataSource == null) {
+      setHikariConnectionPool();
+    }
+    return dataSource.getConnection();
+  }
+
+  /**
+   * Closes the connection instance.
+   */
+  public void closeConnection() {
+    if (connection != null) {
+      try {
+        connection.close();
+        connection = null;
+      }
+      catch (SQLException e) {
+      }
+    }
+  }
+
+  /**
+   * Method to get the connection from the JDBCSingleton instance.
+   *
+   * @return The instance of the connection.
+   */
+  public Connection getJDBCConnection() {
+    setJDBCConnection();
+    return connection;
+  }
 
 }

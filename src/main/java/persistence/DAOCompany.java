@@ -35,14 +35,14 @@ public class DAOCompany {
     ResultSet     mResultSet   = null;
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT);
+        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT);
     ) {
       mResultSet   = preparedStatement.executeQuery();
-      rCompanyList = this.mapper.mapList(mResultSet);
+      rCompanyList = mapper.mapList(mResultSet);
     }
     catch (SQLException e) {
-      this.LOG.warn("Couldn't execute select query : " + e.getMessage());
+      LOG.warn("Couldn't execute select query : " + e.getMessage());
     }
     return rCompanyList;
   }
@@ -50,36 +50,36 @@ public class DAOCompany {
   public Optional<Company> read(Long id) {
     Optional<Company> oCompany = Optional.empty();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
-      oCompany = this.mapper.map(resultSet);
+      oCompany = mapper.map(resultSet);
     }
     catch (SQLException e) {
-      this.LOG.warn("Couldn't execute select query : " + e.getMessage());
+      LOG.warn("Couldn't execute select query : " + e.getMessage());
     }
     return oCompany;
   }
 
   private PreparedStatement prepareReadStatement(Connection connection, Long id)
       throws SQLException {
-    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_WHEREID);
+    PreparedStatement preparedStatement = connection.prepareStatement(SELECT_WHEREID);
     preparedStatement.setLong(1, id);
     return preparedStatement;
   }
 
   public void update(Company company) {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.UPDATE);
+        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
     ) {
       preparedStatement.setString(1, company.getName());
       preparedStatement.setLong(2, company.getId());
       preparedStatement.executeUpdate();
     }
     catch (SQLException e) {
-      this.LOG.warn("Couldn't execute update query : " + e.getMessage());
+      LOG.warn("Couldn't execute update query : " + e.getMessage());
     }
 
   }
@@ -88,8 +88,8 @@ public class DAOCompany {
     Integer   count      = null;
     ResultSet mResultSet = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.COUNT);
+        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(COUNT);
     ) {
       mResultSet = preparedStatement.executeQuery();
       if (mResultSet.first()) {
@@ -97,7 +97,7 @@ public class DAOCompany {
       }
     }
     catch (SQLException e) {
-      this.LOG.warn("Couldn't execute count query : " + e.getMessage());
+      LOG.warn("Couldn't execute count query : " + e.getMessage());
     }
     return count;
   }
@@ -105,27 +105,27 @@ public class DAOCompany {
   public List<Company> paginatedList(Integer size, Integer offset) {
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
                                                                            offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
     ) {
       if (size != null && offset != null) {
-        rCompanyList = this.mapper.mapList(mResultSet);
+        rCompanyList = mapper.mapList(mResultSet);
       }
     }
     catch (SQLException e) {
-      this.LOG.warn("Couldn't execute select in list : " + e.getMessage());
+      LOG.warn("Couldn't execute select in list : " + e.getMessage());
     }
     catch (NullPointerException e) {
-      this.LOG.error("An object is null (probably connection) ");
+      LOG.error("An object is null (probably connection) ");
     }
     return rCompanyList;
   }
 
   private PreparedStatement preparedSelectLimitStatement(Connection connection, Integer size,
       Integer offset) throws SQLException {
-    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_LIMIT);
+    PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LIMIT);
     preparedStatement.setInt(1, size);
     preparedStatement.setInt(2, offset);
     return preparedStatement;
