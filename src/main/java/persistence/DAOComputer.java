@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exception.DAOUnexecutedQuery;
+import exception.PropertiesNotFoundException;
 import mapping.ComputerMapper;
 import model.Company;
 import model.Computer;
@@ -32,10 +33,10 @@ public class DAOComputer {
 
   ComputerMapper mapper = new ComputerMapper();
 
-  public void create(Computer computer) throws DAOUnexecutedQuery {
+  public void create(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.CREATE)
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(CREATE)
     ) {
       preparedStatement.setString(1, computer.getName());
       preparedStatement.setDate(2, computer.getIntroduced());
@@ -51,9 +52,9 @@ public class DAOComputer {
     }
   }
 
-  public void delete(Computer computer) throws DAOUnexecutedQuery {
+  public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareDeleteStatement(connection, computer.getId());
     ) {
       preparedStatement.executeUpdate();
@@ -65,20 +66,20 @@ public class DAOComputer {
 
   private PreparedStatement prepareDeleteStatement(Connection connection, Long id)
       throws SQLException {
-    PreparedStatement preparedStatement = connection.prepareStatement(this.DELETE);
+    PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
     preparedStatement.setLong(1, id);
     return preparedStatement;
   }
 
-  public List<Computer> list() {
-    List<Computer> rComputerList = new ArrayList<Computer>();
+  public List<Computer> list() throws PropertiesNotFoundException {
+    List<Computer> rComputerList = new ArrayList<>();
     ResultSet      mResultSet    = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT)
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(SELECT)
     ) {
       mResultSet    = preparedStatement.executeQuery();
-      rComputerList = this.mapper.mapList(mResultSet);
+      rComputerList = mapper.mapList(mResultSet);
 
     }
     catch (SQLException e) {
@@ -90,14 +91,14 @@ public class DAOComputer {
     return rComputerList;
   }
 
-  public Optional<Computer> read(Long id) throws DAOUnexecutedQuery {
+  public Optional<Computer> read(Long id) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     Optional<Computer> oComputer = Optional.empty();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
-      oComputer = this.mapper.map(resultSet);
+      oComputer = mapper.map(resultSet);
     }
     catch (SQLException e) {
       LOG.error("Couldn't execute the select query.");
@@ -108,15 +109,15 @@ public class DAOComputer {
 
   private PreparedStatement prepareReadStatement(Connection connection, Long id)
       throws SQLException {
-    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_WHEREID);
+    PreparedStatement preparedStatement = connection.prepareStatement(SELECT_WHEREID);
     preparedStatement.setLong(1, id);
     return preparedStatement;
   }
 
-  public void update(Computer computer) {
+  public void update(Computer computer) throws PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.UPDATE)
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)
     ) {
       preparedStatement.setString(1, computer.getName());
       preparedStatement.setDate(2, computer.getIntroduced());
@@ -130,16 +131,17 @@ public class DAOComputer {
     }
   }
 
-  public List<Computer> paginatedList(Integer size, Integer offset) {
+  public List<Computer> paginatedList(Integer size, Integer offset)
+      throws PropertiesNotFoundException {
     List<Computer> rComputerList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
                                                                            offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
     ) {
       if (size != null && offset != null) {
-        rComputerList = this.mapper.mapList(mResultSet);
+        rComputerList = mapper.mapList(mResultSet);
       }
     }
     catch (SQLException e) {
@@ -152,18 +154,19 @@ public class DAOComputer {
   }
 
   private PreparedStatement preparedSelectLimitStatement(Connection connection, Integer size,
-      Integer offset) throws SQLException {
-    PreparedStatement preparedStatement = connection.prepareStatement(this.SELECT_LIMIT);
+      Integer offset)
+      throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LIMIT);
     preparedStatement.setInt(1, size);
     preparedStatement.setInt(2, offset);
     return preparedStatement;
   }
 
-  public Integer count() {
+  public Integer count() throws PropertiesNotFoundException {
     Integer count = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(this.COUNT);
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = connection.prepareStatement(COUNT);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
       if (resultSet.first()) {

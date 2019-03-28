@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import service.MenuEnum;
+import controller.MenuEnum;
 
 /**
  * Class containing static methods for user interactions (mostly prompts and
@@ -104,8 +104,11 @@ public class UIHelper {
    */
   public static void displayMenu() {
     System.out.println("========== Computer DataBase ==========");
-    Stream.of(MenuEnum.values()).forEach(
-        item -> System.out.println(String.format("%d - %s", item.ordinal(), item.toString())));
+    Stream
+          .of(MenuEnum.values())
+          .forEach(
+                   item -> System.out.println(String.format("%d - %s", item.ordinal(),
+                                                            item.toString())));
   }
 
   /**

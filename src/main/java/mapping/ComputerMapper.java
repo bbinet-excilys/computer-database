@@ -74,7 +74,7 @@ public class ComputerMapper {
     return rComputerList;
   }
 
-  public ComputerDTO computerToDTO(Computer computer) {
+  public static ComputerDTO computerToDTO(Computer computer) {
     ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
     cDTOBuilder.withId(computer.getId());
     cDTOBuilder.withName(computer.getName());

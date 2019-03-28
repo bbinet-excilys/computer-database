@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import exception.DAOUnexecutedQuery;
+import exception.PropertiesNotFoundException;
 import model.Company;
 import model.Computer;
 import model.Computer.ComputerBuilder;
@@ -53,6 +54,9 @@ public class ComputerController {
         logger.warn(e.getMessage());
         UIHelper.displayError("One argument passed for creation was wrong : " + e.getMessage());
       }
+      catch (PropertiesNotFoundException e) {
+        UIHelper.displayError(e.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("The computer must have a name");
     });
@@ -71,12 +75,18 @@ public class ComputerController {
           catch (DAOUnexecutedQuery e) {
             UIHelper.displayError("The computer has not been deleted.\n" + e.getMessage());
           }
+          catch (PropertiesNotFoundException e) {
+            UIHelper.displayError(e.getMessage());
+          }
         }, () -> {
           UIHelper.displayError("This computer ID doesn't exist");
         });
       }
-      catch (DAOUnexecutedQuery e1) {
-        UIHelper.displayError(e1.getMessage());
+      catch (DAOUnexecutedQuery e) {
+        UIHelper.displayError(e.getMessage());
+      }
+      catch (PropertiesNotFoundException e) {
+        UIHelper.displayError(e.getMessage());
       }
     }, () -> {
       UIHelper.displayError("Please enter a valid ID.");
@@ -96,6 +106,9 @@ public class ComputerController {
         });
       }
       catch (DAOUnexecutedQuery e) {
+        UIHelper.displayError(e.getMessage());
+      }
+      catch (PropertiesNotFoundException e) {
         UIHelper.displayError(e.getMessage());
       }
     }, () -> {
@@ -130,7 +143,16 @@ public class ComputerController {
           computer.setCompany(DAOFactory.INSTANCE.getDAOCompany()
                                                  .read(companyId)
                                                  .orElseGet(computer::getCompany));
-          computerService.update(computer);
+          try {
+            computerService.update(computer);
+          }
+          catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+            UIHelper.displayError(e.getMessage());
+          }
+          catch (PropertiesNotFoundException e) {
+            UIHelper.displayError(e.getMessage());
+          }
         }, () -> {
           UIHelper.displayError("This computer ID doesn't exist in database");
         });
@@ -142,33 +164,48 @@ public class ComputerController {
         logger.warn(e.getMessage());
         UIHelper.displayError("One argument passed for update was wrong : " + e.getMessage());
       }
+      catch (PropertiesNotFoundException e) {
+        UIHelper.displayError(e.getMessage());
+      }
     }, () -> {
       UIHelper.displayError("Please enter a valid ID.");
     });
   }
 
   public void list() {
-    List<Computer> lComputer = computerService.list();
-    EntityUI.printComputerList(lComputer);
+    List<Computer> lComputer;
+    try {
+      lComputer = computerService.list();
+      EntityUI.printComputerList(lComputer);
+    }
+    catch (PropertiesNotFoundException e) {
+      UIHelper.displayError(e.getMessage());
+    }
   }
 
   public void pagedList() {
     UIHelper.promptInt("How many computers per page?").ifPresent(pageSize -> {
-      ComputerPage cPage = new ComputerPage(pageSize);
-      whileLoop: do {
-        EntityUI.printComputerList(cPage.getCurrentPage());
-        Integer choice = UIHelper.promptPage(cPage.getPage());
-        switch (choice) {
-          case -1:
-            cPage.previousPage();
-            break;
-          case 1:
-            cPage.nextPage();
-            break;
-          default:
-            break whileLoop;
-        }
-      } while (true);
+      ComputerPage cPage;
+      try {
+        cPage = new ComputerPage(pageSize);
+        whileLoop: do {
+          EntityUI.printComputerList(cPage.getCurrentPage());
+          Integer choice = UIHelper.promptPage(cPage.getPage());
+          switch (choice) {
+            case -1:
+              cPage.previousPage();
+              break;
+            case 1:
+              cPage.nextPage();
+              break;
+            default:
+              break whileLoop;
+          }
+        } while (true);
+      }
+      catch (PropertiesNotFoundException e) {
+        UIHelper.displayError(e.getMessage());
+      }
     });
   }
 

@@ -31,33 +31,17 @@ $("#addComputerForm").validate({
   errorClass: "uk-form-danger"
 });
 
-
-// "computerDiscontinued": {
-//   min: {
-//     param: introduced.toISOString(),
-//     depends: function (element) {
-//       if (typeof introduced === 'undefined') {
-//         return false;
-//       } else {
-//         return !isNaN(introduced.valueOf());
-//       }
-//     }
-//   }
-// }
-
 $("#computerName").focusout(function (e) {
   $(this).val($(this).val().trim());
 });
 
 $("#computerIntroduced").change(function () {
-  console.log("value" + this.value);
   introduced = new Date(this.value);
   if (!isNaN(introduced.valueOf())) {
     var tempDate = new Date(this.value);
     tempDate.setDate(tempDate.getDate() + 1);
     var isoDate = tempDate.toISOString();
     var limDate = isoDate.substr(0, isoDate.indexOf('T'));
-    console.log("tempDate" + limDate);
     $("#computerDiscontinued")[0].setAttribute("min", limDate);
     $("#computerDiscontinued").rules("add", {
       min: {
