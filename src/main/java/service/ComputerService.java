@@ -51,6 +51,7 @@ public class ComputerService {
 
   public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     ComputerValidator.computerIsValid(computer);
+    CompanyValidator.companyIsValid(computer.getCompany());
     dao.delete(computer);
   }
 
