@@ -1,11 +1,11 @@
 package dto;
 
 public class ComputerDTO {
-  private long   id;
+  private Long   id;
   private String name;
   private String introduced;
   private String discontinued;
-  private long   companyId;
+  private Long   companyId;
   private String companyName;
 
   private ComputerDTO(ComputerDTOBuilder builder) {
@@ -17,11 +17,11 @@ public class ComputerDTO {
     companyName  = builder.companyName;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
@@ -49,11 +49,11 @@ public class ComputerDTO {
     this.discontinued = discontinued;
   }
 
-  public long getCompanyId() {
+  public Long getCompanyId() {
     return companyId;
   }
 
-  public void setCompanyId(long companyId) {
+  public void setCompanyId(Long companyId) {
     this.companyId = companyId;
   }
 
@@ -70,16 +70,16 @@ public class ComputerDTO {
   }
 
   public static final class ComputerDTOBuilder {
-    private long   id;
+    private Long   id;
     private String name;
     private String introduced;
     private String discontinued;
-    private long   companyId;
+    private Long   companyId;
     private String companyName;
 
     private ComputerDTOBuilder() {}
 
-    public ComputerDTOBuilder withId(long id) {
+    public ComputerDTOBuilder withId(Long id) {
       this.id = id;
       return this;
     }
@@ -99,7 +99,7 @@ public class ComputerDTO {
       return this;
     }
 
-    public ComputerDTOBuilder withCompanyId(long companyId) {
+    public ComputerDTOBuilder withCompanyId(Long companyId) {
       this.companyId = companyId;
       return this;
     }

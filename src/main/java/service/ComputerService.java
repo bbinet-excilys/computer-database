@@ -2,6 +2,7 @@ package service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,10 @@ public class ComputerService {
 
   private DAOComputer dao = new DAOComputer();
 
-  public void create(Computer computer)
+  public void create(ComputerDTO computerDTO)
       throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
+    Computer computer = ComputerMapper.computerFromDTO(computerDTO);
+    System.out.println(computer);
     if (computer.getCompany() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
@@ -38,19 +41,22 @@ public class ComputerService {
     dao.create(computer);
   }
 
-  public Optional<Computer> read(Long id)
+  public Optional<ComputerDTO> read(Long id)
       throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    return dao.read(id);
+    return dao.read(id).map(ComputerMapper::computerToDTO);
   }
 
-  public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
+  public void delete(ComputerDTO computerDTO)
+      throws DAOUnexecutedQuery, PropertiesNotFoundException, IllegalArgumentException {
+    Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     ComputerValidator.computerIsValid(computer);
     CompanyValidator.companyIsValid(computer.getCompany());
     dao.delete(computer);
   }
 
-  public void update(Computer computer)
+  public void update(ComputerDTO computerDTO)
       throws IllegalArgumentException, PropertiesNotFoundException {
+    Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     if (computer.getCompany() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
@@ -58,8 +64,8 @@ public class ComputerService {
     dao.update(computer);
   }
 
-  public List<Computer> list() throws PropertiesNotFoundException {
-    return dao.list();
+  public List<ComputerDTO> list() throws PropertiesNotFoundException {
+    return dao.list().stream().map(ComputerMapper::computerToDTO).collect(Collectors.toList());
   }
 
 }

@@ -2,8 +2,10 @@ package service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
-import model.Company;
+import dto.CompanyDTO;
+import mapping.CompanyMapper;
 import persistence.DAOCompany;
 import persistence.DAOFactory;
 
@@ -17,12 +19,15 @@ public class CompanyService {
 
   private DAOCompany dao = DAOFactory.INSTANCE.getDAOCompany();
 
-  public List<Company> list() {
-    return this.dao.list();
+  public List<CompanyDTO> list() {
+    return dao.list()
+              .stream()
+              .map(CompanyMapper::companyToDTO)
+              .collect(Collectors.toList());
   }
 
-  public Optional<Company> read(Long id) {
-    return this.dao.read(id);
+  public Optional<CompanyDTO> read(Long id) {
+    return dao.read(id).map(CompanyMapper::companyToDTO);
   }
 
 }

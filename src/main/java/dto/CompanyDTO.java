@@ -2,24 +2,24 @@ package dto;
 
 public class CompanyDTO {
 
-  private long   id;
+  private Long   id;
   private String name;
 
   private CompanyDTO(CompanyDTOBuilder builder) {
-    this.id   = builder.id;
-    this.name = builder.name;
+    id   = builder.id;
+    name = builder.name;
   }
 
   public long getId() {
-    return this.id;
+    return id;
   }
 
-  public void setId(long id) {
+  public void setId(Long id) {
     this.id = id;
   }
 
   public String getName() {
-    return this.name;
+    return name;
   }
 
   public void setName(String name) {
@@ -31,12 +31,12 @@ public class CompanyDTO {
   }
 
   public static final class CompanyDTOBuilder {
-    private long   id;
+    private Long   id;
     private String name;
 
     private CompanyDTOBuilder() {}
 
-    public CompanyDTOBuilder withId(long id) {
+    public CompanyDTOBuilder withId(Long id) {
       this.id = id;
       return this;
     }
