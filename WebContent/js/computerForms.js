@@ -64,4 +64,9 @@ $("#computerIntroduced").change(function () {
 $("#computerDiscontinued").change(function () {
   discontinued = new Date(this.value);
   console.log("undefined :" + isNaN(discontinued.valueOf()))
-})
+});
+
+$("#computerCompanyId").change(function () {
+  $("#computerCompanyName").val($("#computerCompanyId option:selected").text());
+  console.log("Changed : " + $("#computerCompanyId option:selected").text());
+});

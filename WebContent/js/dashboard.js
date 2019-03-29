@@ -89,3 +89,8 @@ $(document).keydown(function (e) {
       break;
   }
 });
+
+function setNumberPerPage(number) {
+  number = number || 10;
+  $("#hiddenForm input[name=pageSize]").val(number);
+}
