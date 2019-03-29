@@ -43,7 +43,7 @@ public class CompanyMapper {
   public List<Company> mapList(ResultSet resultSet) {
     List<Company> rCompanyList = null;
     try {
-      rCompanyList = new ArrayList<Company>();
+      rCompanyList = new ArrayList<>();
       while (resultSet.next()) {
         CompanyBuilder companyBuilder = Company.builder();
         companyBuilder.withId(resultSet.getLong("id"));
@@ -60,14 +60,14 @@ public class CompanyMapper {
     return rCompanyList;
   }
 
-  public CompanyDTO companyToDTO(Company company) {
+  public static CompanyDTO companyToDTO(Company company) {
     CompanyDTOBuilder cDTOBuilder = CompanyDTO.builder();
     cDTOBuilder.withId(company.getId());
     cDTOBuilder.withName(company.getName());
     return cDTOBuilder.build();
   }
 
-  public Company companyFromDTO(CompanyDTO companyDTO) {
+  public static Company companyFromDTO(CompanyDTO companyDTO) {
     CompanyBuilder cBuilder = Company.builder();
     cBuilder.withId(companyDTO.getId());
     cBuilder.withName(companyDTO.getName());

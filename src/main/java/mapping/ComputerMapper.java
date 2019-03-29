@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.commons.validator.routines.DateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class ComputerMapper {
   public List<Computer> mapList(ResultSet resultSet) {
     List<Computer> rComputerList = null;
     try {
-      rComputerList = new ArrayList<Computer>();
+      rComputerList = new ArrayList<>();
       while (resultSet.next()) {
         ComputerBuilder computerBuilder = Computer.builder();
         computerBuilder.withId(resultSet.getLong("computer.id"));
@@ -78,25 +79,42 @@ public class ComputerMapper {
     ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
     cDTOBuilder.withId(computer.getId());
     cDTOBuilder.withName(computer.getName());
-    cDTOBuilder.withIntroduced(DATE_FORMATTER.format(computer.getIntroduced().toLocalDate()));
-    cDTOBuilder.withDiscontinued(DATE_FORMATTER.format(computer.getDiscontinued().toLocalDate()));
-    cDTOBuilder.withCompanyId(computer.getCompany().getId());
-    cDTOBuilder.withCompanyName(computer.getCompany().getName());
+    Optional.ofNullable(computer.getIntroduced())
+            .map(Date::toLocalDate)
+            .map(LocalDate::toString)
+            .ifPresent(date -> cDTOBuilder.withIntroduced(date));
+    Optional.ofNullable(computer.getDiscontinued())
+            .map(Date::toLocalDate)
+            .map(LocalDate::toString)
+            .ifPresent(date -> cDTOBuilder.withDiscontinued(date));
+    Optional.ofNullable(computer.getCompany())
+            .map(Company::getId)
+            .ifPresent(id -> cDTOBuilder.withCompanyId(id));
+    Optional.ofNullable(computer.getCompany())
+            .map(Company::getName)
+            .ifPresent(name -> cDTOBuilder.withCompanyName(name));
     return cDTOBuilder.build();
   }
 
-  public Computer computerFromDTO(ComputerDTO computerDTO) {
-    ComputerBuilder cBuilder = Computer.builder();
-    cBuilder.withId(computerDTO.getId());
-    cBuilder.withName(computerDTO.getName());
-    LocalDate ldtIntroduced = LocalDate.parse(computerDTO.getIntroduced(), DATE_FORMATTER);
-    Date      introduced    = Date.valueOf(ldtIntroduced);
-    cBuilder.withIntroduced(introduced);
-    LocalDate ldtDiscontinued = LocalDate.parse(computerDTO.getDiscontinued(),
-                                                DATE_FORMATTER);
-    Date      discontinued    = Date.valueOf(ldtDiscontinued);
-    cBuilder.withDiscontinued(discontinued);
-
-    return null;
+  public static Computer computerFromDTO(ComputerDTO computerDTO) {
+    DateValidator   dValidator      = new DateValidator();
+    ComputerBuilder computerBuilder = Computer.builder();
+    computerBuilder.withId(computerDTO.getId());
+    computerBuilder.withName(computerDTO.getName());
+    Optional.ofNullable(computerDTO.getIntroduced()).ifPresent(strDate -> {
+      Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
+      computerBuilder.withIntroduced(date);
+    });
+    Optional.ofNullable(computerDTO.getDiscontinued()).ifPresent(strDate -> {
+      Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
+      computerBuilder.withDiscontinued(date);
+    });
+    CompanyBuilder companyBuilder = Company.builder();
+    Optional.ofNullable(computerDTO.getCompanyId())
+            .ifPresent(companyId -> companyBuilder.withId(companyId));
+    Optional.ofNullable(computerDTO.getCompanyName())
+            .ifPresent(companyName -> companyBuilder.withName(companyName));
+    computerBuilder.withCompany(companyBuilder.build());
+    return computerBuilder.build();
   }
 }
