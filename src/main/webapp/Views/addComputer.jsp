@@ -98,7 +98,7 @@
   <script src="js/jquery.validate.min.js"></script>
   <script src="js/uikit.min.js"></script>
   <script src="js/uikit-icons.min.js"></script>
-  <script src="js/addComputer.js"></script>
+  <script src="js/computerForms.js"></script>
 </body>
 
 </html>

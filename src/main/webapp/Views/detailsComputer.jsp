@@ -68,7 +68,7 @@
         <dt>Discontinuation date :</dt>
         <dd>${computer.discontinued}</dd>
         <dt>Company :</dt>
-        <dd>${computer.company.name}</dd>
+        <dd>${computer.companyName}</dd>
       </dl>
 
     </div>

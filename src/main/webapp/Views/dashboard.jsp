@@ -46,12 +46,12 @@
 
     <div class="uk-grid">
       <div class="uk-width-1-1">
-        <h1>Computer list</h1>
+        <h1>Computer list - ${count} found</h1>
       </div>
     </div>
 
     <div class="uk-grid uk-flex-left" uk-grid>
-      <div class="uk-width-5-6">
+      <div class="uk-width-1-3">
         <form class="uk-form-horizontal">
           <div>
             <label class="uk-form-label" for="searchComputerByName">Search by Name </label>
@@ -60,7 +60,14 @@
           </div>
         </form>
       </div>
-      <div class="uk-width-1-6">
+      <div class="uk-width-1-3">
+        <div class="uk-button-group">
+          <a class="uk-button uk-button-default" href="?page=1&pageSize=10">10</a>
+          <a class=" uk-button uk-button-default" href="?page=1&pageSize=50">50</a>
+          <a class=" uk-button uk-button-default" href="?page=1&pageSize=100">100</a>
+        </div>
+      </div>
+      <div class=" uk-width-1-3">
         <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addComputer">Add Computer</a>
       </div>
     </div>
@@ -94,8 +101,9 @@
                 <td>${computer.introduced}</td>
                 <td>${computer.discontinued}</td>
                 <td>${computer.company.name}</td>
-                <td><button class="uk-button uk-button-primary uk-button-small uk-padding-small-left"><span
-                      uk-icon="icon: pencil"></span></button></td>
+                <td><a href="editcomputer?computerId=${computer.id}"
+                    class="uk-button uk-button-primary uk-button-small uk-padding-small-left"><span
+                      uk-icon="icon: pencil"></span></a></td>
                 <td><button class="uk-button uk-button-danger uk-button-small uk-padding-small-left"><span
                       uk-icon="icon: trash"></span></button></td>
                 <td>
@@ -126,13 +134,13 @@
           </c:if>
         </ul>
       </div>
-    </div>
 
-    <script src="js/jquery.min.js"></script>
-    <script src="js/uikit.min.js"></script>
-    <script src="js/uikit-icons.min.js"></script>
-    <script src="js/dashboard.js"></script>
+    </div>
   </div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/uikit.min.js"></script>
+  <script src="js/uikit-icons.min.js"></script>
+  <script src="js/dashboard.js"></script>
 </body>
 
 </html>
