@@ -1,7 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -16,13 +15,13 @@ import org.apache.commons.validator.routines.DateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dto.CompanyDTO;
+import dto.ComputerDTO;
+import dto.ComputerDTO.ComputerDTOBuilder;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
-import model.Company;
-import model.Computer;
-import model.Computer.ComputerBuilder;
 import service.CompanyService;
 import service.ComputerService;
 
@@ -56,7 +55,7 @@ public class AddComputer extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    List<Company> companies = companyService.list();
+    List<CompanyDTO> companies = companyService.list();
     request.setAttribute("companies", companies);
     getServletContext().getRequestDispatcher("/Views/addComputer.jsp").forward(request, response);
   }
@@ -68,62 +67,38 @@ public class AddComputer extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Optional<Object> oName = Optional.ofNullable(request.getParameter("computerName"));
-    oName.ifPresentOrElse(name -> {
-      String          sName    = (String) name;
-      ComputerBuilder cBuilder = Computer.builder();
-      cBuilder.withName(sName);
-
-      Optional<String> oIntroduced = Optional.ofNullable(request.getParameter("computerIntroduced"));
-      oIntroduced.filter(Predicate.not(String::isBlank))
-                 .ifPresent(sIntroduced -> {
-                   Date introduced = new Date(dValidator.validate(sIntroduced, "yyyy-MM-dd")
-                                                        .getTime());
-                   cBuilder.withIntroduced(introduced);
-                 });
-
-      Optional<String> oDiscontinued = Optional.ofNullable(request.getParameter("computerDiscontinued"));
-      oDiscontinued.filter(Predicate.not(String::isBlank))
-                   .ifPresent(sDiscontinued -> {
-                     Date discontinued = new Date(dValidator.validate(sDiscontinued, "yyyy-MM-dd")
-                                                            .getTime());
-                     cBuilder.withDiscontinued(discontinued);
-                   });
-
-      Optional<String> oCompanyId = Optional.ofNullable(request.getParameter("computerCompanyId"));
-      oCompanyId.filter(Predicate.not(String::isBlank))
-                .filter(str -> {
-                  return str.matches("\\d+");
-                })
-                .ifPresent(sCompanyId -> {
-                  Long    id       = Long.parseLong(sCompanyId);
-                  Optional<Company> oCompany = companyService.read(id);
-                  oCompany.ifPresent(company -> {
-                    cBuilder.withCompany(company);
-                  });
-                });
-      ComputerService cService = new ComputerService();
-      try {
-        cService.create(cBuilder.build());
-        setSuccessMessage(request, "Success !",
-                          String.format("Computer %s created", sName));
-      }
-      catch (DAOUnexecutedQuery e) {
-        setErrorMessage(request, "Unexecuted Query",
-                        "An error occured, the computer has not been created : " + e.getMessage());
-      }
-      catch (IllegalArgumentException e) {
-        setErrorMessage(request, "Illegal Argument",
-                        "An error occured, the computer has not been created : " + e.getMessage());
-      }
-      catch (PropertiesNotFoundException e) {
-        setErrorMessage(request, "Connection Error",
-                        "The connection to the database could not be established");
-      }
-    }, () -> {
-      setErrorMessage(request, "Computer not created",
-                      "The name field was empty :'(");
-    });
+    ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
+    cDTOBuilder.withName(Optional.ofNullable(request.getParameter("computerName"))
+                                 .orElseGet(() -> null));
+    cDTOBuilder.withIntroduced(Optional.ofNullable(request.getParameter("computerIntroduced"))
+                                       .filter(Predicate.not(String::isBlank))
+                                       .orElseGet(() -> null));
+    cDTOBuilder.withDiscontinued(Optional.ofNullable(request.getParameter("computerDiscontinued"))
+                                         .filter(Predicate.not(String::isBlank))
+                                         .orElseGet(() -> null));
+    Optional.ofNullable(request.getParameter("computerCompanyId"))
+            .filter(Predicate.not(String::isBlank))
+            .map(Long::parseLong)
+            .ifPresent(companyId -> {
+              cDTOBuilder.withCompanyId(companyId);
+              cDTOBuilder.withCompanyName(companyService.read(companyId)
+                                                        .map(CompanyDTO::getName)
+                                                        .orElseGet(() -> null));
+            });
+    try {
+      computerService.create(cDTOBuilder.build());
+      setSuccessMessage(request, "Success", String.format("Computer %s successfully created",
+                                                          cDTOBuilder.build().getName()));
+    }
+    catch (IllegalArgumentException e) {
+      setErrorMessage(request, "Parameter Error", e.getMessage());
+    }
+    catch (PropertiesNotFoundException e) {
+      setErrorMessage(request, "Connection error", "Couldn't connect to the database");
+    }
+    catch (DAOUnexecutedQuery e) {
+      setErrorMessage(request, "Query Error", "Couldn't execute the query");
+    }
     doGet(request, response);
   }
 

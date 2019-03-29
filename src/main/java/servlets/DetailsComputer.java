@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dto.ComputerDTO;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
-import model.Computer;
 import service.ComputerService;
 
 /**
@@ -26,17 +26,10 @@ import service.ComputerService;
   description = "Computer details page")
 
 public class DetailsComputer extends HttpServlet {
-
-  /**
-   *
-   */
   private static final long serialVersionUID = 1L;
 
   ComputerService computerService = new ComputerService();
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
   public DetailsComputer() {}
 
   /**
@@ -46,12 +39,12 @@ public class DetailsComputer extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Optional<Long> oComputerId = Optional.of(request.getParameter("computerId"))
+    Optional<Long> oComputerId = Optional.ofNullable(request.getParameter("computerId"))
                                          .filter(Predicate.not(String::isBlank))
                                          .map(Long::parseLong);
     oComputerId.ifPresentOrElse(computerId -> {
       try {
-        Optional<Computer> oComputer = computerService.read(computerId);
+        Optional<ComputerDTO> oComputer = computerService.read(computerId);
         oComputer.ifPresent(computer -> {
           request.setAttribute("computer", computer);
         });

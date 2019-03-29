@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dto.ComputerDTO;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
-import model.Computer;
 import service.ComputerService;
 
 /**
@@ -60,16 +60,12 @@ public class DeleteComputer extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    Optional<Long>    oComputerId = Optional
-                                            .of(request.getParameter("computerId"))
-                                            .filter(Predicate.not(String::isBlank))
-                                            .map(param -> Optional.of(Long.parseLong(param)))
-                                            .get();
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
-    mDTOBuilder.withTitle("Error");
+    Optional<Long> oComputerId = Optional.of(request.getParameter("computerId"))
+                                         .filter(Predicate.not(String::isBlank))
+                                         .map(param -> Optional.of(Long.parseLong(param)))
+                                         .get();
     oComputerId.ifPresent(computerId -> {
-      Optional<Computer> oComputer;
+      Optional<ComputerDTO> oComputer;
       try {
         oComputer = computerService.read(computerId);
         oComputer.ifPresent(computer -> {
@@ -85,6 +81,9 @@ public class DeleteComputer extends HttpServlet {
           catch (PropertiesNotFoundException e) {
             setErrorMessage(request, "Connection Error",
                             "The connection to the database could not be established");
+          }
+          catch (IllegalArgumentException e) {
+            setErrorMessage(request, "Parameter error", e.getMessage());
           }
         });
       }

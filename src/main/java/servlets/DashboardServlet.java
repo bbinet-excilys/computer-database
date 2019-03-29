@@ -48,7 +48,7 @@ public class DashboardServlet extends HttpServlet {
                                                   .orElse("1"));
       Integer pageSize = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
                                                   .orElse("10"));
-      Double  cCount   = (double) DAOFactory.INSTANCE.getDAOComputer().count();
+      Double  cCount   = (double) computers.size();
       Integer pageMax  = (int) Math.ceil((cCount / pageSize));
       if (page <= pageMax && page > 0) {
         ComputerPage cPage = new ComputerPage(pageSize);
@@ -58,6 +58,7 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("pageMax", pageMax);
         request.setAttribute("pageSize", pageSize);
+        request.setAttribute("count", cCount.intValue());
         getServletContext().getRequestDispatcher("/Views/dashboard.jsp")
                            .forward(request, response);
       }
