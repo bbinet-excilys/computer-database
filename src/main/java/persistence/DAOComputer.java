@@ -23,8 +23,9 @@ public class DAOComputer {
    * Logger for the DAOComputer Class.
    */
   static final Logger  LOG            = LoggerFactory.getLogger(DAOComputer.class);
-  private final String SELECT         = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id;";
-  private final String SELECT_LIMIT   = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id LIMIT ? OFFSET ?;";
+  private final String SELECT_NAME    = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id WHERE computer.name like ? OR company.name like ?;";
+  private final String SELECT         = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id;";
+  private final String SELECT_LIMIT   = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id LIMIT ? OFFSET ?;";
   private final String CREATE         = "INSERT INTO computer(name, introduced, discontinued, company_id) VALUES(?,?,?,?);";
   private final String UPDATE         = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;";
   private final String DELETE         = "DELETE FROM computer WHERE id=?;";
@@ -55,7 +56,8 @@ public class DAOComputer {
   public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
         Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
-        PreparedStatement preparedStatement = prepareDeleteStatement(connection, computer.getId());
+        PreparedStatement preparedStatement = prepareDeleteStatement(connection,
+                                                                     computer.getId());
     ) {
       preparedStatement.executeUpdate();
     }
@@ -65,7 +67,7 @@ public class DAOComputer {
   }
 
   private PreparedStatement prepareDeleteStatement(Connection connection, Long id)
-      throws SQLException {
+    throws SQLException {
     PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
     preparedStatement.setLong(1, id);
     return preparedStatement;
@@ -79,7 +81,7 @@ public class DAOComputer {
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT)
     ) {
       mResultSet    = preparedStatement.executeQuery();
-      rComputerList = mapper.mapList(mResultSet);
+      rComputerList = mapper.mapResultSetList(mResultSet);
 
     }
     catch (SQLException e) {
@@ -98,17 +100,16 @@ public class DAOComputer {
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
-      oComputer = mapper.map(resultSet);
+      oComputer = mapper.mapResultSet(resultSet);
     }
     catch (SQLException e) {
-      LOG.error("Couldn't execute the select query.");
       throw new DAOUnexecutedQuery("Couldn't execute the select query", e);
     }
     return oComputer;
   }
 
   private PreparedStatement prepareReadStatement(Connection connection, Long id)
-      throws SQLException {
+    throws SQLException {
     PreparedStatement preparedStatement = connection.prepareStatement(SELECT_WHEREID);
     preparedStatement.setLong(1, id);
     return preparedStatement;
@@ -128,11 +129,12 @@ public class DAOComputer {
     }
     catch (SQLException e) {
       LOG.warn("Couldn't update : " + e.getMessage());
+
     }
   }
 
   public List<Computer> paginatedList(Integer size, Integer offset)
-      throws PropertiesNotFoundException {
+    throws PropertiesNotFoundException {
     List<Computer> rComputerList = null;
     try (
         Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
@@ -141,7 +143,7 @@ public class DAOComputer {
         ResultSet mResultSet = preparedStatement.executeQuery();
     ) {
       if (size != null && offset != null) {
-        rComputerList = mapper.mapList(mResultSet);
+        rComputerList = mapper.mapResultSetList(mResultSet);
       }
     }
     catch (SQLException e) {
@@ -155,7 +157,7 @@ public class DAOComputer {
 
   private PreparedStatement preparedSelectLimitStatement(Connection connection, Integer size,
       Integer offset)
-      throws SQLException {
+    throws SQLException {
     PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LIMIT);
     preparedStatement.setInt(1, size);
     preparedStatement.setInt(2, offset);
@@ -177,5 +179,32 @@ public class DAOComputer {
       LOG.warn("Couldn't execute count query : " + e.getMessage());
     }
     return count;
+  }
+
+  public List<Computer> searchByName(String name)
+    throws PropertiesNotFoundException, DAOUnexecutedQuery {
+    List<Computer> computers = new ArrayList<>();
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = prepareSelectByNameStatement(connection, name);
+        ResultSet resultSet = preparedStatement.executeQuery();
+    ) {
+      computers = mapper.mapResultSetList(resultSet);
+    }
+    catch (SQLException e) {
+      throw new DAOUnexecutedQuery("Couldn't execute the select query", e);
+    }
+    return computers;
+  }
+
+  private PreparedStatement prepareSelectByNameStatement(Connection connection, String name)
+    throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(SELECT_NAME);
+    StringBuilder     strBuilder        = new StringBuilder();
+    strBuilder.append("%").append(name).append("%");
+    LOG.debug(strBuilder.toString());
+    preparedStatement.setObject(1, strBuilder.toString());
+    preparedStatement.setObject(2, strBuilder.toString());
+    return preparedStatement;
   }
 }
