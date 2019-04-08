@@ -1,5 +1,7 @@
 package dto;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class ComputerDTO {
   private Long   id;
   private String name;
@@ -63,6 +65,11 @@ public class ComputerDTO {
 
   public void setCompanyName(String companyName) {
     this.companyName = companyName;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
   }
 
   public static ComputerDTOBuilder builder() {
