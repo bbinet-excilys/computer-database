@@ -28,7 +28,7 @@ public class ComputerMapper {
   static final Logger            LOG            = LoggerFactory.getLogger(ComputerMapper.class);
   static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_DATE_TIME;
 
-  public Optional<Computer> map(ResultSet resultSet) {
+  public Optional<Computer> mapResultSet(ResultSet resultSet) {
     Optional<Computer> oComputer = Optional.empty();
     try {
       if (resultSet.first()) {
@@ -51,7 +51,7 @@ public class ComputerMapper {
     return oComputer;
   }
 
-  public List<Computer> mapList(ResultSet resultSet) {
+  public List<Computer> mapResultSetList(ResultSet resultSet) {
     List<Computer> rComputerList = null;
     try {
       rComputerList = new ArrayList<>();
