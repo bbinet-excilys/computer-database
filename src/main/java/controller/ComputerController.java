@@ -7,11 +7,11 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dto.ComputerDTO;
+import dto.ComputerDTO.ComputerDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import model.Company;
-import model.Computer;
-import model.Computer.ComputerBuilder;
 import model.ComputerPage;
 import persistence.DAOFactory;
 import service.ComputerService;
@@ -28,21 +28,22 @@ public class ComputerController {
   public void create() {
     Optional<String> oName = UIHelper.promptString("Enter computer name :");
     oName.ifPresentOrElse(name -> {
-      ComputerBuilder computerBuilder = Computer.builder();
+      ComputerDTOBuilder computerBuilder = ComputerDTO.builder();
       computerBuilder.withName(name);
 
       Optional<Date> oIntroduced = UIHelper.promptDate("Enter introduction date (YYYY-MM-DD) :");
       oIntroduced.ifPresent(introduced -> {
-        computerBuilder.withIntroduced(introduced);
+        computerBuilder.withIntroduced(introduced.toString());
         Optional<Date> oDiscontinued = Optional.empty();
         oDiscontinued = UIHelper.promptDate("Enter discontinuation date (YYYY-MM-DD) :");
-        oDiscontinued.ifPresent(discontinued -> computerBuilder.withDiscontinued(discontinued));
+        oDiscontinued.ifPresent(discontinued -> computerBuilder.withDiscontinued(discontinued.toString()));
       });
 
       Optional<Long> oCompanyId = UIHelper.promptLong("Enter company ID :");
       oCompanyId.ifPresent(companyId -> {
         Company company = DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElse(null);
-        computerBuilder.withCompany(company);
+        computerBuilder.withCompanyId(company.getId());
+        computerBuilder.withCompanyName(company.getName());
       });
       try {
         computerService.create(computerBuilder.build());
@@ -65,7 +66,7 @@ public class ComputerController {
   public void delete() {
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to delete :");
     oId.ifPresentOrElse(id -> {
-      Optional<Computer> oComputer;
+      Optional<ComputerDTO> oComputer;
       try {
         oComputer = computerService.read(id);
         oComputer.ifPresentOrElse(computer -> {
@@ -96,7 +97,7 @@ public class ComputerController {
   public void read() {
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to display :");
     oId.ifPresentOrElse(id -> {
-      Optional<Computer> oComputer;
+      Optional<ComputerDTO> oComputer;
       try {
         oComputer = computerService.read(id);
         oComputer.ifPresentOrElse(computer -> {
@@ -120,7 +121,7 @@ public class ComputerController {
 
     Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to update :");
     oId.ifPresentOrElse(id -> {
-      Optional<Computer> oComputer;
+      Optional<ComputerDTO> oComputer;
       try {
         oComputer = computerService.read(id);
         oComputer.ifPresentOrElse(computer -> {
@@ -131,18 +132,20 @@ public class ComputerController {
                                    .orElseGet(computer::getName));
 
           computer.setIntroduced(UIHelper.promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
+                                         .map(Date::toString)
                                          .orElseGet(computer::getIntroduced));
 
           computer.setDiscontinued(UIHelper.promptDate("Enter the new date of discontinuation of the computer (or empty to keep it) :")
+                                           .map(Date::toString)
                                            .orElseGet(computer::getDiscontinued));
 
           Long companyId = UIHelper.promptLong("Enter the id of the new company (or empty to keep it):")
-                                   .orElse(computer.getCompany()
-                                                   .getId());
+                                   .orElse(computer.getCompanyId());
 
-          computer.setCompany(DAOFactory.INSTANCE.getDAOCompany()
-                                                 .read(companyId)
-                                                 .orElseGet(computer::getCompany));
+          computer.setCompanyId(DAOFactory.INSTANCE.getDAOCompany()
+                                                   .read(companyId)
+                                                   .map(Company::getId)
+                                                   .orElseGet(computer::getCompanyId));
           try {
             computerService.update(computer);
           }
@@ -173,7 +176,7 @@ public class ComputerController {
   }
 
   public void list() {
-    List<Computer> lComputer;
+    List<ComputerDTO> lComputer;
     try {
       lComputer = computerService.list();
       EntityUI.printComputerList(lComputer);

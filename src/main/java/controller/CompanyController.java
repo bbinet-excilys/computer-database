@@ -1,8 +1,5 @@
 package controller;
 
-import java.util.List;
-
-import model.Company;
 import model.CompanyPage;
 import service.CompanyService;
 import service.ServiceFactory;
@@ -14,8 +11,7 @@ public class CompanyController {
   CompanyService companyService = ServiceFactory.INSTANCE.getCompanyService();
 
   public void list() {
-    List<Company> lCompany = this.companyService.list();
-    EntityUI.printCompanyList(lCompany);
+    EntityUI.printCompanyList(companyService.list());
   }
 
   public void pagedList() {
