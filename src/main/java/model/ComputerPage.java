@@ -2,34 +2,33 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dto.ComputerDTO;
 import exception.PropertiesNotFoundException;
-import persistence.DAOComputer;
+import service.ComputerService;
 
 public class ComputerPage {
 
   private Logger logger = LoggerFactory.getLogger(ComputerPage.class);
 
-  private Integer        pageSize    = 10;
-  private Integer        offset      = 0;
-  private Integer        page        = 1;
-  private DAOComputer    dao         = new DAOComputer();
-  private List<Computer> currentPage = new ArrayList<>();
+  private Integer           pageSize    = 10;
+  private Integer           offset      = 0;
+  private Integer           page        = 1;
+  private ComputerService   cService    = new ComputerService();
+  private List<ComputerDTO> currentPage = new ArrayList<>();
+  private List<ComputerDTO> computers;
 
-  public ComputerPage(int pageSize) throws PropertiesNotFoundException {
+  public ComputerPage(Integer pageSize) {
     super();
-    Optional.of(pageSize).filter(val -> val >= 1).ifPresent(size -> setPageSize(size));
-    computeOffset();
-    computePage();
-    logger.debug("Instanciate companyPage");
+    this.pageSize = pageSize;
   }
 
   public void nextPage() throws PropertiesNotFoundException {
-    if (page < dao.count() / pageSize) {
+    if (page < cService.count() / pageSize) {
       page++;
     }
     logger.debug("Next page. Now :" + page);
@@ -39,10 +38,10 @@ public class ComputerPage {
     if (page > 0) {
       page--;
     }
-    logger.info("Prev page. Now :" + page);
+    logger.debug("Prev page. Now :" + page);
   }
 
-  public List<Computer> getCurrentPage() throws PropertiesNotFoundException {
+  public List<ComputerDTO> getCurrentPage() throws PropertiesNotFoundException {
     computeOffset();
     computePage();
     logger.debug(currentPage.size() + "");
@@ -56,9 +55,9 @@ public class ComputerPage {
 
   private void computePage() throws PropertiesNotFoundException {
     logger.debug("Offset " + offset);
-    if (offset < dao.count() && offset >= 0) {
+    if (offset < cService.count() && offset >= 0) {
       logger.debug("Computing company page");
-      currentPage = dao.paginatedList(pageSize, offset);
+      currentPage = computers.stream().skip(offset).limit(pageSize).collect(Collectors.toList());
       logger.debug("Page size " + currentPage.size());
     }
   }
@@ -81,6 +80,14 @@ public class ComputerPage {
 
   public void setPage(Integer page) {
     this.page = page;
+  }
+
+  public List<ComputerDTO> getComputers() {
+    return computers;
+  }
+
+  public void setComputers(List<ComputerDTO> computers) {
+    this.computers = computers;
   }
 
 }
