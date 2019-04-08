@@ -30,4 +30,15 @@ public class CompanyService {
     return dao.read(id).map(CompanyMapper::companyToDTO);
   }
 
+  public Integer count() {
+    return dao.count();
+  }
+
+  public List<CompanyDTO> paginatedList(Integer pageSize, Integer offset) {
+    return dao.paginatedList(pageSize, offset)
+              .stream()
+              .map(CompanyMapper::companyToDTO)
+              .collect(Collectors.toList());
+  }
+
 }
