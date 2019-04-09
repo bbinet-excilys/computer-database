@@ -10,13 +10,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dto.ComputerDTO;
+import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
-import model.Computer;
 import model.ComputerPage;
-import persistence.DAOFactory;
+import service.ComputerService;
 
 /**
- * Servlet implementation class ComputerServlet
+ * Servlet implementation class ComputerServlet.
  */
 @WebServlet(
   name = "dashboard",
@@ -40,25 +41,47 @@ public class DashboardServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    List<Computer> computers;
+    throws ServletException, IOException {
+    List<ComputerDTO> computers;
     try {
-      computers = DAOFactory.INSTANCE.getDAOComputer().list();
-      Integer page     = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
-                                                  .orElse("1"));
-      Integer pageSize = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
-                                                  .orElse("10"));
-      Double  cCount   = (double) computers.size();
-      Integer pageMax  = (int) Math.ceil((cCount / pageSize));
-      if (page <= pageMax && page > 0) {
-        ComputerPage cPage = new ComputerPage(pageSize);
-        cPage.setPage(page);
-        computers = cPage.getCurrentPage();
+      ComputerService computerService = new ComputerService();
+      Integer         page            = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
+                                                                 .orElse("1"));
+      Integer         pageSize        = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
+                                                                 .orElse("10"));
+      ComputerPage    computerPage    = new ComputerPage(pageSize);
+      Optional.ofNullable(request.getParameter("searchName")).ifPresentOrElse(searchedName -> {
+        try {
+          computerPage.setComputers(computerService.paginatedSearchByNameList(searchedName));
+
+        }
+        catch (PropertiesNotFoundException e) {
+          ServletUtils.setErrorMessage(request, "Connection error",
+                                       "Couldn't connect to database, contact administrator");
+        }
+        catch (DAOUnexecutedQuery e) {
+          ServletUtils.setErrorMessage(request, "Query error",
+                                       "Couldn't execute select query " + e.getMessage());
+        }
+      }, () -> {
+        try {
+          computerPage.setComputers(computerService.list());
+        }
+        catch (PropertiesNotFoundException e) {
+          ServletUtils.setErrorMessage(request, "Connection error",
+                                       "Couldn't connect to database, contact administrator");
+        }
+      });
+      computerPage.setPage(page);
+      computers = computerPage.getCurrentPage();
+      if (computers.size() != 0) {
+        Double  computerCount = (double) computerPage.getComputers().size();
+        Integer pageMax       = (int) Math.ceil((computerCount / pageSize));
         request.setAttribute("computers", computers);
         request.setAttribute("page", page);
         request.setAttribute("pageMax", pageMax);
         request.setAttribute("pageSize", pageSize);
-        request.setAttribute("count", cCount.intValue());
+        request.setAttribute("count", computerCount.intValue());
         getServletContext().getRequestDispatcher("/Views/dashboard.jsp")
                            .forward(request, response);
       }
@@ -78,7 +101,8 @@ public class DashboardServlet extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
+
     doGet(request, response);
   }
 

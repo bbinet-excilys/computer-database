@@ -47,13 +47,20 @@ public class EditComputer extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
     Optional<ComputerDTO> oComputer = getRequestComputer(request);
     oComputer.ifPresent(computer -> {
       request.setAttribute("computer", computer);
     });
-    List<CompanyDTO> companies = companyService.list();
-    request.setAttribute("companies", companies);
+    List<CompanyDTO> companies;
+    try {
+      companies = companyService.list();
+      request.setAttribute("companies", companies);
+    }
+    catch (PropertiesNotFoundException e) {
+      setErrorMessage(request, "Connection error",
+                      "Couldn't connect to database contact administrator");
+    }
     if (request.getAttribute("computer") == null) {
       response.setStatus(HttpServletResponse.SC_NOT_FOUND);
       setErrorMessage(request, "Computer not found", "No computer matches in database");
@@ -72,7 +79,7 @@ public class EditComputer extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
     ComputerDTOBuilder    cDTOBuilder = ComputerDTO.builder();
     Optional<ComputerDTO> oComputer   = getRequestComputer(request);
     oComputer.ifPresent(computer -> {
@@ -90,9 +97,15 @@ public class EditComputer extends HttpServlet {
               .map(Long::parseLong)
               .ifPresent(companyId -> {
                 cDTOBuilder.withCompanyId(companyId);
-                cDTOBuilder.withCompanyName(companyService.read(companyId)
-                                                          .map(CompanyDTO::getName)
-                                                          .orElseGet(() -> null));
+                try {
+                  cDTOBuilder.withCompanyName(companyService.read(companyId)
+                                                            .map(CompanyDTO::getName)
+                                                            .orElseGet(() -> null));
+                }
+                catch (PropertiesNotFoundException e) {
+                  setErrorMessage(request, "Connection error",
+                                  "Couldn't connect to database, contact administrator");
+                }
               });
       try {
         computerService.update(cDTOBuilder.build());

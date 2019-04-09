@@ -59,6 +59,9 @@ public class MenuController {
         case PAGED_COMPUTERS:
           mComputerController.pagedList();
           break;
+        case DELETE_COMPANY:
+          mCompanyController.delete();
+          break;
         default:
           UIHelper.displayError("Not available");
           break;
