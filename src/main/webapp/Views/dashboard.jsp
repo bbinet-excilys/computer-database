@@ -50,40 +50,55 @@
       </div>
     </div>
 
-    <div class="uk-grid uk-flex-left" uk-grid>
-      <div class="uk-width-1-3">
-        <form class="uk-form-horizontal">
-          <div>
+    <div class="uk-grid uk-flex" uk-grid>
+      <div class="uk-width-3-5">
+        <form class="uk-form-horizontal" method="GET" id="searchForm">
+          <div class="uk-width-1-2">
             <label class="uk-form-label" for="searchComputerByName">Search by Name </label>
             <div class="uk-form-controls uk-form-controls-text">
-              <input class="uk-input uk-form-width-medium uk-form-small" type="text" id="searchComputerByName" /></div>
+              <input class="uk-input uk-form-width-medium uk-form-small" type="text" id="searchName" name="searchName"
+                value="${param.searchName}" />
+            </div>
           </div>
+          <input type="hidden" id="page" value="${page}" name="page" />
+          <input type="hidden" id="pageSize" value="${pageSize}" name="pageSize" />
+          <input type="submit" class="uk-button uk-button-primary uk-width-1-3" value="Search" />
         </form>
       </div>
-      <div class="uk-width-1-3">
+      <div class="uk-width-1-5">
         <div class="uk-button-group">
           <a class="uk-button uk-button-default" href="?page=1&pageSize=10">10</a>
           <a class=" uk-button uk-button-default" href="?page=1&pageSize=50">50</a>
           <a class=" uk-button uk-button-default" href="?page=1&pageSize=100">100</a>
         </div>
       </div>
-      <div class=" uk-width-1-3">
+      <div class=" uk-width-1-5">
         <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addComputer">Add Computer</a>
       </div>
     </div>
 
     <div class="uk-grid">
       <div class="uk-width-1-1">
-        <table class="uk-table uk-table-striped uk-margin uk-padding">
+        <table class="uk-table uk-table-striped uk-margin uk-padding" id="computerTable" data-sortable>
           <thead class=" uk-background-secondary">
             <tr>
-              <th class="uk-width-small  uk-text-primary">ID</th>
-              <th class="uk-width-medium uk-text-primary">Name</th>
-              <th class="uk-width-medium uk-text-primary">Introduction Date</th>
-              <th class="uk-width-medium uk-text-primary">Discontinuation Date</th>
-              <th class="uk-width-medium uk-text-primary">Company</th>
-              <th class="uk-width-small  uk-text-primary"></th>
-              <th class="uk-width-small  uk-text-primary">
+              <th class="uk-width-small uk-text-primary">
+                ID
+              </th>
+              <th class="uk-width-medium uk-text-primary">
+                Name
+              </th>
+              <th class="uk-width-medium uk-text-primary">
+                Introduction Date
+              </th>
+              <th class="uk-width-medium uk-text-primary">
+                Discontinuation Date
+              </th>
+              <th class="uk-width-medium uk-text-primary">
+                Company
+              </th>
+              <th class="uk-width-small uk-text-primary"></th>
+              <th class="uk-width-small uk-text-primary">
                 <button class="uk-button uk-button-danger uk-button-small uk-padding-small-left"><span
                     uk-icon="icon: trash"></span></button>
               </th>
@@ -100,7 +115,7 @@
                 </td>
                 <td>${computer.introduced}</td>
                 <td>${computer.discontinued}</td>
-                <td>${computer.company.name}</td>
+                <td>${computer.companyName}</td>
                 <td><a href="editcomputer?computerId=${computer.id}"
                     class="uk-button uk-button-primary uk-button-small uk-padding-small-left"><span
                       uk-icon="icon: pencil"></span></a></td>
@@ -119,15 +134,17 @@
       <div class="uk-width-1-1">
         <ul class="uk-pagination uk-flex-center">
           <c:if test="${page>1}">
-            <li><a href="?page=${page-1}&pageSize=${pageSize}"><span uk-pagination-previous></span></a></li>
+            <li><a href="?page=${page-1}&pageSize=${pageSize}&searchName=${param.searchName}"><span
+                  uk-pagination-previous></span></a></li>
           </c:if>
           <c:if test="${!(page>1)}">
             <li class="uk-disabled"><a><span uk-pagination-previous></span></a></li>
           </c:if>
-          <li><a href="?page=1&pageSize=${pageSize}">First</a></li>
-          <li><a href="?page=${pageMax}&pageSize=${pageSize}">Last</a></li>
+          <li><a href="?page=1&pageSize=${pageSize}&searchName=${param.searchName}">First</a></li>
+          <li><a href="?page=${pageMax}&pageSize=${pageSize}&searchName=${param.searchName}">Last</a></li>
           <c:if test="${page<pageMax}">
-            <li><a href="?page=${page+1}&pageSize=${pageSize}"><span uk-pagination-next></span></a></li>
+            <li><a href="?page=${page+1}&pageSize=${pageSize}&searchName=${param.searchName}"><span
+                  uk-pagination-next></span></a></li>
           </c:if>
           <c:if test="${!(page<pageMax)}">
             <li class="uk-disabled"><a><span uk-pagination-next></span></a></li>
@@ -140,6 +157,7 @@
   <script src="js/jquery.min.js"></script>
   <script src="js/uikit.min.js"></script>
   <script src="js/uikit-icons.min.js"></script>
+  <script src="js/sortable.min.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 
