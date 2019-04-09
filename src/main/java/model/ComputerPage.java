@@ -2,72 +2,72 @@ package model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import persistence.DAOComputer;
+import dto.ComputerDTO;
+import exception.PropertiesNotFoundException;
+import service.ComputerService;
 
 public class ComputerPage {
 
   private Logger logger = LoggerFactory.getLogger(ComputerPage.class);
 
-  private Integer        pageSize    = 10;
-  private Integer        offset      = 0;
-  private Integer        page        = 1;
-  private DAOComputer    dao         = new DAOComputer();
-  private List<Computer> currentPage = new ArrayList<Computer>();
+  private Integer           pageSize    = 10;
+  private Integer           offset      = 0;
+  private Integer           page        = 1;
+  private ComputerService   cService    = new ComputerService();
+  private List<ComputerDTO> currentPage = new ArrayList<>();
+  private List<ComputerDTO> computers;
 
-  public ComputerPage(int pageSize) {
+  public ComputerPage(Integer pageSize) {
     super();
-    Optional.of(pageSize).filter(val -> val >= 1).ifPresent(size -> setPageSize(size));
-    computeOffset();
-    computePage();
-    this.logger.debug("Instanciate companyPage");
+    this.pageSize = pageSize;
   }
 
-  public void nextPage() {
-    if (this.page < this.dao.count() / this.pageSize) {
-      this.page++;
+  public void nextPage() throws PropertiesNotFoundException {
+    if (page < computers.size() / pageSize) {
+      page++;
     }
-    this.logger.debug("Next page. Now :" + this.page);
+    logger.debug("Next page. Now :" + page);
   }
 
   public void previousPage() {
-    if (this.page > 0) {
-      this.page--;
+    if (page > 0) {
+      page--;
     }
-    this.logger.info("Prev page. Now :" + this.page);
+    logger.debug("Prev page. Now :" + page);
   }
 
-  public List<Computer> getCurrentPage() {
+  public List<ComputerDTO> getCurrentPage() throws PropertiesNotFoundException {
     computeOffset();
     computePage();
-    this.logger.debug(this.currentPage.size() + "");
-    return this.currentPage;
+    logger.debug(currentPage.size() + "");
+    return currentPage;
   }
 
   private void computeOffset() {
-    this.offset = this.pageSize * (this.page - 1);
-    this.logger.debug("Update offset :" + this.offset);
+    offset = pageSize * (page - 1);
+    logger.debug("Update offset :" + offset);
   }
 
-  private void computePage() {
-    this.logger.debug("Offset " + this.offset);
-    if (this.offset < this.dao.count() && this.offset >= 0) {
-      this.logger.debug("Computing company page");
-      this.currentPage = this.dao.paginatedList(this.pageSize, this.offset);
-      this.logger.debug("Page size " + this.currentPage.size());
+  private void computePage() throws PropertiesNotFoundException {
+    logger.debug("Offset " + offset);
+    if (offset < computers.size() && offset >= 0) {
+      logger.debug("Computing company page");
+      currentPage = computers.stream().skip(offset).limit(pageSize).collect(Collectors.toList());
+      logger.debug("Page size " + currentPage.size());
     }
   }
 
   public Integer getOffset() {
-    return this.offset;
+    return offset;
   }
 
   public Integer getPageSize() {
-    return this.pageSize;
+    return pageSize;
   }
 
   public void setPageSize(Integer pageSize) {
@@ -75,11 +75,19 @@ public class ComputerPage {
   }
 
   public Integer getPage() {
-    return this.page;
+    return page;
   }
 
   public void setPage(Integer page) {
     this.page = page;
+  }
+
+  public List<ComputerDTO> getComputers() {
+    return computers;
+  }
+
+  public void setComputers(List<ComputerDTO> computers) {
+    this.computers = computers;
   }
 
 }

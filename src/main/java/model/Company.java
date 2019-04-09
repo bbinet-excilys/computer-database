@@ -12,6 +12,11 @@ public class Company extends Entity {
 
   static final Logger LOG = LoggerFactory.getLogger(Company.class);
 
+  private Company(CompanyBuilder builder) {
+    this.id   = builder.id;
+    this.name = builder.name;
+  }
+
   public Company(Long id, String name) {
     super();
     this.id   = id;
@@ -36,26 +41,31 @@ public class Company extends Entity {
 
   @Override
   public int hashCode() {
-    // TODO Auto-generated method stub
     return getId().hashCode() + getName().hashCode();
   }
 
-  public static class CompanyBuilder {
+  public static CompanyBuilder builder() {
+    return new CompanyBuilder();
+  }
+
+  public static final class CompanyBuilder {
     private Long   id;
     private String name;
 
-    public CompanyBuilder setId(Long id) {
+    private CompanyBuilder() {}
+
+    public CompanyBuilder withId(Long id) {
       this.id = id;
       return this;
     }
 
-    public CompanyBuilder setName(String name) {
+    public CompanyBuilder withName(String name) {
       this.name = name;
       return this;
     }
 
     public Company build() {
-      return new Company(this.id, this.name);
+      return new Company(this);
     }
   }
 

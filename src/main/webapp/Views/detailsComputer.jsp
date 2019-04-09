@@ -8,19 +8,13 @@
   <title>Computer Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <!-- Bootstrap -->
-  <!-- <link href="css/bootstrap.min.css" rel="stylesheet" media="screen"> -->
   <link href="css/uikit.min.css" rel="stylesheet" media="screen">
-  <!-- <link href="css/font-awesome.css" rel="stylesheet" media="screen"> -->
-  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
-    integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
   <link href="css/main.css" rel="stylesheet">
 </head>
 
 <body>
-  <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-    <nav class="uk-navbar uk-navbar-attached uk-background-secondary uk-dark uk-margin-large-bottom"
-      uk-navbar="mode: click; boundary-align:true">
+  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
+    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
       <div class="uk-navbar-left">
         <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
@@ -74,7 +68,7 @@
         <dt>Discontinuation date :</dt>
         <dd>${computer.discontinued}</dd>
         <dt>Company :</dt>
-        <dd>${computer.company.name}</dd>
+        <dd>${computer.companyName}</dd>
       </dl>
 
     </div>

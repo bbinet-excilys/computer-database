@@ -10,26 +10,29 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import model.Computer;
+import dto.ComputerDTO;
+import exception.DAOUnexecutedQuery;
+import exception.PropertiesNotFoundException;
 import model.ComputerPage;
-import persistence.DAOFactory;
+import service.ComputerService;
 
 /**
- * Servlet implementation class ComputerServlet
+ * Servlet implementation class ComputerServlet.
  */
 @WebServlet(
-    name = "dashboard",
-    urlPatterns = { "/Dashboard",
-        "/dashboard" },
-    description = "The main page of the WebUI")
+  name = "dashboard",
+  urlPatterns = { "/Dashboard",
+      "/dashboard" },
+  description = "The main page of the WebUI")
 public class DashboardServlet extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
 
   /**
    * @see HttpServlet#HttpServlet()
    */
   public DashboardServlet() {
     super();
-    // TODO Auto-generated constructor stub
   }
 
   /**
@@ -38,29 +41,55 @@ public class DashboardServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    List<Computer> computers = DAOFactory.INSTANCE.getDAOComputer().list();
-    Integer        page      = Integer
-        .parseInt(Optional.ofNullable(request.getParameter("page")).orElseGet(() -> {
-                                   return "1";
-                                 }));
-    Integer        pageSize  = Integer
-        .parseInt(Optional.ofNullable(request.getParameter("pageSize")).orElseGet(() -> {
-                                   return "10";
-                                 }));
-    Double         cCount    = (double) DAOFactory.INSTANCE.getDAOComputer().count();
-    Integer        pageMax   = (int) Math.ceil((cCount / pageSize));
-    if (page <= pageMax && page > 0) {
-      ComputerPage cPage = new ComputerPage(pageSize);
-      cPage.setPage(page);
-      computers = cPage.getCurrentPage();
-      request.setAttribute("computers", computers);
-      request.setAttribute("page", page);
-      request.setAttribute("pageMax", pageMax);
-      request.setAttribute("pageSize", pageSize);
-      getServletContext().getRequestDispatcher("/Views/dashboard.jsp").forward(request, response);
+    throws ServletException, IOException {
+    List<ComputerDTO> computers;
+    try {
+      ComputerService computerService = new ComputerService();
+      Integer         page            = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
+                                                                 .orElse("1"));
+      Integer         pageSize        = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
+                                                                 .orElse("10"));
+      ComputerPage    computerPage    = new ComputerPage(pageSize);
+      Optional.ofNullable(request.getParameter("searchName")).ifPresentOrElse(searchedName -> {
+        try {
+          computerPage.setComputers(computerService.paginatedSearchByNameList(searchedName));
+
+        }
+        catch (PropertiesNotFoundException e) {
+          ServletUtils.setErrorMessage(request, "Connection error",
+                                       "Couldn't connect to database, contact administrator");
+        }
+        catch (DAOUnexecutedQuery e) {
+          ServletUtils.setErrorMessage(request, "Query error",
+                                       "Couldn't execute select query " + e.getMessage());
+        }
+      }, () -> {
+        try {
+          computerPage.setComputers(computerService.list());
+        }
+        catch (PropertiesNotFoundException e) {
+          ServletUtils.setErrorMessage(request, "Connection error",
+                                       "Couldn't connect to database, contact administrator");
+        }
+      });
+      computerPage.setPage(page);
+      computers = computerPage.getCurrentPage();
+      if (computers.size() != 0) {
+        Double  computerCount = (double) computerPage.getComputers().size();
+        Integer pageMax       = (int) Math.ceil((computerCount / pageSize));
+        request.setAttribute("computers", computers);
+        request.setAttribute("page", page);
+        request.setAttribute("pageMax", pageMax);
+        request.setAttribute("pageSize", pageSize);
+        request.setAttribute("count", computerCount.intValue());
+        getServletContext().getRequestDispatcher("/Views/dashboard.jsp")
+                           .forward(request, response);
+      }
+      else {
+        getServletContext().getRequestDispatcher("/Views/404.jsp").forward(request, response);
+      }
     }
-    else {
+    catch (PropertiesNotFoundException e) {
       getServletContext().getRequestDispatcher("/Views/404.jsp").forward(request, response);
     }
 
@@ -72,8 +101,8 @@ public class DashboardServlet extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    // TODO Auto-generated method stub
+    throws ServletException, IOException {
+
     doGet(request, response);
   }
 

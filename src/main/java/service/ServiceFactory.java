@@ -1,7 +1,5 @@
 package service;
 
-import controller.MenuController;
-
 public enum ServiceFactory {
 
   /**
@@ -15,10 +13,6 @@ public enum ServiceFactory {
 
   public ComputerService getComputerService() {
     return new ComputerService();
-  }
-
-  public MenuController getMenuService() {
-    return new MenuController();
   }
 
 }

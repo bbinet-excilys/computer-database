@@ -8,10 +8,11 @@ tmp/
 *.swp
 *~.nib
 *.log
-local.properties
+*.properties
 .settings/
 .loadpath
 .recommenders
+.*
 *.launch
 build/
 doc/

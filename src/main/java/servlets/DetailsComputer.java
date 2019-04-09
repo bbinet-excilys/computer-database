@@ -10,27 +10,26 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import dto.ComputerDTO;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
-import model.Computer;
+import exception.PropertiesNotFoundException;
 import service.ComputerService;
 
 /**
  * Servlet implementation class DetailsComputer
  */
 @WebServlet(
-    name = "detailsComputer",
-    urlPatterns = { "/detailsComputer", "/detailscomputer" },
-    description = "Computer details page")
+  name = "detailsComputer",
+  urlPatterns = { "/detailsComputer", "/detailscomputer" },
+  description = "Computer details page")
 
 public class DetailsComputer extends HttpServlet {
+  private static final long serialVersionUID = 1L;
 
   ComputerService computerService = new ComputerService();
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
   public DetailsComputer() {}
 
   /**
@@ -40,31 +39,28 @@ public class DetailsComputer extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
-    Optional<Long>    oComputerId = Optional
-        .of(request.getParameter("computerId"))
-        .filter(Predicate.not(String::isBlank))
-        .map(Long::parseLong);
-    MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
+    Optional<Long> oComputerId = Optional.ofNullable(request.getParameter("computerId"))
+                                         .filter(Predicate.not(String::isBlank))
+                                         .map(Long::parseLong);
     oComputerId.ifPresentOrElse(computerId -> {
       try {
-        Optional<Computer> oComputer = this.computerService.read(computerId);
+        Optional<ComputerDTO> oComputer = computerService.read(computerId);
         oComputer.ifPresent(computer -> {
           request.setAttribute("computer", computer);
         });
       }
       catch (DAOUnexecutedQuery e) {
-        mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-        mDTOBuilder.setTitle("Database error");
-        mDTOBuilder.setContent("The computer has not been found " + e.getMessage());
+        setErrorMessage(request, "Database error",
+                        String.format("The computer has not been found %s", e.getMessage()));
+      }
+      catch (PropertiesNotFoundException e) {
+        setErrorMessage(request, "Connection error", "The connection has failed");
       }
     }, () -> {
-      mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-      mDTOBuilder.setTitle("Parameter error");
-      mDTOBuilder.setContent("Couldn't parse the id or parameter not found");
+      setErrorMessage(request, "Parameter error", "Couldn't parse or find the ID");
     });
-    getServletContext()
-        .getRequestDispatcher("/Views/detailsComputer.jsp")
-        .forward(request, response);
+    getServletContext().getRequestDispatcher("/Views/detailsComputer.jsp")
+                       .forward(request, response);
   }
 
   /**
@@ -75,6 +71,22 @@ public class DetailsComputer extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
     doGet(request, response);
+  }
+
+  public void setErrorMessage(HttpServletRequest request, String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    request.setAttribute("message", mDTOBuilder.build());
+  }
+
+  public void setSuccessMessage(HttpServletRequest request, String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    request.setAttribute("message", mDTOBuilder.build());
   }
 
 }

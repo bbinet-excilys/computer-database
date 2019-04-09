@@ -1,11 +1,6 @@
 package servlets;
 
 import java.io.IOException;
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -16,11 +11,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.validator.routines.DateValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import dto.CompanyDTO;
+import dto.ComputerDTO;
+import dto.ComputerDTO.ComputerDTOBuilder;
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
-import model.Company;
-import model.Computer.ComputerBuilder;
+import exception.PropertiesNotFoundException;
 import service.CompanyService;
 import service.ComputerService;
 
@@ -28,13 +29,19 @@ import service.ComputerService;
  * Servlet implementation class AddComputer
  */
 @WebServlet(
-    name = "addComputer",
-    urlPatterns = { "/addComputer", "/addcomputer" },
-    description = "Add computer page")
+  name = "addComputer",
+  urlPatterns = { "/addComputer", "/addcomputer" },
+  description = "Add computer page")
 public class AddComputer extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
+
+  private static final Logger LOGGER = LoggerFactory.getLogger(AddComputer.class);
 
   ComputerService computerService = new ComputerService();
   CompanyService  companyService  = new CompanyService();
+
+  private static DateValidator dValidator = new DateValidator();
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -47,18 +54,15 @@ public class AddComputer extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    List<Company> companies = this.companyService.list();
-    request.setAttribute("companies", companies);
-    String            name        = new String("" + request.getAttribute("name"));
-    MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
-    if (name.isBlank()) {
-      mDTOBuilder.setTitle(MessageDTO.ERROR_TYPE);
-      mDTOBuilder.setContent("Couldn't create the computer.");
+    throws ServletException, IOException {
+    List<CompanyDTO> companies;
+    try {
+      companies = companyService.list();
+      request.setAttribute("companies", companies);
     }
-    else {
-      mDTOBuilder.setTitle(MessageDTO.SUCCESS_TYPE);
-      mDTOBuilder.setContent("Successfully created the computer.");
+    catch (PropertiesNotFoundException e) {
+      setErrorMessage(request, "Connection error",
+                      "Couldn't connect to database, contact administrator");
     }
     getServletContext().getRequestDispatcher("/Views/addComputer.jsp").forward(request, response);
   }
@@ -69,66 +73,62 @@ public class AddComputer extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    Optional<Object>  oName       = Optional.ofNullable(request.getParameter("name"));
-    MessageDTOBuilder mDTOBuilder = new MessageDTOBuilder();
-    oName.ifPresentOrElse(name -> {
-      String          sName    = (String) name;
-      ComputerBuilder cBuilder = new ComputerBuilder();
-      cBuilder.setName(sName);
-
-      DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-      Optional<String> oIntroduced = Optional.ofNullable(request.getParameter("introduced"));
-      oIntroduced
-          .filter(Predicate.not(String::isBlank))
-          .filter(str -> str.matches("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}"))
-          .ifPresent(sIntroduced -> {
-            LocalDate date   = LocalDate.parse(sIntroduced, dtf);
-            Date  introduced = new Date(
-                date.toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC) * 1000);
-            cBuilder.setIntroduced(introduced);
-          });
-
-      Optional<String> oDiscontinued = Optional.ofNullable(request.getParameter("discontinued"));
-      oDiscontinued
-          .filter(Predicate.not(String::isBlank))
-          .filter(str -> str.matches("[0-9]{4}\\-[0-9]{2}\\-[0-9]{2}"))
-          .ifPresent(sDiscontinued -> {
-            LocalDate parsedDate = LocalDate.parse(sDiscontinued, dtf);
-            Date  discontinued = new Date(
-                parsedDate.toEpochSecond(LocalTime.MIDNIGHT, ZoneOffset.UTC) * 1000);
-            cBuilder.setDiscontinued(discontinued);
-          });
-
-      Optional<String> oCompanyId = Optional.ofNullable(request.getParameter("companyId"));
-      oCompanyId.filter(Predicate.not(String::isBlank)).ifPresent(sCompanyId -> {
-        Long              id       = Long.parseLong(sCompanyId);
-        Optional<Company> oCompany = this.companyService.read(id);
-        oCompany.ifPresent(company -> {
-          cBuilder.setCompany(company);
-        });
-      });
-      ComputerService cService = new ComputerService();
-      try {
-        cService.create(cBuilder.build());
-        mDTOBuilder.setType(MessageDTO.SUCCESS_TYPE);
-        mDTOBuilder.setTitle(String.format("Computer %s created", sName));
-        mDTOBuilder.setContent("A computer has successfully been created");
-      }
-      catch (DAOUnexecutedQuery e) {
-        mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-        mDTOBuilder.setTitle("Computer not created");
-        mDTOBuilder
-            .setContent("An error occured, the computer has not been created :" + e.getMessage());
-      }
-    }, () -> {
-      mDTOBuilder.setType(MessageDTO.ERROR_TYPE);
-      mDTOBuilder.setTitle("Computer not created");
-      mDTOBuilder.setContent("An error occured, the computer has not been created");
-    });
-    request.setAttribute("message", mDTOBuilder.build());
+    throws ServletException, IOException {
+    ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
+    cDTOBuilder.withName(Optional.ofNullable(request.getParameter("computerName"))
+                                 .orElseGet(() -> null));
+    cDTOBuilder.withIntroduced(Optional.ofNullable(request.getParameter("computerIntroduced"))
+                                       .filter(Predicate.not(String::isBlank))
+                                       .orElseGet(() -> null));
+    cDTOBuilder.withDiscontinued(Optional.ofNullable(request.getParameter("computerDiscontinued"))
+                                         .filter(Predicate.not(String::isBlank))
+                                         .orElseGet(() -> null));
+    Optional.ofNullable(request.getParameter("computerCompanyId"))
+            .filter(Predicate.not(String::isBlank))
+            .map(Long::parseLong)
+            .ifPresent(companyId -> {
+              cDTOBuilder.withCompanyId(companyId);
+              try {
+                cDTOBuilder.withCompanyName(companyService.read(companyId)
+                                                          .map(CompanyDTO::getName)
+                                                          .orElseGet(() -> null));
+              }
+              catch (PropertiesNotFoundException e) {
+                setErrorMessage(request, "Connection error",
+                                "Couldn't connect to database, contact administrator");
+              }
+            });
+    try {
+      computerService.create(cDTOBuilder.build());
+      setSuccessMessage(request, "Success", String.format("Computer %s successfully created",
+                                                          cDTOBuilder.build().getName()));
+    }
+    catch (IllegalArgumentException e) {
+      setErrorMessage(request, "Parameter Error", e.getMessage());
+    }
+    catch (PropertiesNotFoundException e) {
+      setErrorMessage(request, "Connection error", "Couldn't connect to the database");
+    }
+    catch (DAOUnexecutedQuery e) {
+      setErrorMessage(request, "Query Error", "Couldn't execute the query");
+    }
     doGet(request, response);
+  }
+
+  public void setErrorMessage(HttpServletRequest request, String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    request.setAttribute("message", mDTOBuilder.build());
+  }
+
+  public void setSuccessMessage(HttpServletRequest request, String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    request.setAttribute("message", mDTOBuilder.build());
   }
 
 }

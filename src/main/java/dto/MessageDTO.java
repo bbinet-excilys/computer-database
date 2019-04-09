@@ -3,9 +3,6 @@ package dto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class MessageDTO {
 
   public final static String ERROR_TYPE   = "danger";
@@ -15,6 +12,13 @@ public class MessageDTO {
   private String title;
   private String content;
   Logger         logger = LoggerFactory.getLogger(MessageDTO.class);
+
+  private MessageDTO(MessageDTOBuilder builder) {
+    this.type    = builder.type;
+    this.title   = builder.title;
+    this.content = builder.content;
+    this.logger  = builder.logger;
+  }
 
   public MessageDTO(String type, String title, String content) {
     super();
@@ -35,37 +39,41 @@ public class MessageDTO {
     return this.type;
   }
 
-  public String toJSON() {
-    ObjectMapper om = new ObjectMapper();
-    try {
-      return om.writeValueAsString(this);
-    }
-    catch (JsonProcessingException e) {
-      this.logger.error("Error converting object to JSON :" + e.getMessage());
-      e.printStackTrace();
-    }
-    return "";
+  public static MessageDTOBuilder builder() {
+    return new MessageDTOBuilder();
   }
 
-  public static class MessageDTOBuilder {
+  public static final class MessageDTOBuilder {
     private String type;
     private String title;
     private String content;
+    private Logger logger;
 
-    public void setType(String type) {
+    private MessageDTOBuilder() {}
+
+    public MessageDTOBuilder withType(String type) {
       this.type = type;
+      return this;
     }
 
-    public void setTitle(String title) {
+    public MessageDTOBuilder withTitle(String title) {
       this.title = title;
+      return this;
     }
 
-    public void setContent(String content) {
+    public MessageDTOBuilder withContent(String content) {
       this.content = content;
+      return this;
+    }
+
+    public MessageDTOBuilder withLogger(Logger logger) {
+      this.logger = logger;
+      return this;
     }
 
     public MessageDTO build() {
-      return new MessageDTO(this.type, this.title, this.content);
+      return new MessageDTO(this);
     }
   }
+
 }

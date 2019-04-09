@@ -1,6 +1,5 @@
 package controller;
 
-import service.MenuEnum;
 import ui.UIHelper;
 
 /**
@@ -15,14 +14,15 @@ public class MenuController {
    */
   public void runMenu() {
     boolean            loop                = true;
-    ComputerController mComputerController = new ComputerController();
-    CompanyController  mCompanyController  = new CompanyController();
+    ComputerController mComputerController = ControllerFactory.INSTANCE.getComputerController();
+    CompanyController  mCompanyController  = ControllerFactory.INSTANCE.getCompanyController();
     do {
       UIHelper.displayMenu();
       MenuEnum choice;
       do {
         Integer index = UIHelper.promptInt("Please choose an item :")
-            .filter(val -> val < MenuEnum.values().length && val >= 0).orElse(null);
+                                .filter(val -> val < MenuEnum.values().length && val >= 0)
+                                .orElse(null);
         if (index != null) {
           choice = MenuEnum.values()[index];
         }
@@ -58,6 +58,9 @@ public class MenuController {
           break;
         case PAGED_COMPUTERS:
           mComputerController.pagedList();
+          break;
+        case DELETE_COMPANY:
+          mCompanyController.delete();
           break;
         default:
           UIHelper.displayError("Not available");

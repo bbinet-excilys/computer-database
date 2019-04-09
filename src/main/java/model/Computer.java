@@ -25,6 +25,14 @@ public class Computer extends Entity {
 
   static final Logger LOG = LoggerFactory.getLogger(Computer.class);
 
+  private Computer(ComputerBuilder builder) {
+    this.id           = builder.id;
+    this.name         = builder.name;
+    this.introduced   = builder.introduced;
+    this.discontinued = builder.discontinued;
+    this.company      = builder.company;
+  }
+
   /**
    * Parametered constructor.
    *
@@ -34,97 +42,43 @@ public class Computer extends Entity {
    * @param discontinued
    * @param company
    */
-  public Computer(Long id, String name, Date introduced, Date discontinued, Company company) {
-    super();
-    this.id = id;
-    if (name != null) {
-      this.name = (name.trim().isEmpty()) ? null : name.trim();
-    }
-    else {
-      this.name = name;
-    }
-    if (introduced != null && discontinued != null) {
-      if (introduced.before(discontinued)) {
-        this.introduced   = introduced;
-        this.discontinued = discontinued;
-      }
-      else {
-        this.introduced   = null;
-        this.discontinued = null;
-      }
-    }
-    else if (introduced == null && discontinued != null) {
-      this.introduced   = null;
-      this.discontinued = null;
-    }
-    else {
-      this.introduced   = introduced;
-      this.discontinued = discontinued;
-    }
-    this.company = company;
-  }
 
   /**
    * Base constructor.
    */
-  public Computer() {
-  }
+  public Computer() {}
 
-  /**
-   * @return The Company object the Computer belongs to
-   */
-  public Company getCompany() {
-    return this.company;
-  }
-
-  /**
-   * @return The java.sql.Date object of discontinuation of the Computer
-   */
-  public Date getDiscontinued() {
-    return this.discontinued;
-  }
-
-  /**
-   * @return The java.sql.Date object of introduction of the Computer
-   */
   public Date getIntroduced() {
     return this.introduced;
   }
 
-  /**
-   * @param company
-   *                The Company object the Computer belongs to
-   */
+  public void setIntroduced(Date introduced) {
+    this.introduced = introduced;
+  }
+
+  public Date getDiscontinued() {
+    return this.discontinued;
+  }
+
+  public void setDiscontinued(Date discontinued) {
+    this.discontinued = discontinued;
+  }
+
+  public Company getCompany() {
+    return this.company;
+  }
+
   public void setCompany(Company company) {
     this.company = company;
   }
 
-  /**
-   * @param discontinued
-   *                     The java.sql.Date object of discontinuation of the
-   *                     Computer
-   */
-  public void setDiscontinued(Date discontinued) {
-    if (discontinued != null) {
-      this.discontinued = discontinued;
-    }
-  }
-
-  /**
-   * @param introduced
-   *                   The java.sql.Date object of introduction of the Computer
-   */
-  public void setIntroduced(Date introduced) {
-    if (introduced != null) {
-      this.introduced = introduced;
-    }
-  }
-
   @Override
   public String toString() {
-    return String.format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced,
-        this.discontinued,
-        (this.company != null) ? this.company.toString() : String.format("%5s", "null"));
+    return String
+                 .format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced,
+                         this.discontinued,
+                         (this.company != null) ? this.company.toString()
+                             : String.format("%5s", "null"));
   }
 
   @Override
@@ -147,36 +101,47 @@ public class Computer extends Entity {
         + getDiscontinued().hashCode() + getCompany().hashCode();
   }
 
-  public static class ComputerBuilder {
+  public static ComputerBuilder builder() {
+    return new ComputerBuilder();
+  }
+
+  public static final class ComputerBuilder {
     private Long    id;
     private String  name;
     private Date    introduced;
     private Date    discontinued;
     private Company company;
 
-    public void setId(Long id) {
+    private ComputerBuilder() {}
+
+    public ComputerBuilder withId(Long id) {
       this.id = id;
+      return this;
     }
 
-    public void setName(String name) {
+    public ComputerBuilder withName(String name) {
       this.name = name;
+      return this;
     }
 
-    public void setIntroduced(Date introduced) {
+    public ComputerBuilder withIntroduced(Date introduced) {
       this.introduced = introduced;
+      return this;
     }
 
-    public void setDiscontinued(Date discontinued) {
+    public ComputerBuilder withDiscontinued(Date discontinued) {
       this.discontinued = discontinued;
+      return this;
     }
 
-    public void setCompany(Company company) {
+    public ComputerBuilder withCompany(Company company) {
       this.company = company;
+      return this;
     }
 
     public Computer build() {
-      return new Computer(this.id, this.name, this.introduced, this.discontinued, this.company);
+      return new Computer(this);
     }
-
   }
+
 }

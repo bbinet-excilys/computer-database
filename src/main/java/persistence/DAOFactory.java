@@ -9,12 +9,12 @@ public enum DAOFactory {
 
   INSTANCE;
 
-  public DAOComputer getDAOComputer() {
-    return new DAOComputer();
+  public ComputerDAO getDAOComputer() {
+    return new ComputerDAO();
   }
 
-  public DAOCompany getDAOCompany() {
-    return new DAOCompany();
+  public CompanyDAO getDAOCompany() {
+    return new CompanyDAO();
   }
 
 }
