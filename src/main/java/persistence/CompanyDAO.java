@@ -10,15 +10,17 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import exception.DAOUnexecutedQuery;
+import exception.PropertiesNotFoundException;
 import mapping.CompanyMapper;
 import model.Company;
 
-public class DAOCompany {
+public class CompanyDAO {
 
   /**
    * Logger for the DAOCompany class.
    */
-  private final Logger LOG            = LoggerFactory.getLogger(DAOCompany.class);
+  private final Logger LOG            = LoggerFactory.getLogger(CompanyDAO.class);
   private final String SELECT         = "SELECT id, name FROM company;";
   private final String SELECT_LIMIT   = "SELECT id, name FROM company LIMIT ? OFFSET ?;";
   private final String CREATE         = "INSERT INTO company(name) VALUES(?);";
@@ -31,11 +33,11 @@ public class DAOCompany {
    */
   CompanyMapper        mapper         = new CompanyMapper();
 
-  public List<Company> list() {
+  public List<Company> list() throws PropertiesNotFoundException {
     ResultSet     mResultSet   = null;
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT);
     ) {
       mResultSet   = preparedStatement.executeQuery();
@@ -47,10 +49,10 @@ public class DAOCompany {
     return rCompanyList;
   }
 
-  public Optional<Company> read(Long id) {
+  public Optional<Company> read(Long id) throws PropertiesNotFoundException {
     Optional<Company> oCompany = Optional.empty();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
@@ -63,15 +65,15 @@ public class DAOCompany {
   }
 
   private PreparedStatement prepareReadStatement(Connection connection, Long id)
-      throws SQLException {
+    throws SQLException {
     PreparedStatement preparedStatement = connection.prepareStatement(SELECT_WHEREID);
     preparedStatement.setLong(1, id);
     return preparedStatement;
   }
 
-  public void update(Company company) {
+  public void update(Company company) throws PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
     ) {
       preparedStatement.setString(1, company.getName());
@@ -84,28 +86,11 @@ public class DAOCompany {
 
   }
 
-  public Integer count() {
-    Integer   count      = null;
-    ResultSet mResultSet = null;
-    try (
-        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(COUNT);
-    ) {
-      mResultSet = preparedStatement.executeQuery();
-      if (mResultSet.first()) {
-        count = mResultSet.getInt("count");
-      }
-    }
-    catch (SQLException e) {
-      LOG.warn("Couldn't execute count query : " + e.getMessage());
-    }
-    return count;
-  }
-
-  public List<Company> paginatedList(Integer size, Integer offset) {
+  public List<Company> paginatedList(Integer size, Integer offset)
+    throws PropertiesNotFoundException {
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getJDBCConnection();
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
                                                                            offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
@@ -124,10 +109,30 @@ public class DAOCompany {
   }
 
   private PreparedStatement preparedSelectLimitStatement(Connection connection, Integer size,
-      Integer offset) throws SQLException {
+      Integer offset)
+    throws SQLException {
     PreparedStatement preparedStatement = connection.prepareStatement(SELECT_LIMIT);
     preparedStatement.setInt(1, size);
     preparedStatement.setInt(2, offset);
+    return preparedStatement;
+  }
+
+  public void delete(Company company) throws DAOUnexecutedQuery, PropertiesNotFoundException {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = prepareDeleteStatement(connection, company.getId());
+    ) {
+      preparedStatement.executeUpdate();
+    }
+    catch (SQLException e) {
+      throw new DAOUnexecutedQuery("Couldn't delete company", e);
+    }
+  }
+
+  public PreparedStatement prepareDeleteStatement(Connection connection, Long companyId)
+    throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(DELETE);
+    preparedStatement.setLong(1, companyId);
     return preparedStatement;
   }
 

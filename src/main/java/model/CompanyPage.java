@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.CompanyDTO;
+import exception.PropertiesNotFoundException;
 import service.CompanyService;
 
 public class CompanyPage {
@@ -18,6 +19,7 @@ public class CompanyPage {
   private Integer          offset      = 0;
   private Integer          page        = 0;
   private CompanyService   cService    = new CompanyService();
+  private List<CompanyDTO> companies   = new ArrayList<>();
   private List<CompanyDTO> currentPage = new ArrayList<>();
 
   public CompanyPage(Integer pageSize) {
@@ -29,7 +31,7 @@ public class CompanyPage {
   }
 
   public void nextPage() {
-    if (page < cService.count() / pageSize) {
+    if (page < companies.size() / pageSize) {
       page++;
     }
     logger.debug("Next page. Now :" + page);
@@ -56,9 +58,14 @@ public class CompanyPage {
 
   private void computePage() {
     logger.debug("Offset " + offset);
-    if (offset < cService.count() && offset >= 0) {
+    if (offset < companies.size() && offset >= 0) {
       logger.debug("Computing company page");
-      currentPage = cService.paginatedList(pageSize, offset);
+      try {
+        currentPage = cService.paginatedList(pageSize, offset);
+      }
+      catch (PropertiesNotFoundException e) {
+        logger.error("Connection error, couldn't conenct to database");
+      }
       logger.debug("Page size " + currentPage.size());
     }
   }
@@ -77,6 +84,14 @@ public class CompanyPage {
 
   public Integer getPage() {
     return page;
+  }
+
+  public List<CompanyDTO> getCompanies() {
+    return companies;
+  }
+
+  public void setCompanies(List<CompanyDTO> companies) {
+    this.companies = companies;
   }
 
 }

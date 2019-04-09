@@ -54,9 +54,16 @@ public class AddComputer extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
-    List<CompanyDTO> companies = companyService.list();
-    request.setAttribute("companies", companies);
+    throws ServletException, IOException {
+    List<CompanyDTO> companies;
+    try {
+      companies = companyService.list();
+      request.setAttribute("companies", companies);
+    }
+    catch (PropertiesNotFoundException e) {
+      setErrorMessage(request, "Connection error",
+                      "Couldn't connect to database, contact administrator");
+    }
     getServletContext().getRequestDispatcher("/Views/addComputer.jsp").forward(request, response);
   }
 
@@ -66,7 +73,7 @@ public class AddComputer extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
     ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
     cDTOBuilder.withName(Optional.ofNullable(request.getParameter("computerName"))
                                  .orElseGet(() -> null));
@@ -81,9 +88,15 @@ public class AddComputer extends HttpServlet {
             .map(Long::parseLong)
             .ifPresent(companyId -> {
               cDTOBuilder.withCompanyId(companyId);
-              cDTOBuilder.withCompanyName(companyService.read(companyId)
-                                                        .map(CompanyDTO::getName)
-                                                        .orElseGet(() -> null));
+              try {
+                cDTOBuilder.withCompanyName(companyService.read(companyId)
+                                                          .map(CompanyDTO::getName)
+                                                          .orElseGet(() -> null));
+              }
+              catch (PropertiesNotFoundException e) {
+                setErrorMessage(request, "Connection error",
+                                "Couldn't connect to database, contact administrator");
+              }
             });
     try {
       computerService.create(cDTOBuilder.build());

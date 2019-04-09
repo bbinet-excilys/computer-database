@@ -12,6 +12,7 @@ tmp/
 .settings/
 .loadpath
 .recommenders
+.*
 *.launch
 build/
 doc/

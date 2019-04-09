@@ -28,7 +28,7 @@ public class ComputerPage {
   }
 
   public void nextPage() throws PropertiesNotFoundException {
-    if (page < cService.count() / pageSize) {
+    if (page < computers.size() / pageSize) {
       page++;
     }
     logger.debug("Next page. Now :" + page);
@@ -55,7 +55,7 @@ public class ComputerPage {
 
   private void computePage() throws PropertiesNotFoundException {
     logger.debug("Offset " + offset);
-    if (offset < cService.count() && offset >= 0) {
+    if (offset < computers.size() && offset >= 0) {
       logger.debug("Computing company page");
       currentPage = computers.stream().skip(offset).limit(pageSize).collect(Collectors.toList());
       logger.debug("Page size " + currentPage.size());

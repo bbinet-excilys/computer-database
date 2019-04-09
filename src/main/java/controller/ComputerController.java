@@ -41,9 +41,15 @@ public class ComputerController {
 
       Optional<Long> oCompanyId = UIHelper.promptLong("Enter company ID :");
       oCompanyId.ifPresent(companyId -> {
-        Company company = DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElse(null);
-        computerBuilder.withCompanyId(company.getId());
-        computerBuilder.withCompanyName(company.getName());
+        Company company;
+        try {
+          company = DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElse(null);
+          computerBuilder.withCompanyId(company.getId());
+          computerBuilder.withCompanyName(company.getName());
+        }
+        catch (PropertiesNotFoundException e) {
+          logger.error("Connection error, couldn't conenct to database");
+        }
       });
       try {
         computerService.create(computerBuilder.build());
@@ -142,11 +148,11 @@ public class ComputerController {
           Long companyId = UIHelper.promptLong("Enter the id of the new company (or empty to keep it):")
                                    .orElse(computer.getCompanyId());
 
-          computer.setCompanyId(DAOFactory.INSTANCE.getDAOCompany()
-                                                   .read(companyId)
-                                                   .map(Company::getId)
-                                                   .orElseGet(computer::getCompanyId));
           try {
+            computer.setCompanyId(DAOFactory.INSTANCE.getDAOCompany()
+                                                     .read(companyId)
+                                                     .map(Company::getId)
+                                                     .orElseGet(computer::getCompanyId));
             computerService.update(computer);
           }
           catch (IllegalArgumentException e) {
@@ -188,9 +194,9 @@ public class ComputerController {
 
   public void pagedList() {
     UIHelper.promptInt("How many computers per page?").ifPresent(pageSize -> {
-      ComputerPage cPage;
       try {
-        cPage = new ComputerPage(pageSize);
+        ComputerPage cPage = new ComputerPage(pageSize);
+        cPage.setComputers(computerService.list());
         whileLoop: do {
           EntityUI.printComputerList(cPage.getCurrentPage());
           Integer choice = UIHelper.promptPage(cPage.getPage());

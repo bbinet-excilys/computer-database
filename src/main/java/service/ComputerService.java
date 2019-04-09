@@ -12,7 +12,7 @@ import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import mapping.ComputerMapper;
 import model.Computer;
-import persistence.DAOComputer;
+import persistence.ComputerDAO;
 import validation.CompanyValidator;
 import validation.ComputerValidator;
 
@@ -28,7 +28,7 @@ public class ComputerService {
    */
   static final Logger LOG = LoggerFactory.getLogger("service");
 
-  private DAOComputer dao = new DAOComputer();
+  private ComputerDAO dao = new ComputerDAO();
 
   public void create(ComputerDTO computerDTO)
     throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
@@ -74,10 +74,6 @@ public class ComputerService {
               .stream()
               .map(ComputerMapper::computerToDTO)
               .collect(Collectors.toList());
-  }
-
-  public Integer count() throws PropertiesNotFoundException {
-    return dao.count();
   }
 
   public List<ComputerDTO> paginatedSearchByNameList(String name)

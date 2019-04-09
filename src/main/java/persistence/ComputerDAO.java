@@ -17,12 +17,12 @@ import mapping.ComputerMapper;
 import model.Company;
 import model.Computer;
 
-public class DAOComputer {
+public class ComputerDAO {
 
   /**
    * Logger for the DAOComputer Class.
    */
-  static final Logger  LOG            = LoggerFactory.getLogger(DAOComputer.class);
+  static final Logger  LOG            = LoggerFactory.getLogger(ComputerDAO.class);
   private final String SELECT_NAME    = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id WHERE computer.name like ? OR company.name like ?;";
   private final String SELECT         = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id;";
   private final String SELECT_LIMIT   = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company ON computer.company_id=company.id LIMIT ? OFFSET ?;";
@@ -30,7 +30,7 @@ public class DAOComputer {
   private final String UPDATE         = "UPDATE computer SET name=?, introduced=?, discontinued=?, company_id=? WHERE id=?;";
   private final String DELETE         = "DELETE FROM computer WHERE id=?;";
   private final String SELECT_WHEREID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id WHERE computer.id=?;";
-  private final String COUNT          = "SELECT count(*) as count FROM computer;";
+  private final String DELETE_COMPANY = "DELETE FROM computer WHERE company_id = ?;";
 
   ComputerMapper mapper = new ComputerMapper();
 
@@ -164,23 +164,6 @@ public class DAOComputer {
     return preparedStatement;
   }
 
-  public Integer count() throws PropertiesNotFoundException {
-    Integer count = null;
-    try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
-        PreparedStatement preparedStatement = connection.prepareStatement(COUNT);
-        ResultSet resultSet = preparedStatement.executeQuery();
-    ) {
-      if (resultSet.first()) {
-        count = resultSet.getInt("count");
-      }
-    }
-    catch (SQLException e) {
-      LOG.warn("Couldn't execute count query : " + e.getMessage());
-    }
-    return count;
-  }
-
   public List<Computer> searchByName(String name)
     throws PropertiesNotFoundException, DAOUnexecutedQuery {
     List<Computer> computers = new ArrayList<>();
@@ -205,6 +188,27 @@ public class DAOComputer {
     LOG.debug(strBuilder.toString());
     preparedStatement.setObject(1, strBuilder.toString());
     preparedStatement.setObject(2, strBuilder.toString());
+    return preparedStatement;
+  }
+
+  public void deleteCompany(Company company)
+    throws DAOUnexecutedQuery, PropertiesNotFoundException {
+    try (
+        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        PreparedStatement preparedStatement = prepareDeleteCompanyStatement(connection,
+                                                                            company.getId());
+    ) {
+      preparedStatement.executeUpdate();
+    }
+    catch (SQLException e) {
+      throw new DAOUnexecutedQuery("Couldn't delete computer", e);
+    }
+  }
+
+  public PreparedStatement prepareDeleteCompanyStatement(Connection connection, Long companyId)
+    throws SQLException {
+    PreparedStatement preparedStatement = connection.prepareStatement(DELETE_COMPANY);
+    preparedStatement.setLong(1, companyId);
     return preparedStatement;
   }
 }
