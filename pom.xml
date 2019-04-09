@@ -5,8 +5,8 @@
   <artifactId>computerdatabase</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
-  <name>computerdatabase Webapp</name>
-  <url>http://maven.apache.org</url>
+  <name>computerdatabase</name>
+  <url>http://computerdatabase.com</url>
 
   <properties>
     <apache-commons.version>1.6</apache-commons.version>
