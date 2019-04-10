@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:p="http://www.springframework.org/schema/p" 
+  xmlns:aop="http://www.springframework.org/schema/aop" 
+  xmlns:context="http://www.springframework.org/schema/context" 
+  xmlns:jee="http://www.springframework.org/schema/jee" 
+  xmlns:tx="http://www.springframework.org/schema/tx" 
+  xmlns:task="http://www.springframework.org/schema/task" xsi:schemaLocation="http://www.springframework.org/schema/aop
+  http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+  http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context-3.2.xsd
+  http://www.springframework.org/schema/jee
+  http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+  http://www.springframework.org/schema/tx
+  http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+  http://www.springframework.org/schema/task
+  http://www.springframework.org/schema/task/spring-task-3.2.xsd">
+  <!-- Services -->
+  <bean id="ComputerService" class="service.ComputerService" />
+  <bean id="CompanyService" class="service.CompanyService" />
+  <!-- Controllers -->
+  <bean id="ComputerController" class="controller.ComputerController">
+    <property name="computerService" ref="ComputerService" />
+  </bean>
+  <bean id="CompanyController" class="controller.CompanyController">
+    <property name="companyService" ref="CompanyService" />
+  </bean>
+  <bean id="MenuController" class="controller.MenuController">
+    <property name="computerController" ref="ComputerController" />
+    <property name="companyController" ref="CompanyController" />
+  </bean>
+  <!-- Servlets -->
+  <bean id="CreateComputerServlet" class="servlet.CreateComputerServlet">
+    <property name="computerService" ref="ComputerService" />
+    <property name="companyService" ref="CompanyService" />
+  </bean>
+  <bean id="ReadComputerServlet" class="servlet.ReadComputerServlet">
+    <property name="computerService" ref="ComputerService" />
+  </bean>
+  <bean id="UpdateComputerServlet" class="servlet.UpdateComputerServlet">
+    <property name="computerService" ref="ComputerService" />
+    <property name="companyService" ref="CompanyService" />
+  </bean>
+  <bean id="DeleteComputerServlet" class="servlet.DeleteComputerServlet">
+    <property name="computerService" ref="ComputerService" />
+  </bean>
+  <bean id="DashboardServlet" class="servlet.DashboardServlet">
+    <property name="computerService" ref="ComputerService" />
+  </bean>
+  <!-- Entry Points -->
+  <bean id="Main" class="Main">
+    <property name="menuController" ref="MenuController" />
+  </bean>
+</beans>
