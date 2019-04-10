@@ -33,7 +33,6 @@ public class ComputerService {
   public void create(ComputerDTO computerDTO)
     throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
-    System.out.println(computer);
     if (computer.getCompany() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }

@@ -22,7 +22,7 @@ import exception.PropertiesNotFoundException;
  *
  * @author bbinet
  */
-public enum JDBCSingleton {
+public enum DatabaseSingleton {
 
   /**
    * The unique instance of the JDBCSingleton (Connection to the database).
@@ -35,7 +35,7 @@ public enum JDBCSingleton {
   private static final String JDBC_PROPERTIES_FILE = "properties/jdbcSettings.properties";
   private static final String HIKARI_PROPERTIES    = "properties/hikari.properties";
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(JDBCSingleton.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseSingleton.class);
 
   /**
    * The properties file as a Property object to ease the parsing of the
@@ -49,7 +49,7 @@ public enum JDBCSingleton {
   private HikariDataSource dataSource;
 
   private void setJDBCConnection() {
-    Logger constructorLogger = LoggerFactory.getLogger(JDBCSingleton.class);
+    Logger constructorLogger = LoggerFactory.getLogger(DatabaseSingleton.class);
     try {
       ClassLoader loader           = Thread.currentThread().getContextClassLoader();
       InputStream propertiesStream = loader.getResourceAsStream(JDBC_PROPERTIES_FILE);

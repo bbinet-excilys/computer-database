@@ -23,11 +23,9 @@ public class CompanyDAO {
   private final Logger LOG            = LoggerFactory.getLogger(CompanyDAO.class);
   private final String SELECT         = "SELECT id, name FROM company;";
   private final String SELECT_LIMIT   = "SELECT id, name FROM company LIMIT ? OFFSET ?;";
-  private final String CREATE         = "INSERT INTO company(name) VALUES(?);";
   private final String UPDATE         = "UPDATE company SET name=? WHERE id=?;";
   private final String DELETE         = "DELETE FROM company WHERE id=?;";
   private final String SELECT_WHEREID = "SELECT id, name FROM company WHERE id=?;";
-  private final String COUNT          = "SELECT count(*) as count FROM company;";
   /**
    * Set the Mapper on DAOCompany instanciation.
    */
@@ -37,7 +35,7 @@ public class CompanyDAO {
     ResultSet     mResultSet   = null;
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT);
     ) {
       mResultSet   = preparedStatement.executeQuery();
@@ -52,7 +50,7 @@ public class CompanyDAO {
   public Optional<Company> read(Long id) throws PropertiesNotFoundException {
     Optional<Company> oCompany = Optional.empty();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
@@ -73,7 +71,7 @@ public class CompanyDAO {
 
   public void update(Company company) throws PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE);
     ) {
       preparedStatement.setString(1, company.getName());
@@ -90,7 +88,7 @@ public class CompanyDAO {
     throws PropertiesNotFoundException {
     List<Company> rCompanyList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
                                                                            offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
@@ -119,7 +117,7 @@ public class CompanyDAO {
 
   public void delete(Company company) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareDeleteStatement(connection, company.getId());
     ) {
       preparedStatement.executeUpdate();

@@ -1,9 +1,10 @@
-package servlets;
+package servlet;
 
 import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import dto.ComputerDTO;
-import dto.MessageDTO;
-import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import service.ComputerService;
@@ -23,14 +22,21 @@ import service.ComputerService;
 @WebServlet(
   name = "detailsComputer",
   urlPatterns = { "/detailsComputer", "/detailscomputer" },
-  description = "Computer details page")
+  description = "Computer details page"
+)
 
-public class DetailsComputer extends HttpServlet {
+public class ReadComputerServlet extends HttpServlet implements IServlet {
   private static final long serialVersionUID = 1L;
 
-  ComputerService computerService = new ComputerService();
+  private final String VIEW = "/Views/detailsComputer.jsp";
 
-  public DetailsComputer() {}
+  ComputerService computerService;
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
+  }
+
+  public ReadComputerServlet() {}
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -38,7 +44,7 @@ public class DetailsComputer extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
     Optional<Long> oComputerId = Optional.ofNullable(request.getParameter("computerId"))
                                          .filter(Predicate.not(String::isBlank))
                                          .map(Long::parseLong);
@@ -50,16 +56,16 @@ public class DetailsComputer extends HttpServlet {
         });
       }
       catch (DAOUnexecutedQuery e) {
-        setErrorMessage(request, "Database error",
-                        String.format("The computer has not been found %s", e.getMessage()));
+        setErrorMessage(request, MSG_TITLE_ERROR_QUERY, MSG_CONTENT_ERROR_QUERY);
       }
       catch (PropertiesNotFoundException e) {
-        setErrorMessage(request, "Connection error", "The connection has failed");
+        setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
       }
     }, () -> {
-      setErrorMessage(request, "Parameter error", "Couldn't parse or find the ID");
+      setErrorMessage(request, MSG_TITLE_ERROR_PARAMETER,
+                      String.format(MSG_CONTENT_ERROR_PARAMETER, "ID"));
     });
-    getServletContext().getRequestDispatcher("/Views/detailsComputer.jsp")
+    getServletContext().getRequestDispatcher(VIEW)
                        .forward(request, response);
   }
 
@@ -69,24 +75,8 @@ public class DetailsComputer extends HttpServlet {
    */
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException {
+    throws ServletException, IOException {
     doGet(request, response);
-  }
-
-  public void setErrorMessage(HttpServletRequest request, String title, String message) {
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
-    mDTOBuilder.withTitle(title);
-    mDTOBuilder.withContent(message);
-    request.setAttribute("message", mDTOBuilder.build());
-  }
-
-  public void setSuccessMessage(HttpServletRequest request, String title, String message) {
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
-    mDTOBuilder.withTitle(title);
-    mDTOBuilder.withContent(message);
-    request.setAttribute("message", mDTOBuilder.build());
   }
 
 }

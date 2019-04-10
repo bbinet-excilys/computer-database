@@ -15,7 +15,6 @@ import model.Company;
 import model.ComputerPage;
 import persistence.DAOFactory;
 import service.ComputerService;
-import service.ServiceFactory;
 import ui.EntityUI;
 import ui.UIHelper;
 
@@ -23,7 +22,7 @@ public class ComputerController {
 
   Logger logger = LoggerFactory.getLogger(ComputerController.class);
 
-  private ComputerService computerService = ServiceFactory.INSTANCE.getComputerService();
+  private ComputerService computerService;
 
   public void create() {
     Optional<String> oName = UIHelper.promptString("Enter computer name :");
@@ -67,6 +66,10 @@ public class ComputerController {
     }, () -> {
       UIHelper.displayError("The computer must have a name");
     });
+  }
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
   }
 
   public void delete() {

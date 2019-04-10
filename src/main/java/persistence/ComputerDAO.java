@@ -36,7 +36,7 @@ public class ComputerDAO {
 
   public void create(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(CREATE)
     ) {
       preparedStatement.setString(1, computer.getName());
@@ -55,7 +55,7 @@ public class ComputerDAO {
 
   public void delete(Computer computer) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareDeleteStatement(connection,
                                                                      computer.getId());
     ) {
@@ -77,7 +77,7 @@ public class ComputerDAO {
     List<Computer> rComputerList = new ArrayList<>();
     ResultSet      mResultSet    = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(SELECT)
     ) {
       mResultSet    = preparedStatement.executeQuery();
@@ -96,7 +96,7 @@ public class ComputerDAO {
   public Optional<Computer> read(Long id) throws DAOUnexecutedQuery, PropertiesNotFoundException {
     Optional<Computer> oComputer = Optional.empty();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareReadStatement(connection, id);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
@@ -117,7 +117,7 @@ public class ComputerDAO {
 
   public void update(Computer computer) throws PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = connection.prepareStatement(UPDATE)
     ) {
       preparedStatement.setString(1, computer.getName());
@@ -137,7 +137,7 @@ public class ComputerDAO {
     throws PropertiesNotFoundException {
     List<Computer> rComputerList = null;
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = preparedSelectLimitStatement(connection, size,
                                                                            offset);
         ResultSet mResultSet = preparedStatement.executeQuery();
@@ -168,7 +168,7 @@ public class ComputerDAO {
     throws PropertiesNotFoundException, DAOUnexecutedQuery {
     List<Computer> computers = new ArrayList<>();
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareSelectByNameStatement(connection, name);
         ResultSet resultSet = preparedStatement.executeQuery();
     ) {
@@ -194,7 +194,7 @@ public class ComputerDAO {
   public void deleteCompany(Company company)
     throws DAOUnexecutedQuery, PropertiesNotFoundException {
     try (
-        Connection connection = JDBCSingleton.INSTANCE.getHikariConnection();
+        Connection connection = DatabaseSingleton.INSTANCE.getHikariConnection();
         PreparedStatement preparedStatement = prepareDeleteCompanyStatement(connection,
                                                                             company.getId());
     ) {

@@ -18,7 +18,6 @@ public class ComputerPage {
   private Integer           pageSize    = 10;
   private Integer           offset      = 0;
   private Integer           page        = 1;
-  private ComputerService   cService    = new ComputerService();
   private List<ComputerDTO> currentPage = new ArrayList<>();
   private List<ComputerDTO> computers;
 
