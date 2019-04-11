@@ -2,8 +2,13 @@ package servlet;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import dto.MessageDTO;
 import dto.MessageDTO.MessageDTOBuilder;
+import service.CompanyService;
+import service.ComputerService;
 
 public interface IServlet {
 
@@ -31,6 +36,8 @@ public interface IServlet {
   String PATH_PAGE_404 = "/Views/404.jsp";
   String PATH_PAGE_500 = "/Views/500.jsp";
 
+  ApplicationContext CONTEXT = new ClassPathXmlApplicationContext("classpath:/applicationContext.xml");
+
   default void setErrorMessage(HttpServletRequest request, String title, String message) {
     MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
     mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
@@ -45,6 +52,14 @@ public interface IServlet {
     mDTOBuilder.withTitle(title);
     mDTOBuilder.withContent(message);
     request.setAttribute("message", mDTOBuilder.build());
+  }
+
+  default CompanyService getCompanyService() {
+    return (CompanyService) CONTEXT.getBean("CompanyService");
+  }
+
+  default ComputerService getComputerService() {
+    return (ComputerService) CONTEXT.getBean("ComputerService");
   }
 
 }

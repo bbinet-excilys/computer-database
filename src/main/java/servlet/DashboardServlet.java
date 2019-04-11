@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
@@ -26,7 +24,7 @@ import service.ComputerService;
  */
 @WebServlet(
   name = "dashboard",
-  urlPatterns = { "/Dashboard", "/dashboard", "/" },
+  urlPatterns = { "/Dashboard", "/dashboard" },
   description = "The main page of the WebUI"
 )
 public class DashboardServlet extends HttpServlet implements IServlet {
@@ -57,6 +55,9 @@ public class DashboardServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+    if (computerService == null) {
+      computerService = getComputerService();
+    }
     List<ComputerDTO> computers;
     try {
       Integer      page         = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
@@ -93,7 +94,7 @@ public class DashboardServlet extends HttpServlet implements IServlet {
         request.setAttribute("page", page);
         request.setAttribute("pageMax", pageMax);
         request.setAttribute("pageSize", pageSize);
-        request.setAttribute("count", computerCount.intValue());
+        request.setAttribute("count", computerCount);
         getServletContext().getRequestDispatcher(VIEW)
                            .forward(request, response);
       }
@@ -114,7 +115,6 @@ public class DashboardServlet extends HttpServlet implements IServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-
     doGet(request, response);
   }
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -63,6 +62,10 @@ public class CreateComputerServlet extends HttpServlet implements IServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
     List<CompanyDTO> companies;
+    if (companyService == null || computerService == null) {
+      companyService  = getCompanyService();
+      computerService = getComputerService();
+    }
     try {
       companies = companyService.list();
       request.setAttribute("companies", companies);

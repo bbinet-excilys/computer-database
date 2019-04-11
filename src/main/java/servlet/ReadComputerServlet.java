@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -45,6 +44,9 @@ public class ReadComputerServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+    if (computerService == null) {
+      computerService = getComputerService();
+    }
     Optional<Long> oComputerId = Optional.ofNullable(request.getParameter("computerId"))
                                          .filter(Predicate.not(String::isBlank))
                                          .map(Long::parseLong);

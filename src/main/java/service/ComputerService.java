@@ -28,7 +28,11 @@ public class ComputerService {
    */
   static final Logger LOG = LoggerFactory.getLogger("service");
 
-  private ComputerDAO dao = new ComputerDAO();
+  private ComputerDAO computerDAO;
+
+  public void setComputerDAO(ComputerDAO computerDAO) {
+    this.computerDAO = computerDAO;
+  }
 
   public void create(ComputerDTO computerDTO)
     throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
@@ -37,12 +41,12 @@ public class ComputerService {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);
-    dao.create(computer);
+    computerDAO.create(computer);
   }
 
   public Optional<ComputerDTO> read(Long id)
     throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    return dao.read(id).map(ComputerMapper::computerToDTO);
+    return computerDAO.read(id).map(ComputerMapper::computerToDTO);
   }
 
   public void delete(ComputerDTO computerDTO)
@@ -50,7 +54,7 @@ public class ComputerService {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     ComputerValidator.computerIsValid(computer);
     CompanyValidator.companyIsValid(computer.getCompany());
-    dao.delete(computer);
+    computerDAO.delete(computer);
   }
 
   public void update(ComputerDTO computerDTO)
@@ -60,27 +64,30 @@ public class ComputerService {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);
-    dao.update(computer);
+    computerDAO.update(computer);
   }
 
   public List<ComputerDTO> list() throws PropertiesNotFoundException {
-    return dao.list().stream().map(ComputerMapper::computerToDTO).collect(Collectors.toList());
+    return computerDAO.list()
+                      .stream()
+                      .map(ComputerMapper::computerToDTO)
+                      .collect(Collectors.toList());
   }
 
   public List<ComputerDTO> paginatedList(Integer size, Integer offset)
     throws PropertiesNotFoundException {
-    return dao.paginatedList(size, offset)
-              .stream()
-              .map(ComputerMapper::computerToDTO)
-              .collect(Collectors.toList());
+    return computerDAO.paginatedList(size, offset)
+                      .stream()
+                      .map(ComputerMapper::computerToDTO)
+                      .collect(Collectors.toList());
   }
 
   public List<ComputerDTO> paginatedSearchByNameList(String name)
     throws PropertiesNotFoundException, DAOUnexecutedQuery {
-    return dao.searchByName(name)
-              .stream()
-              .map(ComputerMapper::computerToDTO)
-              .collect(Collectors.toList());
+    return computerDAO.searchByName(name)
+                      .stream()
+                      .map(ComputerMapper::computerToDTO)
+                      .collect(Collectors.toList());
   }
 
 }
