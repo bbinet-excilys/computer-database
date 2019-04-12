@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import dto.CompanyDTO;
 import dto.ComputerDTO;
 import dto.ComputerDTO.ComputerDTOBuilder;
@@ -32,8 +35,9 @@ public class UpdateComputerServlet extends HttpServlet implements IServlet {
 
   private final String VIEW = "/Views/editComputer.jsp";
 
-  ComputerService computerService;
-  CompanyService  companyService;
+  private ApplicationContext context;
+  private ComputerService    computerService;
+  private CompanyService     companyService;
 
   public void setComputerService(ComputerService computerService) {
     this.computerService = computerService;
@@ -43,11 +47,13 @@ public class UpdateComputerServlet extends HttpServlet implements IServlet {
     this.companyService = companyService;
   }
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
-  public UpdateComputerServlet() {
-    super();
+  @Override
+  public void init() throws ServletException {
+    // TODO Auto-generated method stub
+    super.init();
+    context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    computerService = (ComputerService) context.getBean("ComputerService");
+    companyService  = (CompanyService) context.getBean("CompanyService");
   }
 
   /**
@@ -57,10 +63,6 @@ public class UpdateComputerServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    if (companyService == null || computerService == null) {
-      companyService  = getCompanyService();
-      computerService = getComputerService();
-    }
     Optional<ComputerDTO> oComputer = getRequestComputer(request);
     oComputer.ifPresent(computer -> {
       request.setAttribute("computer", computer);
@@ -137,7 +139,6 @@ public class UpdateComputerServlet extends HttpServlet implements IServlet {
   }
 
   public Optional<ComputerDTO> getRequestComputer(HttpServletRequest request) {
-    // Optional<Long> id = Optional.of(request.getParameter("computerId"));
     Long computerId = Optional.ofNullable(request.getParameter("computerId"))
                               .filter(Predicate.not(String::isBlank))
                               .map(Long::parseLong)

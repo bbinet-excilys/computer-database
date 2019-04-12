@@ -12,6 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
@@ -35,17 +37,19 @@ public class DashboardServlet extends HttpServlet implements IServlet {
 
   private final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
 
+  ApplicationContext      context;
   private ComputerService computerService;
 
   public void setComputerService(ComputerService computerService) {
     this.computerService = computerService;
   }
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
-  public DashboardServlet() {
-    super();
+  @Override
+  public void init() throws ServletException {
+    // TODO Auto-generated method stub
+    super.init();
+    context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    computerService = (ComputerService) context.getBean("ComputerService");
   }
 
   /**
@@ -55,9 +59,6 @@ public class DashboardServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    if (computerService == null) {
-      computerService = getComputerService();
-    }
     List<ComputerDTO> computers;
     try {
       Integer      page         = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))

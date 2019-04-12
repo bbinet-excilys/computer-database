@@ -37,19 +37,17 @@
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
       <list>
-        <value>properties/hikari.properties</value>
+        <value>classpath:/properties/hikari.properties</value>
       </list>
     </property>
   </bean>
 
   <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-    <property name="driverClassName" value="${dataSourceClassName}" />
-    <property name="jdbcUrl" value="${jdbcUrl}" />
+    <property name="dataSourceClassName" value="${driverClassName}" />
     <property name="dataSourceProperties">
       <props>
         <prop key="user">${dataSource.user}</prop>
         <prop key="password">${dataSource.password}</prop>
-        <prop key="cachePrepStmts">${dataSource.cachePrepStmts}</prop>
         <prop key="databaseName">${dataSource.databaseName}</prop>
         <prop key="portNumber">${dataSource.portNumber}</prop>
         <prop key="serverName">${dataSource.serverName}</prop>
@@ -59,6 +57,11 @@
 
   <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
     <constructor-arg ref="hikariConfig" />
+  </bean>
+
+  <!-- Servlets -->
+  <bean id="DashboardServlet" class="servlet.DashboardServlet">
+    <property name="computerService" ref="ComputerService" />
   </bean>
 
   <!-- Entry Point -->

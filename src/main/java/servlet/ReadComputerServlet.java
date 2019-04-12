@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
@@ -29,13 +32,19 @@ public class ReadComputerServlet extends HttpServlet implements IServlet {
 
   private final String VIEW = "/Views/detailsComputer.jsp";
 
-  ComputerService computerService;
+  private ApplicationContext context;
+  private ComputerService    computerService;
 
   public void setComputerService(ComputerService computerService) {
     this.computerService = computerService;
   }
 
-  public ReadComputerServlet() {}
+  @Override
+  public void init() throws ServletException {
+    super.init();
+    context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    computerService = (ComputerService) context.getBean("ComputerService");
+  }
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -44,9 +53,6 @@ public class ReadComputerServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    if (computerService == null) {
-      computerService = getComputerService();
-    }
     Optional<Long> oComputerId = Optional.ofNullable(request.getParameter("computerId"))
                                          .filter(Predicate.not(String::isBlank))
                                          .map(Long::parseLong);

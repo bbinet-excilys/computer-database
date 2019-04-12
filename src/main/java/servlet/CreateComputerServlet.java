@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import dto.CompanyDTO;
 import dto.ComputerDTO;
@@ -38,8 +40,9 @@ public class CreateComputerServlet extends HttpServlet implements IServlet {
 
   private final String VIEW = "/Views/addComputer.jsp";
 
-  ComputerService computerService;
-  CompanyService  companyService;
+  private ApplicationContext context;
+  private ComputerService    computerService;
+  private CompanyService     companyService;
 
   public void setComputerService(ComputerService computerService) {
     this.computerService = computerService;
@@ -49,10 +52,14 @@ public class CreateComputerServlet extends HttpServlet implements IServlet {
     this.companyService = companyService;
   }
 
-  /**
-   * @see HttpServlet#HttpServlet()
-   */
-  public CreateComputerServlet() {}
+  @Override
+  public void init() throws ServletException {
+    // TODO Auto-generated method stub
+    super.init();
+    context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    computerService = (ComputerService) context.getBean("ComputerService");
+    companyService  = (CompanyService) context.getBean("CompanyService");
+  }
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -62,10 +69,6 @@ public class CreateComputerServlet extends HttpServlet implements IServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
     List<CompanyDTO> companies;
-    if (companyService == null || computerService == null) {
-      companyService  = getCompanyService();
-      computerService = getComputerService();
-    }
     try {
       companies = companyService.list();
       request.setAttribute("companies", companies);

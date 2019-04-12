@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
@@ -29,10 +32,19 @@ public class DeleteComputerServlet extends HttpServlet implements IServlet {
 
   private final String VIEW = "/Views/deleteComputer.jsp";
 
-  private ComputerService computerService;
+  private ApplicationContext context;
+  private ComputerService    computerService;
 
   public void setComputerService(ComputerService computerService) {
     this.computerService = computerService;
+  }
+
+  @Override
+  public void init() throws ServletException {
+    // TODO Auto-generated method stub
+    super.init();
+    context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    computerService = (ComputerService) context.getBean("ComputerService");
   }
 
   /**
@@ -47,9 +59,6 @@ public class DeleteComputerServlet extends HttpServlet implements IServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    if (computerService == null) {
-      computerService = getComputerService();
-    }
     try {
       request.setAttribute("computers", computerService.list());
     }
@@ -67,11 +76,6 @@ public class DeleteComputerServlet extends HttpServlet implements IServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-
-    if (computerService == null) {
-      computerService = getComputerService();
-    }
-
     Optional<Long> oComputerId = Optional.of(request.getParameter("computerId"))
                                          .filter(Predicate.not(String::isBlank))
                                          .map(param -> Optional.of(Long.parseLong(param)))
