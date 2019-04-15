@@ -2,6 +2,8 @@ package dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import ui.EntityToStringStyle;
+
 public class ComputerDTO {
   private Long   id;
   private String name;
@@ -69,7 +71,7 @@ public class ComputerDTO {
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    return ToStringBuilder.reflectionToString(this, new EntityToStringStyle());
   }
 
   public static ComputerDTOBuilder builder() {

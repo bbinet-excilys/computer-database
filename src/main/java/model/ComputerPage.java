@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import dto.ComputerDTO;
 import exception.PropertiesNotFoundException;
-import service.ComputerService;
 
 public class ComputerPage {
 
@@ -19,7 +18,7 @@ public class ComputerPage {
   private Integer           offset      = 0;
   private Integer           page        = 1;
   private List<ComputerDTO> currentPage = new ArrayList<>();
-  private List<ComputerDTO> computers;
+  private List<ComputerDTO> computers   = new ArrayList<>();
 
   public ComputerPage(Integer pageSize) {
     super();
@@ -43,7 +42,6 @@ public class ComputerPage {
   public List<ComputerDTO> getCurrentPage() throws PropertiesNotFoundException {
     computeOffset();
     computePage();
-    logger.debug(currentPage.size() + "");
     return currentPage;
   }
 
@@ -52,12 +50,9 @@ public class ComputerPage {
     logger.debug("Update offset :" + offset);
   }
 
-  private void computePage() throws PropertiesNotFoundException {
-    logger.debug("Offset " + offset);
+  private void computePage() {
     if (offset < computers.size() && offset >= 0) {
-      logger.debug("Computing company page");
       currentPage = computers.stream().skip(offset).limit(pageSize).collect(Collectors.toList());
-      logger.debug("Page size " + currentPage.size());
     }
   }
 
