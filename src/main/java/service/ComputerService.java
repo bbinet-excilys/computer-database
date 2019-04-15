@@ -11,6 +11,7 @@ import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import mapping.ComputerMapper;
+import model.Company;
 import model.Computer;
 import persistence.ComputerDAO;
 import validation.CompanyValidator;
@@ -26,7 +27,7 @@ public class ComputerService {
   /**
    * Logger for the ComputerController class.
    */
-  static final Logger LOG = LoggerFactory.getLogger("service");
+  static final Logger LOGGER = LoggerFactory.getLogger("service");
 
   private ComputerDAO computerDAO;
 
@@ -37,7 +38,8 @@ public class ComputerService {
   public void create(ComputerDTO computerDTO)
     throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
-    if (computer.getCompany() != null) {
+    LOGGER.debug(computer.toString());
+    if (computer.getCompany().getName() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);
@@ -46,7 +48,7 @@ public class ComputerService {
 
   public Optional<ComputerDTO> read(Long id)
     throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    return computerDAO.read(id).map(ComputerMapper::computerToDTO);
+    return Optional.ofNullable(computerDAO.read(id)).map(ComputerMapper::computerToDTO);
   }
 
   public void delete(ComputerDTO computerDTO)
@@ -74,20 +76,16 @@ public class ComputerService {
                       .collect(Collectors.toList());
   }
 
-  public List<ComputerDTO> paginatedList(Integer size, Integer offset)
-    throws PropertiesNotFoundException {
-    return computerDAO.paginatedList(size, offset)
-                      .stream()
-                      .map(ComputerMapper::computerToDTO)
-                      .collect(Collectors.toList());
-  }
-
   public List<ComputerDTO> paginatedSearchByNameList(String name)
     throws PropertiesNotFoundException, DAOUnexecutedQuery {
     return computerDAO.searchByName(name)
                       .stream()
                       .map(ComputerMapper::computerToDTO)
                       .collect(Collectors.toList());
+  }
+
+  public void deleteCompany(Company company) {
+    computerDAO.deleteCompany(company);
   }
 
 }

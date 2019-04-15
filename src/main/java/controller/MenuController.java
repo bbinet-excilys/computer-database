@@ -8,8 +8,8 @@ import ui.UIHelper;
  */
 public class MenuController {
 
-  ComputerController computerController;
-  CompanyController  companyController;
+  private ComputerController computerController;
+  private CompanyController  companyController;
 
   /**
    * Basic method looping until the user wants to exit. Get Controllers from the

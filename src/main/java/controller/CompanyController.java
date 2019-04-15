@@ -12,7 +12,7 @@ import ui.UIHelper;
 
 public class CompanyController {
 
-  CompanyService companyService;
+  private CompanyService companyService;
 
   public void setCompanyService(CompanyService companyService) {
     this.companyService = companyService;

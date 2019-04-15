@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import dto.CompanyDTO;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import mapping.CompanyMapper;
 import model.Company;
 import persistence.CompanyDAO;
-import persistence.ComputerDAO;
 
 /**
  * Computer entity controller with specific DAO of type company.
@@ -20,10 +22,16 @@ import persistence.ComputerDAO;
 
 public class CompanyService {
 
-  private CompanyDAO companyDAO;
+  private CompanyDAO      companyDAO;
+  private ComputerService computerService;
+  private Logger          LOGGER = LoggerFactory.getLogger(CompanyService.class);
 
   public void setCompanyDAO(CompanyDAO companyDAO) {
     this.companyDAO = companyDAO;
+  }
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
   }
 
   public List<CompanyDTO> list() throws PropertiesNotFoundException {
@@ -37,19 +45,11 @@ public class CompanyService {
     return companyDAO.read(id).map(CompanyMapper::companyToDTO);
   }
 
-  public List<CompanyDTO> paginatedList(Integer pageSize, Integer offset)
-    throws PropertiesNotFoundException {
-    return companyDAO.paginatedList(pageSize, offset)
-                     .stream()
-                     .map(CompanyMapper::companyToDTO)
-                     .collect(Collectors.toList());
-  }
-
   public void deleteCompany(CompanyDTO companyDTO)
     throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    ComputerDAO daoComputer = new ComputerDAO();
-    Company     company     = CompanyMapper.companyFromDTO(companyDTO);
-    daoComputer.deleteCompany(company);
+    Company company = CompanyMapper.companyFromDTO(companyDTO);
+    LOGGER.debug(company.toString());
+    computerService.deleteCompany(company);
     companyDAO.delete(company);
   }
 
