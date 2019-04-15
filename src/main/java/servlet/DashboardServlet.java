@@ -46,7 +46,6 @@ public class DashboardServlet extends HttpServlet implements IServlet {
 
   @Override
   public void init() throws ServletException {
-    // TODO Auto-generated method stub
     super.init();
     context         = WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
     computerService = (ComputerService) context.getBean("ComputerService");
