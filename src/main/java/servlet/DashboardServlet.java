@@ -1,4 +1,4 @@
-package servlets;
+package servlet;
 
 import java.io.IOException;
 import java.util.List;
@@ -9,6 +9,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import dto.ComputerDTO;
 import exception.DAOUnexecutedQuery;
@@ -21,12 +24,22 @@ import service.ComputerService;
  */
 @WebServlet(
   name = "dashboard",
-  urlPatterns = { "/Dashboard",
-      "/dashboard" },
-  description = "The main page of the WebUI")
-public class DashboardServlet extends HttpServlet {
+  urlPatterns = { "/Dashboard", "/dashboard" },
+  description = "The main page of the WebUI"
+)
+public class DashboardServlet extends HttpServlet implements IServlet {
 
   private static final long serialVersionUID = 1L;
+
+  private final String VIEW = "/Views/dashboard.jsp";
+
+  private final Logger LOGGER = LoggerFactory.getLogger(DashboardServlet.class);
+
+  private ComputerService computerService;
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
+  }
 
   /**
    * @see HttpServlet#HttpServlet()
@@ -42,34 +55,34 @@ public class DashboardServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
+    if (computerService == null) {
+      computerService = getComputerService();
+    }
     List<ComputerDTO> computers;
     try {
-      ComputerService computerService = new ComputerService();
-      Integer         page            = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
-                                                                 .orElse("1"));
-      Integer         pageSize        = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
-                                                                 .orElse("10"));
-      ComputerPage    computerPage    = new ComputerPage(pageSize);
+      Integer      page         = Integer.parseInt(Optional.ofNullable(request.getParameter("page"))
+                                                           .orElse("1"));
+      Integer      pageSize     = Integer.parseInt(Optional.ofNullable(request.getParameter("pageSize"))
+                                                           .orElse("10"));
+      ComputerPage computerPage = new ComputerPage(pageSize);
       Optional.ofNullable(request.getParameter("searchName")).ifPresentOrElse(searchedName -> {
         try {
           computerPage.setComputers(computerService.paginatedSearchByNameList(searchedName));
 
         }
         catch (PropertiesNotFoundException e) {
-          ServletUtils.setErrorMessage(request, "Connection error",
-                                       "Couldn't connect to database, contact administrator");
+          setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
         }
         catch (DAOUnexecutedQuery e) {
-          ServletUtils.setErrorMessage(request, "Query error",
-                                       "Couldn't execute select query " + e.getMessage());
+          setErrorMessage(request, MSG_TITLE_ERROR_QUERY, MSG_CONTENT_ERROR_QUERY);
         }
       }, () -> {
         try {
-          computerPage.setComputers(computerService.list());
+          List<ComputerDTO> computerList = computerService.list();
+          computerPage.setComputers(computerList);
         }
         catch (PropertiesNotFoundException e) {
-          ServletUtils.setErrorMessage(request, "Connection error",
-                                       "Couldn't connect to database, contact administrator");
+          setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
         }
       });
       computerPage.setPage(page);
@@ -81,16 +94,16 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("page", page);
         request.setAttribute("pageMax", pageMax);
         request.setAttribute("pageSize", pageSize);
-        request.setAttribute("count", computerCount.intValue());
-        getServletContext().getRequestDispatcher("/Views/dashboard.jsp")
+        request.setAttribute("count", computerCount);
+        getServletContext().getRequestDispatcher(VIEW)
                            .forward(request, response);
       }
       else {
-        getServletContext().getRequestDispatcher("/Views/404.jsp").forward(request, response);
+        getServletContext().getRequestDispatcher(PATH_PAGE_404).forward(request, response);
       }
     }
     catch (PropertiesNotFoundException e) {
-      getServletContext().getRequestDispatcher("/Views/404.jsp").forward(request, response);
+      getServletContext().getRequestDispatcher(PATH_PAGE_404).forward(request, response);
     }
 
   }
@@ -102,7 +115,6 @@ public class DashboardServlet extends HttpServlet {
   @Override
   protected void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-
     doGet(request, response);
   }
 

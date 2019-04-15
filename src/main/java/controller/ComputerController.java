@@ -11,11 +11,11 @@ import dto.ComputerDTO;
 import dto.ComputerDTO.ComputerDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
+import mapping.CompanyMapper;
 import model.Company;
 import model.ComputerPage;
-import persistence.DAOFactory;
+import service.CompanyService;
 import service.ComputerService;
-import service.ServiceFactory;
 import ui.EntityUI;
 import ui.UIHelper;
 
@@ -23,7 +23,8 @@ public class ComputerController {
 
   Logger logger = LoggerFactory.getLogger(ComputerController.class);
 
-  private ComputerService computerService = ServiceFactory.INSTANCE.getComputerService();
+  private ComputerService computerService;
+  private CompanyService  companyService;
 
   public void create() {
     Optional<String> oName = UIHelper.promptString("Enter computer name :");
@@ -43,7 +44,7 @@ public class ComputerController {
       oCompanyId.ifPresent(companyId -> {
         Company company;
         try {
-          company = DAOFactory.INSTANCE.getDAOCompany().read(companyId).orElse(null);
+          company = companyService.read(companyId).map(CompanyMapper::companyFromDTO).orElse(null);
           computerBuilder.withCompanyId(company.getId());
           computerBuilder.withCompanyName(company.getName());
         }
@@ -67,6 +68,14 @@ public class ComputerController {
     }, () -> {
       UIHelper.displayError("The computer must have a name");
     });
+  }
+
+  public void setCompanyService(CompanyService companyService) {
+    this.companyService = companyService;
+  }
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
   }
 
   public void delete() {
@@ -149,10 +158,7 @@ public class ComputerController {
                                    .orElse(computer.getCompanyId());
 
           try {
-            computer.setCompanyId(DAOFactory.INSTANCE.getDAOCompany()
-                                                     .read(companyId)
-                                                     .map(Company::getId)
-                                                     .orElseGet(computer::getCompanyId));
+            computer.setCompanyId(companyId);
             computerService.update(computer);
           }
           catch (IllegalArgumentException e) {

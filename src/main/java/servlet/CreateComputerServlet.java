@@ -1,4 +1,4 @@
-package servlets;
+package servlet;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,15 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.validator.routines.DateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.CompanyDTO;
 import dto.ComputerDTO;
 import dto.ComputerDTO.ComputerDTOBuilder;
-import dto.MessageDTO;
-import dto.MessageDTO.MessageDTOBuilder;
 import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import service.CompanyService;
@@ -31,22 +28,31 @@ import service.ComputerService;
 @WebServlet(
   name = "addComputer",
   urlPatterns = { "/addComputer", "/addcomputer" },
-  description = "Add computer page")
-public class AddComputer extends HttpServlet {
+  description = "Add computer page"
+)
+public class CreateComputerServlet extends HttpServlet implements IServlet {
 
   private static final long serialVersionUID = 1L;
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(AddComputer.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(CreateComputerServlet.class);
 
-  ComputerService computerService = new ComputerService();
-  CompanyService  companyService  = new CompanyService();
+  private final String VIEW = "/Views/addComputer.jsp";
 
-  private static DateValidator dValidator = new DateValidator();
+  ComputerService computerService;
+  CompanyService  companyService;
+
+  public void setComputerService(ComputerService computerService) {
+    this.computerService = computerService;
+  }
+
+  public void setCompanyService(CompanyService companyService) {
+    this.companyService = companyService;
+  }
 
   /**
    * @see HttpServlet#HttpServlet()
    */
-  public AddComputer() {}
+  public CreateComputerServlet() {}
 
   /**
    * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
@@ -56,15 +62,18 @@ public class AddComputer extends HttpServlet {
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
     List<CompanyDTO> companies;
+    if (companyService == null || computerService == null) {
+      companyService  = getCompanyService();
+      computerService = getComputerService();
+    }
     try {
       companies = companyService.list();
       request.setAttribute("companies", companies);
     }
     catch (PropertiesNotFoundException e) {
-      setErrorMessage(request, "Connection error",
-                      "Couldn't connect to database, contact administrator");
+      setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
     }
-    getServletContext().getRequestDispatcher("/Views/addComputer.jsp").forward(request, response);
+    getServletContext().getRequestDispatcher(VIEW).forward(request, response);
   }
 
   /**
@@ -94,41 +103,25 @@ public class AddComputer extends HttpServlet {
                                                           .orElseGet(() -> null));
               }
               catch (PropertiesNotFoundException e) {
-                setErrorMessage(request, "Connection error",
-                                "Couldn't connect to database, contact administrator");
+                setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
               }
             });
     try {
       computerService.create(cDTOBuilder.build());
-      setSuccessMessage(request, "Success", String.format("Computer %s successfully created",
-                                                          cDTOBuilder.build().getName()));
+      setSuccessMessage(request, MSG_TITLE_SUCCESS, String.format(MSG_CONTENT_SUCCESS_CREATE,
+                                                                  cDTOBuilder.build().getName()));
     }
     catch (IllegalArgumentException e) {
-      setErrorMessage(request, "Parameter Error", e.getMessage());
+      setErrorMessage(request, MSG_TITLE_ERROR_PARAMETER,
+                      String.format(MSG_CONTENT_ERROR_PARAMETER, e.getMessage()));
     }
     catch (PropertiesNotFoundException e) {
-      setErrorMessage(request, "Connection error", "Couldn't connect to the database");
+      setErrorMessage(request, MSG_TITLE_ERROR_CONNECTION, MSG_CONTENT_ERROR_CONNECTION);
     }
     catch (DAOUnexecutedQuery e) {
-      setErrorMessage(request, "Query Error", "Couldn't execute the query");
+      setErrorMessage(request, MSG_TITLE_ERROR_QUERY, MSG_CONTENT_ERROR_QUERY);
     }
     doGet(request, response);
-  }
-
-  public void setErrorMessage(HttpServletRequest request, String title, String message) {
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
-    mDTOBuilder.withTitle(title);
-    mDTOBuilder.withContent(message);
-    request.setAttribute("message", mDTOBuilder.build());
-  }
-
-  public void setSuccessMessage(HttpServletRequest request, String title, String message) {
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
-    mDTOBuilder.withTitle(title);
-    mDTOBuilder.withContent(message);
-    request.setAttribute("message", mDTOBuilder.build());
   }
 
 }

@@ -7,13 +7,16 @@ import exception.DAOUnexecutedQuery;
 import exception.PropertiesNotFoundException;
 import model.CompanyPage;
 import service.CompanyService;
-import service.ServiceFactory;
 import ui.EntityUI;
 import ui.UIHelper;
 
 public class CompanyController {
 
-  CompanyService companyService = ServiceFactory.INSTANCE.getCompanyService();
+  CompanyService companyService;
+
+  public void setCompanyService(CompanyService companyService) {
+    this.companyService = companyService;
+  }
 
   private static Logger logger = LoggerFactory.getLogger(CompanyController.class);
 
@@ -22,7 +25,7 @@ public class CompanyController {
       EntityUI.printCompanyList(companyService.list());
     }
     catch (PropertiesNotFoundException e) {
-      logger.error("Connection error, couldn't conenct to database");
+      logger.error("Connection error, couldn't connect to database");
     }
   }
 

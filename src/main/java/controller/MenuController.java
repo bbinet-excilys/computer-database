@@ -8,14 +8,15 @@ import ui.UIHelper;
  */
 public class MenuController {
 
+  ComputerController computerController;
+  CompanyController  companyController;
+
   /**
    * Basic method looping until the user wants to exit. Get Controllers from the
    * Factory and calls corresponding methods.
    */
   public void runMenu() {
-    boolean            loop                = true;
-    ComputerController mComputerController = ControllerFactory.INSTANCE.getComputerController();
-    CompanyController  mCompanyController  = ControllerFactory.INSTANCE.getCompanyController();
+    boolean loop = true;
     do {
       UIHelper.displayMenu();
       MenuEnum choice;
@@ -36,37 +37,45 @@ public class MenuController {
           loop = false;
           break;
         case LIST_COMPANIES:
-          mCompanyController.list();
+          companyController.list();
           break;
         case LIST_COMPUTERS:
-          mComputerController.list();
+          computerController.list();
           break;
         case CREATE_COMPUTER:
-          mComputerController.create();
+          computerController.create();
           break;
         case READ_COMPUTER:
-          mComputerController.read();
+          computerController.read();
           break;
         case UPDATE_COMPUTER:
-          mComputerController.update();
+          computerController.update();
           break;
         case DELETE_COMPUTER:
-          mComputerController.delete();
+          computerController.delete();
           break;
         case PAGED_COMPANIES:
-          mCompanyController.pagedList();
+          companyController.pagedList();
           break;
         case PAGED_COMPUTERS:
-          mComputerController.pagedList();
+          computerController.pagedList();
           break;
         case DELETE_COMPANY:
-          mCompanyController.delete();
+          companyController.delete();
           break;
         default:
           UIHelper.displayError("Not available");
           break;
       }
     } while (loop);
+  }
+
+  public void setComputerController(ComputerController computerController) {
+    this.computerController = computerController;
+  }
+
+  public void setCompanyController(CompanyController companyController) {
+    this.companyController = companyController;
   }
 
 }

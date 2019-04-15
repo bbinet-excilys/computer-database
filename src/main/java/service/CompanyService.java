@@ -11,7 +11,6 @@ import mapping.CompanyMapper;
 import model.Company;
 import persistence.CompanyDAO;
 import persistence.ComputerDAO;
-import persistence.DAOFactory;
 
 /**
  * Computer entity controller with specific DAO of type company.
@@ -21,25 +20,29 @@ import persistence.DAOFactory;
 
 public class CompanyService {
 
-  private CompanyDAO dao = DAOFactory.INSTANCE.getDAOCompany();
+  private CompanyDAO companyDAO;
+
+  public void setCompanyDAO(CompanyDAO companyDAO) {
+    this.companyDAO = companyDAO;
+  }
 
   public List<CompanyDTO> list() throws PropertiesNotFoundException {
-    return dao.list()
-              .stream()
-              .map(CompanyMapper::companyToDTO)
-              .collect(Collectors.toList());
+    return companyDAO.list()
+                     .stream()
+                     .map(CompanyMapper::companyToDTO)
+                     .collect(Collectors.toList());
   }
 
   public Optional<CompanyDTO> read(Long id) throws PropertiesNotFoundException {
-    return dao.read(id).map(CompanyMapper::companyToDTO);
+    return companyDAO.read(id).map(CompanyMapper::companyToDTO);
   }
 
   public List<CompanyDTO> paginatedList(Integer pageSize, Integer offset)
     throws PropertiesNotFoundException {
-    return dao.paginatedList(pageSize, offset)
-              .stream()
-              .map(CompanyMapper::companyToDTO)
-              .collect(Collectors.toList());
+    return companyDAO.paginatedList(pageSize, offset)
+                     .stream()
+                     .map(CompanyMapper::companyToDTO)
+                     .collect(Collectors.toList());
   }
 
   public void deleteCompany(CompanyDTO companyDTO)
@@ -47,7 +50,7 @@ public class CompanyService {
     ComputerDAO daoComputer = new ComputerDAO();
     Company     company     = CompanyMapper.companyFromDTO(companyDTO);
     daoComputer.deleteCompany(company);
-    dao.delete(company);
+    companyDAO.delete(company);
   }
 
 }
