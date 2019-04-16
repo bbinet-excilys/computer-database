@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-  xmlns="http://www.springframework.org/schema/beans" xsi:schemaLocation="
-            http://www.springframework.org/schema/beans
-            http://www.springframework.org/schema/beans/spring-beans.xsd">
+<beans xmlns="http://www.springframework.org/schema/beans" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xmlns:mvc="http://www.springframework.org/schema/mvc" 
+  xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+  <mvc:annotation-driven />
+  <context:component-scan base-package="controller.**" />
 
   <!-- Services -->
   <bean id="ComputerService" class="service.ComputerService">
@@ -71,14 +80,16 @@
     <constructor-arg ref="hikariDataSource" />
   </bean>
 
-  <!-- Servlets -->
-  <bean id="DashboardServlet" class="servlet.DashboardServlet">
-    <property name="computerService" ref="ComputerService" />
-  </bean>
-
   <!-- Entry Point -->
   <bean id="Main" class="Main">
     <property name="menuController" ref="MenuController" />
   </bean>
 
+  <mvc:resources mapping="/resources/**" location="/resources" />
+
+  <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/Views/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
 </beans>

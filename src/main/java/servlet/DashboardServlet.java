@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,11 +23,12 @@ import service.ComputerService;
 /**
  * Servlet implementation class ComputerServlet.
  */
-@WebServlet(
-  name = "dashboard",
-  urlPatterns = { "/Dashboard", "/dashboard" },
-  description = "The main page of the WebUI"
-)
+
+//@WebServlet(
+//  name = "dashboard",
+//  urlPatterns = { "/Dashboard", "/dashboard" },
+//  description = "The main page of the WebUI"
+//)
 public class DashboardServlet extends HttpServlet implements IServlet {
 
   private static final long serialVersionUID = 1L;

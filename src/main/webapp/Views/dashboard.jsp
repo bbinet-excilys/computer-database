@@ -8,8 +8,8 @@
   <title>Computer Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <link href="css/uikit.min.css" rel="stylesheet" media="screen">
-  <link href="css/main.css" rel="stylesheet">
+  <link href="<c:url value="resources/css/uikit.min.css"/>" rel="stylesheet" media="screen">
+  <link href="<c:url value="resources/css/main.css"/>" rel="stylesheet">
 </head>
 
 <body>
@@ -154,11 +154,11 @@
 
     </div>
   </div>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
-  <script src="js/sortable.min.js"></script>
-  <script src="js/dashboard.js"></script>
+  <script src="resources/js/jquery.min.js"></script>
+  <script src="resources/js/uikit.min.js"></script>
+  <script src="resources/js/uikit-icons.min.js"></script>
+  <script src="resources/js/sortable.min.js"></script>
+  <script src="resources/js/dashboard.js"></script>
 </body>
 
 </html>

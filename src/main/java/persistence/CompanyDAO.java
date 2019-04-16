@@ -17,17 +17,12 @@ import model.Company;
 
 public class CompanyDAO {
 
-  /**
-   * Logger for the DAOCompany class.
-   */
-  private final Logger               LOGGER         = LoggerFactory.getLogger(CompanyDAO.class);
-  private final String               SELECT         = "SELECT id, name FROM company;";
-  private final String               UPDATE         = "UPDATE company SET name=:name WHERE id=:id;";
-  private final String               DELETE         = "DELETE FROM company WHERE id=:id;";
-  private final String               SELECT_WHEREID = "SELECT id, name FROM company WHERE id=:id;";
-  /**
-   * Set the Mapper on DAOCompany instanciation.
-   */
+  private final Logger LOGGER         = LoggerFactory.getLogger(CompanyDAO.class);
+  private final String SELECT         = "SELECT id, name FROM company;";
+  private final String UPDATE         = "UPDATE company SET name=:name WHERE id=:id;";
+  private final String DELETE         = "DELETE FROM company WHERE id=:id;";
+  private final String SELECT_WHEREID = "SELECT id, name FROM company WHERE id=:id;";
+
   private NamedParameterJdbcTemplate jdbcTemplate;
   private CompanyMapper              companyMapper;
 
