@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 
@@ -8,8 +9,8 @@
   <title>Computer Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <link href="css/uikit.min.css" rel="stylesheet" media="screen">
-  <link href="css/main.css" rel="stylesheet">
+  <link href="<c:url value=" resources/css/uikit.min.css"/>" rel="stylesheet" media="screen">
+  <link href="<c:url value=" resources/css/main.css"/>" rel="stylesheet">
 </head>
 
 <body>
@@ -20,20 +21,20 @@
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
         <ul class="uk-navbar-nav">
           <li>
-            <a href="Dashboard">Computer</a>
+            <a href="dashboard">Computer</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="Dashboard">List</a></li>
-                <li><a href="addComputer">Add</a></li>
-                <li><a href="deleteComputer">Delete</a></li>
+                <li><a href="dashboard">List</a></li>
+                <li><a href="addcomputer">Add</a></li>
+                <li><a href="deletecomputer">Delete</a></li>
               </ul>
             </div>
           </li>
           <li>
-            <a href="listCompany">Company</a>
+            <a href="#">Company</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="listCompany">List</a></li>
+                <li><a href="#">List</a></li>
               </ul>
             </div>
           </li>
@@ -58,24 +59,20 @@
     </c:if>
 
     <div class="uk-grid uk-flex-center uk-flex-middle uk-margin" uk-grid>
-      <form method="POST" class="uk-width-1-2">
-        <fieldset class="uk-fieldset">
-          <select class="uk-select uk-width-1-1" name="computerId" id="computerId">
-            <c:forEach items="${computers}" var="computer">
-              <option value="${computer.id}">${computer.id} - ${computer.name}</option>
-            </c:forEach>
-          </select>
-        </fieldset>
+      <form:form method="POST" class="uk-width-1-2" modelAttribute="computerDTOModel" id="deleteComputerForm">
+        <form:select class="uk-select uk-width-1-1" path="id">
+          <form:options items="${computers}" itemValue="id" itemLabel="name"></form:options>
+        </form:select>
         <div class="uk-grid uk-flex-right uk-margin" uk-grid>
           <input type="submit" class="uk-button uk-button-danger uk-text-center" value="Delete" />
         </div>
-      </form>
+      </form:form>
     </div>
   </div>
 
-  <script src="js/jquery.min.js"></script>
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
+  <script src="resources/js/jquery.min.js"></script>
+  <script src="resources/js/uikit.min.js"></script>
+  <script src="resources/js/uikit-icons.min.js"></script>
 </body>
 
 </html>

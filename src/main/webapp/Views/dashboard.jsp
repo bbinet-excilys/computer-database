@@ -8,8 +8,8 @@
   <title>Computer Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <link href="<c:url value="resources/css/uikit.min.css"/>" rel="stylesheet" media="screen">
-  <link href="<c:url value="resources/css/main.css"/>" rel="stylesheet">
+  <link href="<c:url value=" resources/css/uikit.min.css"/>" rel="stylesheet" media="screen">
+  <link href="<c:url value=" resources/css/main.css"/>" rel="stylesheet">
 </head>
 
 <body>
@@ -20,20 +20,20 @@
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
         <ul class="uk-navbar-nav">
           <li>
-            <a href="Dashboard">Computer</a>
+            <a href="dashboard">Computer</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="Dashboard">List</a></li>
-                <li><a href="addComputer">Add</a></li>
-                <li><a href="deleteComputer">Delete</a></li>
+                <li><a href="dashboard">List</a></li>
+                <li><a href="addcomputer">Add</a></li>
+                <li><a href="deletecomputer">Delete</a></li>
               </ul>
             </div>
           </li>
           <li>
-            <a href="listCompany">Company</a>
+            <a href="#">Company</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="listCompany">List</a></li>
+                <li><a href="#">List</a></li>
               </ul>
             </div>
           </li>
@@ -60,16 +60,16 @@
                 value="${param.searchName}" />
             </div>
           </div>
-          <input type="hidden" id="page" value="${page}" name="page" />
+          <input type="hidden" id="page" value="1" name="page" />
           <input type="hidden" id="pageSize" value="${pageSize}" name="pageSize" />
           <input type="submit" class="uk-button uk-button-primary uk-width-1-3" value="Search" />
         </form>
       </div>
       <div class="uk-width-1-5">
         <div class="uk-button-group">
-          <a class="uk-button uk-button-default" href="?page=1&pageSize=10">10</a>
-          <a class=" uk-button uk-button-default" href="?page=1&pageSize=50">50</a>
-          <a class=" uk-button uk-button-default" href="?page=1&pageSize=100">100</a>
+          <a class="uk-button uk-button-default" href="?page=1&pageSize=10&searchName=${searchName}">10</a>
+          <a class=" uk-button uk-button-default" href="?page=1&pageSize=50&searchName=${searchName}">50</a>
+          <a class=" uk-button uk-button-default" href="?page=1&pageSize=100&searchName=${searchName}">100</a>
         </div>
       </div>
       <div class=" uk-width-1-5">
@@ -124,7 +124,6 @@
                 <td>
                   <input type="checkbox" name="cb" class="uk-checkbox" value="${computer.id}">
                 </td>
-                <!-- <td class="editMode"><input type="checkbox" name="cb" class="cb" value="${computer.id}"></td> -->
               </tr>
             </c:forEach>
           </tbody>

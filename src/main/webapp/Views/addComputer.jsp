@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 <html>
 
@@ -8,8 +9,8 @@
   <title>Computer Database</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
-  <link href="css/uikit.min.css" rel="stylesheet" media="screen">
-  <link href="css/main.css" rel="stylesheet">
+  <link href="<c:url value=" resources/css/uikit.min.css"/>" rel="stylesheet" media="screen">
+  <link href="<c:url value=" resources/css/main.css"/>" rel="stylesheet">
 </head>
 
 <body>
@@ -20,20 +21,20 @@
           DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
         <ul class="uk-navbar-nav">
           <li>
-            <a href="Dashboard">Computer</a>
+            <a href="dashboard">Computer</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="Dashboard">List</a></li>
-                <li><a href="addComputer">Add</a></li>
-                <li><a href="deleteComputer">Delete</a></li>
+                <li><a href="dashboard">List</a></li>
+                <li><a href="addcomputer">Add</a></li>
+                <li><a href="deletecomputer">Delete</a></li>
               </ul>
             </div>
           </li>
           <li>
-            <a href="listCompany">Company</a>
+            <a href="#">Company</a>
             <div uk-dropdown>
               <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="listCompany">List</a></li>
+                <li><a href="#">List</a></li>
               </ul>
             </div>
           </li>
@@ -58,47 +59,55 @@
     </c:if>
 
     <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
-      <form class="uk-width-1-2" method="POST" id="addComputerForm">
-        <fieldset class="uk-fieldset">
-          <div class="uk-margin">
-            <div class="uk-inline uk-width-1-1">
-              <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: desktop"></span>
-              <input class="uk-input" placeholder="Computer Name" type="text" id="computerName" name="computerName">
-            </div>
+      <form:form method="post" modelAttribute="addComputerForm" class="uk-width-1-2 uk-form-horizontal">
+        <div class="uk-margin">
+          <div class="uk-inline uk-width-1-1">
+            <form:label path="name" cssClass="uk-form-label">Computer name</form:label>
+            <form:input path="name" type="text" cssClass="uk-input" />
+            <form:errors path="name" cssClass="uk-text-danger" />
           </div>
-          <div class="uk-margin">
-            <div class="uk-inline uk-width-1-1">
-              <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-              <input class="uk-input" placeholder="Introdction Date" type="date" id="computerIntroduced"
-                name="computerIntroduced">
-            </div>
+        </div>
+        <div class="uk-margin">
+          <div class="uk-width-1-2">
+            <form:label path="introduced" cssClass="uk-form-label">Introduction date</form:label>
+            <form:input path="introduced" type="date" cssClass="uk-input" />
+            <form:errors path="introduced" cssClass="uk-text-danger" />
           </div>
-          <div class="uk-margin">
-            <div class="uk-inline uk-width-1-1">
-              <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-              <input class="uk-input" placeholder="Discontinued Date" type="date" id="computerDiscontinued"
-                name="computerDiscontinued">
-            </div>
+        </div>
+        <div class="uk-margin">
+          <div class="uk-width-1-2">
+            <form:label path="discontinued" cssClass="uk-form-label">Discontinued date</form:label>
+            <form:input path="discontinued" type="date" cssClass="uk-input" />
+            <form:errors path="discontinued" cssClass="uk-text-danger" />
           </div>
-          <div class="uk-margin">
-            <select class="uk-select" name="computerCompanyId" id="computerCompanyId">
-              <option value="">Company</option>
-              <c:forEach items="${companies}" var="company">
-                <option value="${company.id}">${company.id} - ${company.name}</option>
-              </c:forEach>
-            </select>
+        </div>
+        <div class="uk-margin">
+          <div class="uk-inline uk-width-1-1">
+            <form:label path="companyId" cssClass="uk-form-label">Company</form:label>
+            <form:select path="companyId" type="select" cssClass="uk-select">
+              <form:option value="" label="Company" />
+              <form:options items="${companies}" itemValue="id" itemLabel="name" />
+            </form:select>
+            <form:errors path="companyId" cssClass="uk-text-danger" />
           </div>
-        </fieldset>
-        <input type="submit" class="uk-button uk-button-primary uk-width-1-3" value="Add" />
-        <a class="uk-button uk-button-danger uk-width-1-3" href="dashboard">Cancel</a>
-      </form>
+        </div>
+        <div class="uk-margin">
+          <div class=" uk-width-1-1">
+            <a href="dashboard" class="uk-button uk-button-danger">Cancel</a>
+          </div>
+        </div>
+        <div class="uk-margin">
+          <div class="uk-width-1-1">
+            <input type="submit" class="uk-button uk-button-primary" value="Submit"></input>
+          </div>
+        </div>
+      </form:form>
     </div>
   </div>
-  <script src="js/jquery.min.js"></script>
-  <script src="js/jquery.validate.min.js"></script>
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
-  <script src="js/computerForms.js"></script>
+  <script src="resources/js/jquery.min.js"></script>
+  <script src="resources/js/uikit.min.js"></script>
+  <script src="resources/js/uikit-icons.min.js"></script>
+  <script src="resources/js/computerForms.js"></script>
 </body>
 
 </html>
