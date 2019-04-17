@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.CompanyDTO;
-import exception.DAOUnexecutedQuery;
-import exception.PropertiesNotFoundException;
 import mapping.CompanyMapper;
 import model.Company;
 import persistence.CompanyDAO;
@@ -34,19 +32,18 @@ public class CompanyService {
     this.computerService = computerService;
   }
 
-  public List<CompanyDTO> list() throws PropertiesNotFoundException {
+  public List<CompanyDTO> list() {
     return companyDAO.list()
                      .stream()
                      .map(CompanyMapper::companyToDTO)
                      .collect(Collectors.toList());
   }
 
-  public Optional<CompanyDTO> read(Long id) throws PropertiesNotFoundException {
+  public Optional<CompanyDTO> read(Long id) {
     return companyDAO.read(id).map(CompanyMapper::companyToDTO);
   }
 
-  public void deleteCompany(CompanyDTO companyDTO)
-    throws DAOUnexecutedQuery, PropertiesNotFoundException {
+  public void deleteCompany(CompanyDTO companyDTO) {
     Company company = CompanyMapper.companyFromDTO(companyDTO);
     LOGGER.debug(company.toString());
     computerService.deleteCompany(company);
