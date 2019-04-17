@@ -5,13 +5,12 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import exception.DAOUnexecutedQuery;
-import exception.PropertiesNotFoundException;
 import mapping.CompanyMapper;
 import model.Company;
 
@@ -38,17 +37,26 @@ public class CompanyDAO {
     return jdbcTemplate.query(SELECT, companyMapper);
   }
 
-  public Optional<Company> read(Long id) throws PropertiesNotFoundException {
+  public Optional<Company> read(Long id) {
     SqlParameterSource parameters = new MapSqlParameterSource().addValue("id", id);
-    return Optional.of(jdbcTemplate.queryForObject(SELECT_WHEREID, parameters, companyMapper));
+    Optional<Company>  rCompany;
+    try {
+      rCompany = Optional.of(jdbcTemplate.queryForObject(SELECT_WHEREID, parameters,
+                                                         companyMapper));
+    }
+    catch (EmptyResultDataAccessException e) {
+      LOGGER.debug("No matching company in database");
+      rCompany = Optional.empty();
+    }
+    return rCompany;
   }
 
-  public void update(Company company) throws PropertiesNotFoundException {
+  public void update(Company company) {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(company);
     jdbcTemplate.update(UPDATE, parameters);
   }
 
-  public void delete(Company company) throws DAOUnexecutedQuery, PropertiesNotFoundException {
+  public void delete(Company company) {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(company);
     jdbcTemplate.update(DELETE, parameters);
   }
