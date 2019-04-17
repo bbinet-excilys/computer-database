@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.ComputerDTO;
-import exception.PropertiesNotFoundException;
 
 public class ComputerPage {
 
@@ -25,7 +24,7 @@ public class ComputerPage {
     this.pageSize = pageSize;
   }
 
-  public void nextPage() throws PropertiesNotFoundException {
+  public void nextPage() {
     if (page < computers.size() / pageSize) {
       page++;
     }
@@ -39,7 +38,7 @@ public class ComputerPage {
     logger.debug("Prev page. Now :" + page);
   }
 
-  public List<ComputerDTO> getCurrentPage() throws PropertiesNotFoundException {
+  public List<ComputerDTO> getCurrentPage() {
     computeOffset();
     computePage();
     return currentPage;
