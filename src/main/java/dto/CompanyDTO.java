@@ -14,7 +14,7 @@ public class CompanyDTO {
     name = builder.name;
   }
 
-  public long getId() {
+  public Long getId() {
     return id;
   }
 
