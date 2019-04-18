@@ -2,6 +2,7 @@ package persistence;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,7 @@ public class ComputerDAO {
 
   public void update(Computer computer) {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(computer);
+    logParameters(parameters);
     jdbcTemplate.update(UPDATE, parameters);
   }
 
@@ -80,5 +82,13 @@ public class ComputerDAO {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(company);
     LOGGER.debug(company.toString());
     jdbcTemplate.update(DELETE_COMPANY, parameters);
+  }
+
+  private void logParameters(SqlParameterSource parameters) {
+    String[]       names      = parameters.getParameterNames();
+    Stream<String> nameStream = Stream.of(names);
+    nameStream.forEach(name -> {
+      LOGGER.debug(String.format("\tName %20s | Type %20s | Value %30s ", name, parameters.getSqlType(name), parameters.getValue(name)));
+    });
   }
 }

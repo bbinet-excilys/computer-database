@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import dto.CompanyDTO;
 import dto.ComputerDTO;
@@ -75,7 +76,7 @@ public class ComputerController {
   }
 
   @PostMapping("/addcomputer")
-  public ModelAndView postAddComputer(ModelAndView model, @ModelAttribute(
+  public RedirectView postAddComputer(ModelAndView model, @ModelAttribute(
     "addComputerForm"
   ) @Validated ComputerDTO computerDTO, BindingResult bindingResult) {
     LOGGER.error("posted DTO : " + computerDTO.toString());
@@ -83,7 +84,7 @@ public class ComputerController {
                                              .map(CompanyDTO::getName)
                                              .orElse(""));
     computerService.create(computerDTO);
-    return getAddComputer(model);
+    return new RedirectView("dashboard");
   }
 
   @GetMapping("/deletecomputer")
@@ -95,12 +96,12 @@ public class ComputerController {
   }
 
   @PostMapping("/deletecomputer")
-  public ModelAndView postDeleteComputer(ModelAndView model, @ModelAttribute(
+  public RedirectView postDeleteComputer(ModelAndView model, @ModelAttribute(
     "deleteComputerForm"
   ) @Validated ComputerDTO computerDTO) {
     model.setViewName("deleteComputer");
     computerService.read(computerDTO.getId()).ifPresent(cDTO -> computerService.delete(cDTO));
-    return getDeleteComputer(model);
+    return new RedirectView("dashboard");
   }
 
   @GetMapping("/editcomputer")
@@ -110,18 +111,20 @@ public class ComputerController {
     defaultValue = "1"
   ) String computerIdString) {
     model.setViewName("editComputer");
+    LOGGER.debug(model.getModel().toString());
     model.addObject("editComputerForm", computerService.read(Long.parseLong(computerIdString)));
     model.addObject("companies", companyService.list());
     return model;
   }
 
   @PostMapping("/editcomputer")
-  public ModelAndView postEditComputer(ModelAndView model, @ModelAttribute(
+  public RedirectView postEditComputer(ModelAndView model, @ModelAttribute(
     "editComputerForm"
   ) @Validated ComputerDTO computerDTO, BindingResult bindingResult) {
     model.setViewName("editComputer");
+    LOGGER.debug(computerDTO.toString());
     computerService.update(computerDTO);
-    return getDashboard(null, null, null);
+    return new RedirectView("dashboard");
   }
 
   @GetMapping("/detailscomputer")

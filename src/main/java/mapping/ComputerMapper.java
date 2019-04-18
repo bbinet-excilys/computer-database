@@ -55,13 +55,13 @@ public class ComputerMapper implements RowMapper<Computer> {
     Optional.ofNullable(computerDTO.getIntroduced())
             .filter(Predicate.not(String::isBlank))
             .ifPresent(strDate -> {
-              Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
+              Date date = new Date(dValidator.validate(strDate, "yyyy-MM-dd").getTime());
               computerBuilder.withIntroduced(date);
             });
     Optional.ofNullable(computerDTO.getDiscontinued())
             .filter(Predicate.not(String::isBlank))
             .ifPresent(strDate -> {
-              Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
+              Date date = new Date(dValidator.validate(strDate, "yyyy-MM-dd").getTime());
               computerBuilder.withDiscontinued(date);
             });
     CompanyBuilder companyBuilder = Company.builder();

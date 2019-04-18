@@ -49,17 +49,21 @@ public class ComputerService {
 
   public void delete(ComputerDTO computerDTO) {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
+    if (computer.getCompany().getName() != null) {
+      CompanyValidator.companyIsValid(computer.getCompany());
+    }
     ComputerValidator.computerIsValid(computer);
-    CompanyValidator.companyIsValid(computer.getCompany());
     computerDAO.delete(computer);
   }
 
   public void update(ComputerDTO computerDTO) {
+    LOGGER.debug("Updating from DTO " + computerDTO);
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     if (computer.getCompany().getName() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);
+    LOGGER.debug("Updating computer " + computer.toString());
     computerDAO.update(computer);
   }
 
