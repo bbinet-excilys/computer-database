@@ -10,8 +10,7 @@ pageEncoding="UTF-8"%>
   <div class="uk-grid">
     <div class="uk-width-1-1">
       <h1>
-        <spring:message code="page.title.list.computer" /> - ${count}
-        <spring:message code="page.title.found" />
+        <spring:message code="page.title.list.computer" arguments="${count}" />
       </h1>
     </div>
   </div>

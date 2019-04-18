@@ -11,25 +11,31 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
 import dto.CompanyDTO;
 import dto.ComputerDTO;
+import dto.MessageDTO;
+import dto.MessageDTO.MessageDTOBuilder;
 import model.ComputerPage;
 import service.CompanyService;
 import service.ComputerService;
+import validation.ComputerValidator;
 
 @Controller
 public class ComputerController {
 
   private Logger LOGGER = LoggerFactory.getLogger(ComputerController.class);
 
-  private ComputerService computerService;
-  private CompanyService  companyService;
+  private ComputerService   computerService;
+  private CompanyService    companyService;
+  private ComputerValidator computerValidator;
 
-  public ComputerController(ComputerService computerService, CompanyService companyService) {
-    this.companyService  = companyService;
-    this.computerService = computerService;
+  public ComputerController(ComputerService computerService, CompanyService companyService, ComputerValidator computerValidator) {
+    this.companyService    = companyService;
+    this.computerService   = computerService;
+    this.computerValidator = computerValidator;
   }
 
   @GetMapping("/dashboard")
@@ -68,7 +74,7 @@ public class ComputerController {
   }
 
   @GetMapping("/addcomputer")
-  public ModelAndView getAddComputer(ModelAndView model) {
+  public ModelAndView getAddComputer(ModelAndView model, MessageDTO message) {
     model.setViewName("addComputer");
     model.addObject("addComputerForm", ComputerDTO.builder().build());
     model.addObject("companies", companyService.list());
@@ -78,11 +84,18 @@ public class ComputerController {
   @PostMapping("/addcomputer")
   public RedirectView postAddComputer(ModelAndView model, @ModelAttribute(
     "addComputerForm"
-  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult) {
+  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult, RedirectAttributes attributes) {
     LOGGER.error("posted DTO : " + computerDTO.toString());
     computerDTO.setCompanyName(companyService.read(computerDTO.getCompanyId())
                                              .map(CompanyDTO::getName)
                                              .orElse(""));
+    computerValidator.validate(computerDTO, bindingResult);
+    if (bindingResult.hasErrors()) {
+      bindingResult.getAllErrors().stream().forEach(error -> {
+        attributes.addFlashAttribute("message", getErrorMessage("Plop", error.getCode()));
+      });
+      return new RedirectView("addcomputer");
+    }
     computerService.create(computerDTO);
     return new RedirectView("dashboard");
   }
@@ -136,6 +149,22 @@ public class ComputerController {
   @PostMapping("/detailscomputer")
   public ModelAndView postDetailsComputer(ModelAndView model) {
     return getDetailsComputer(model);
+  }
+
+  private MessageDTO getErrorMessage(String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    return mDTOBuilder.build();
+  }
+
+  private MessageDTO getSuccessMessage(String title, String message) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    return mDTOBuilder.build();
   }
 
 }

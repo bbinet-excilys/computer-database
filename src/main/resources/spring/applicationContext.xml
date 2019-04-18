@@ -50,6 +50,12 @@
     <property name="companyMapper" ref="CompanyMapper" />
   </bean>
 
+  <!-- Validation -->
+  <bean id="ComputerValidator" class="validation.ComputerValidator" />
+  <bean id="ResourceBundleMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="" />
+  </bean>
+
   <!-- Hikari -->
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="locations">
