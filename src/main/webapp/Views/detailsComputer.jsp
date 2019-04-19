@@ -36,7 +36,7 @@ pageEncoding="UTF-8"%>
         <spring:message code='table.header.discontinued' />:</dt>
       <dd>${computer.discontinued}</dd>
       <dt>
-        <spring:message code='table.header.company' />:</dt>
+        <spring:message code='table.header.companyname' />:</dt>
       <dd>${computer.companyName}</dd>
     </dl>
 

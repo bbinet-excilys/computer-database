@@ -40,7 +40,7 @@ pageEncoding="UTF-8"%>
       </div>
     </div>
     <div class=" uk-width-1-5">
-      <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addComputer">
+      <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addcomputer">
         <spring:message code="page.title.create.computer" /></a>
     </div>
   </div>
@@ -79,7 +79,7 @@ pageEncoding="UTF-8"%>
           <c:forEach items="${computers }" var="computer">
             <tr>
               <td style="font-weight: bold; color:black">${computer.id}</td>
-              <td><a href="detailsComputer?computerId=${computer.id}" class="uk-link-heading">${computer.name}</a>
+              <td><a href="detailscomputer?computerId=${computer.id}" class="uk-link-heading">${computer.name}</a>
               </td>
               <td>${computer.introduced}</td>
               <td>${computer.discontinued}</td>

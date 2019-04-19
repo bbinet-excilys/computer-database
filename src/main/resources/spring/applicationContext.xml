@@ -52,9 +52,10 @@
 
   <!-- Validation -->
   <bean id="ComputerValidator" class="validation.ComputerValidator" />
-  <bean id="ResourceBundleMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="" />
-  </bean>
+
+  <!-- <bean id="ReloadableResourceBundleMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basenames" value="resources/errors/" />
+  </bean> -->
 
   <!-- Hikari -->
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -97,17 +98,16 @@
     <property name="suffix" value=".jsp" />
   </bean>
 
-  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-    <property name="basename" value="classpath:languages/language" />
-    <property name="defaultEncoding" value="UTF-8" />
-  </bean>
-
   <mvc:interceptors>
     <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
       <property name="paramName" value="lang" />
     </bean>
   </mvc:interceptors>
 
+  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename" value="classpath:languages/language" />
+    <property name="defaultEncoding" value="UTF-8" />
+  </bean>
 
   <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
     <property name="defaultLocale" value="fr" />

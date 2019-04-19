@@ -1,7 +1,13 @@
 package controller;
 
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -28,14 +35,22 @@ public class ComputerController {
 
   private Logger LOGGER = LoggerFactory.getLogger(ComputerController.class);
 
-  private ComputerService   computerService;
-  private CompanyService    companyService;
-  private ComputerValidator computerValidator;
+  private final String MESSAGE_ERROR   = "danger";
+  private final String MESSAGE_SUCCESS = "success";
 
-  public ComputerController(ComputerService computerService, CompanyService companyService, ComputerValidator computerValidator) {
-    this.companyService    = companyService;
-    this.computerService   = computerService;
-    this.computerValidator = computerValidator;
+  private ComputerService                       computerService;
+  private CompanyService                        companyService;
+  private ComputerValidator                     computerValidator;
+  private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+  private SessionLocaleResolver                 localeResolver;
+
+  public ComputerController(ComputerService computerService, CompanyService companyService, ComputerValidator computerValidator,
+      ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource, SessionLocaleResolver localResolver) {
+    this.companyService                        = companyService;
+    this.computerService                       = computerService;
+    this.computerValidator                     = computerValidator;
+    this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
+    localeResolver                             = localResolver;
   }
 
   @GetMapping("/dashboard")
@@ -74,30 +89,29 @@ public class ComputerController {
   }
 
   @GetMapping("/addcomputer")
-  public ModelAndView getAddComputer(ModelAndView model, MessageDTO message) {
-    model.setViewName("addComputer");
-    model.addObject("addComputerForm", ComputerDTO.builder().build());
-    model.addObject("companies", companyService.list());
-    return model;
+  public String getAddComputer(Model model, MessageDTO message, BindingResult bindingResult, ComputerDTO computerDTO) {
+    LOGGER.debug("PLOP : " + bindingResult.getAllErrors().toString());
+    model.addAttribute("addComputerForm", ComputerDTO.builder().build());
+    model.addAttribute("companies", companyService.list());
+    return "addComputer";
   }
 
   @PostMapping("/addcomputer")
-  public RedirectView postAddComputer(ModelAndView model, @ModelAttribute(
+  public String postAddComputer(ModelAndView model, @ModelAttribute(
     "addComputerForm"
-  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult, RedirectAttributes attributes) {
-    LOGGER.error("posted DTO : " + computerDTO.toString());
+  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult, RedirectAttributes attributes, HttpServletRequest request,
+      HttpServletResponse response) {
     computerDTO.setCompanyName(companyService.read(computerDTO.getCompanyId())
                                              .map(CompanyDTO::getName)
                                              .orElse(""));
     computerValidator.validate(computerDTO, bindingResult);
     if (bindingResult.hasErrors()) {
-      bindingResult.getAllErrors().stream().forEach(error -> {
-        attributes.addFlashAttribute("message", getErrorMessage("Plop", error.getCode()));
-      });
-      return new RedirectView("addcomputer");
+      attributes.addFlashAttribute("bindingResult", bindingResult);
+      attributes.addFlashAttribute("computerDTO", computerDTO);
+      return "redirect:/addcomputer";
     }
     computerService.create(computerDTO);
-    return new RedirectView("dashboard");
+    return "redirect:/addcomputer";
   }
 
   @GetMapping("/deletecomputer")
@@ -141,27 +155,34 @@ public class ComputerController {
   }
 
   @GetMapping("/detailscomputer")
-  public ModelAndView getDetailsComputer(ModelAndView model) {
+  public ModelAndView getDetailsComputer(ModelAndView model,
+      @RequestParam(name = "computerId", required = true, defaultValue = "") String computerIdString) {
     model.setViewName("detailsComputer");
+    try {
+      Long computerId = Long.parseLong(computerIdString);
+      computerService.read(computerId).ifPresent(computerDTO -> {
+        model.addObject("computer", computerDTO);
+      });
+
+    }
+    catch (NumberFormatException e) {
+    }
     return model;
   }
 
   @PostMapping("/detailscomputer")
-  public ModelAndView postDetailsComputer(ModelAndView model) {
-    return getDetailsComputer(model);
+  public ModelAndView postDetailsComputer(ModelAndView model,
+      @RequestParam(name = "computerId", required = true, defaultValue = "") String computerIdString, RedirectAttributes attributes) {
+    model.addObject("computerId", computerIdString);
+    return getDetailsComputer(model, computerIdString);
   }
 
-  private MessageDTO getErrorMessage(String title, String message) {
+  private MessageDTO getMessage(String type, String titleCode, String messageCode, HttpServletRequest request) {
     MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.ERROR_TYPE);
-    mDTOBuilder.withTitle(title);
-    mDTOBuilder.withContent(message);
-    return mDTOBuilder.build();
-  }
-
-  private MessageDTO getSuccessMessage(String title, String message) {
-    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
-    mDTOBuilder.withType(MessageDTO.SUCCESS_TYPE);
+    Locale            locale      = localeResolver.resolveLocale(request);
+    String            title       = reloadableResourceBundleMessageSource.getMessage(titleCode, null, locale);
+    String            message     = reloadableResourceBundleMessageSource.getMessage(messageCode, null, locale);
+    mDTOBuilder.withType(type);
     mDTOBuilder.withTitle(title);
     mDTOBuilder.withContent(message);
     return mDTOBuilder.build();

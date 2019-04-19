@@ -59,7 +59,7 @@ public class ComputerValidator implements Validator {
     Optional<String> name      = Optional.ofNullable(targetDTO.getName());
     name.ifPresent(nameString -> {
       if (nameString.trim().isBlank()) {
-        errors.rejectValue("name", "error.name.empty");
+        errors.rejectValue("name", "error.label.name.empty");
       }
     });
     Optional<Date> oIntroduced   = Optional.ofNullable(dateValidator.validate(targetDTO.getIntroduced(), DATE_PATTERN));
@@ -67,10 +67,10 @@ public class ComputerValidator implements Validator {
     oDiscontinued.ifPresent(discontinuedDate -> {
       oIntroduced.ifPresentOrElse(introducedDate -> {
         if (discontinuedDate.before(introducedDate)) {
-          errors.rejectValue("introduced", "error.date.precedence");
+          errors.rejectValue("introduction", "error.label.date.precedence");
         }
       }, () -> {
-        errors.reject("introduced", "error.dates.bothexist");
+        errors.reject("introduction", "error.label.date.bothexist");
       });
     });
   }
