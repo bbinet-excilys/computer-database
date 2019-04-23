@@ -28,7 +28,7 @@ public class Main {
    * Entrypoint of the computer database application.
    */
   public static void main(String[] args) {
-    ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:/applicationContext.xml");
+    ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:/spring/applicationContext.xml");
     menuController.runMenu();
   }
 
