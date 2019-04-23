@@ -10,8 +10,8 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-  <mvc:annotation-driven />
-  <context:component-scan base-package="controller.**" />
+  <!--  <mvc:annotation-driven />  -->
+  <context:component-scan base-package="controller" />
 
   <!-- Services -->
   <bean id="ComputerService" class="service.ComputerService">
@@ -23,11 +23,11 @@
   </bean>
 
   <!-- Controllers -->
-  <bean id="ComputerController" class="controller.ComputerController">
+  <bean id="ComputerController" class="controller.ComputerCLIController">
     <property name="companyService" ref="CompanyService" />
     <property name="computerService" ref="ComputerService" />
   </bean>
-  <bean id="CompanyController" class="controller.CompanyController">
+  <bean id="CompanyController" class="controller.CompanyCLIController">
     <property name="companyService" ref="CompanyService" />
   </bean>
   <bean id="MenuController" class="controller.MenuController">
@@ -49,6 +49,13 @@
     <property name="jdbcTemplate" ref="JDBCTemplate" />
     <property name="companyMapper" ref="CompanyMapper" />
   </bean>
+
+  <!-- Validation -->
+  <bean id="ComputerValidator" class="validation.ComputerValidator" />
+
+  <!-- <bean id="ReloadableResourceBundleMessageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basenames" value="resources/errors/" />
+  </bean> -->
 
   <!-- Hikari -->
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -85,11 +92,24 @@
     <property name="menuController" ref="MenuController" />
   </bean>
 
-  <mvc:resources mapping="/resources/**" location="/resources" />
-
   <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
     <property name="prefix" value="/Views/" />
     <property name="suffix" value=".jsp" />
+  </bean>
+
+  <mvc:interceptors>
+    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+      <property name="paramName" value="lang" />
+    </bean>
+  </mvc:interceptors>
+
+  <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+    <property name="basename" value="classpath:languages/language" />
+    <property name="defaultEncoding" value="UTF-8" />
+  </bean>
+
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+    <property name="defaultLocale" value="fr" />
   </bean>
 </beans>

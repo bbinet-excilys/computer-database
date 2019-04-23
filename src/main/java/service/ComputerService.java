@@ -8,8 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.ComputerDTO;
-import exception.DAOUnexecutedQuery;
-import exception.PropertiesNotFoundException;
 import mapping.ComputerMapper;
 import model.Company;
 import model.Computer;
@@ -35,8 +33,7 @@ public class ComputerService {
     this.computerDAO = computerDAO;
   }
 
-  public void create(ComputerDTO computerDTO)
-    throws DAOUnexecutedQuery, IllegalArgumentException, PropertiesNotFoundException {
+  public void create(ComputerDTO computerDTO) {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     LOGGER.debug(computer.toString());
     if (computer.getCompany().getName() != null) {
@@ -46,38 +43,38 @@ public class ComputerService {
     computerDAO.create(computer);
   }
 
-  public Optional<ComputerDTO> read(Long id)
-    throws DAOUnexecutedQuery, PropertiesNotFoundException {
-    return Optional.ofNullable(computerDAO.read(id)).map(ComputerMapper::computerToDTO);
+  public Optional<ComputerDTO> read(Long id) {
+    return computerDAO.read(id).map(ComputerMapper::computerToDTO);
   }
 
-  public void delete(ComputerDTO computerDTO)
-    throws DAOUnexecutedQuery, PropertiesNotFoundException, IllegalArgumentException {
+  public void delete(ComputerDTO computerDTO) {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
-    ComputerValidator.computerIsValid(computer);
-    CompanyValidator.companyIsValid(computer.getCompany());
-    computerDAO.delete(computer);
-  }
-
-  public void update(ComputerDTO computerDTO)
-    throws IllegalArgumentException, PropertiesNotFoundException {
-    Computer computer = ComputerMapper.computerFromDTO(computerDTO);
-    if (computer.getCompany() != null) {
+    if (computer.getCompany().getName() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);
+    computerDAO.delete(computer);
+  }
+
+  public void update(ComputerDTO computerDTO) {
+    LOGGER.debug("Updating from DTO " + computerDTO);
+    Computer computer = ComputerMapper.computerFromDTO(computerDTO);
+    if (computer.getCompany().getName() != null) {
+      CompanyValidator.companyIsValid(computer.getCompany());
+    }
+    ComputerValidator.computerIsValid(computer);
+    LOGGER.debug("Updating computer " + computer.toString());
     computerDAO.update(computer);
   }
 
-  public List<ComputerDTO> list() throws PropertiesNotFoundException {
+  public List<ComputerDTO> list() {
     return computerDAO.list()
                       .stream()
                       .map(ComputerMapper::computerToDTO)
                       .collect(Collectors.toList());
   }
 
-  public List<ComputerDTO> paginatedSearchByNameList(String name)
-    throws PropertiesNotFoundException, DAOUnexecutedQuery {
+  public List<ComputerDTO> paginatedSearchByNameList(String name) {
     return computerDAO.searchByName(name)
                       .stream()
                       .map(ComputerMapper::computerToDTO)

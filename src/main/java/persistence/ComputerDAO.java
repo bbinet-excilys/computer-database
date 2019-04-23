@@ -1,9 +1,12 @@
 package persistence;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -50,13 +53,23 @@ public class ComputerDAO {
     return jdbcTemplate.query(SELECT, computerMapper);
   }
 
-  public Computer read(Long id) {
+  public Optional<Computer> read(Long id) {
     SqlParameterSource parameters = new MapSqlParameterSource().addValue("id", id);
-    return jdbcTemplate.queryForObject(SELECT_WHEREID, parameters, computerMapper);
+    Optional<Computer> rComputer;
+    try {
+      rComputer = Optional.of(jdbcTemplate.queryForObject(SELECT_WHEREID, parameters,
+                                                          computerMapper));
+    }
+    catch (EmptyResultDataAccessException e) {
+      LOGGER.debug("No matching company in database");
+      rComputer = Optional.empty();
+    }
+    return rComputer;
   }
 
   public void update(Computer computer) {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(computer);
+    logParameters(parameters);
     jdbcTemplate.update(UPDATE, parameters);
   }
 
@@ -69,5 +82,13 @@ public class ComputerDAO {
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(company);
     LOGGER.debug(company.toString());
     jdbcTemplate.update(DELETE_COMPANY, parameters);
+  }
+
+  private void logParameters(SqlParameterSource parameters) {
+    String[]       names      = parameters.getParameterNames();
+    Stream<String> nameStream = Stream.of(names);
+    nameStream.forEach(name -> {
+      LOGGER.debug(String.format("\tName %20s | Type %20s | Value %30s ", name, parameters.getSqlType(name), parameters.getValue(name)));
+    });
   }
 }

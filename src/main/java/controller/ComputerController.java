@@ -1,227 +1,191 @@
 package controller;
 
-import java.sql.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.i18n.SessionLocaleResolver;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.view.RedirectView;
 
+import dto.CompanyDTO;
 import dto.ComputerDTO;
-import dto.ComputerDTO.ComputerDTOBuilder;
-import exception.DAOUnexecutedQuery;
-import exception.PropertiesNotFoundException;
-import mapping.CompanyMapper;
-import model.Company;
+import dto.MessageDTO;
+import dto.MessageDTO.MessageDTOBuilder;
 import model.ComputerPage;
 import service.CompanyService;
 import service.ComputerService;
-import ui.EntityUI;
-import ui.UIHelper;
+import validation.ComputerValidator;
 
+@Controller
 public class ComputerController {
 
-  Logger logger = LoggerFactory.getLogger(ComputerController.class);
+  private Logger LOGGER = LoggerFactory.getLogger(ComputerController.class);
 
-  private ComputerService computerService;
-  private CompanyService  companyService;
+  private final String MESSAGE_ERROR   = "danger";
+  private final String MESSAGE_SUCCESS = "success";
 
-  public void create() {
-    Optional<String> oName = UIHelper.promptString("Enter computer name :");
-    oName.ifPresentOrElse(name -> {
-      ComputerDTOBuilder computerBuilder = ComputerDTO.builder();
-      computerBuilder.withName(name);
+  private ComputerService                       computerService;
+  private CompanyService                        companyService;
+  private ComputerValidator                     computerValidator;
+  private ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource;
+  private SessionLocaleResolver                 localeResolver;
 
-      Optional<Date> oIntroduced = UIHelper.promptDate("Enter introduction date (YYYY-MM-DD) :");
-      oIntroduced.ifPresent(introduced -> {
-        computerBuilder.withIntroduced(introduced.toString());
-        Optional<Date> oDiscontinued = Optional.empty();
-        oDiscontinued = UIHelper.promptDate("Enter discontinuation date (YYYY-MM-DD) :");
-        oDiscontinued.ifPresent(discontinued -> computerBuilder.withDiscontinued(discontinued.toString()));
-      });
-
-      Optional<Long> oCompanyId = UIHelper.promptLong("Enter company ID :");
-      oCompanyId.ifPresent(companyId -> {
-        Company company;
-        try {
-          company = companyService.read(companyId).map(CompanyMapper::companyFromDTO).orElse(null);
-          computerBuilder.withCompanyId(company.getId());
-          computerBuilder.withCompanyName(company.getName());
-        }
-        catch (PropertiesNotFoundException e) {
-          logger.error("Connection error, couldn't conenct to database");
-        }
-      });
-      try {
-        computerService.create(computerBuilder.build());
-      }
-      catch (DAOUnexecutedQuery e) {
-        UIHelper.displayError(e.getMessage());
-      }
-      catch (IllegalArgumentException e) {
-        logger.warn(e.getMessage());
-        UIHelper.displayError("One argument passed for creation was wrong : " + e.getMessage());
-      }
-      catch (PropertiesNotFoundException e) {
-        UIHelper.displayError(e.getMessage());
-      }
-    }, () -> {
-      UIHelper.displayError("The computer must have a name");
-    });
+  public ComputerController(ComputerService computerService, CompanyService companyService, ComputerValidator computerValidator,
+      ReloadableResourceBundleMessageSource reloadableResourceBundleMessageSource, SessionLocaleResolver localResolver) {
+    this.companyService                        = companyService;
+    this.computerService                       = computerService;
+    this.computerValidator                     = computerValidator;
+    this.reloadableResourceBundleMessageSource = reloadableResourceBundleMessageSource;
+    localeResolver                             = localResolver;
   }
 
-  public void setCompanyService(CompanyService companyService) {
-    this.companyService = companyService;
+  @GetMapping("/dashboard")
+  public ModelAndView getDashboard(
+      @RequestParam(value = "page", required = false, defaultValue = "1") String pageString,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "10") String pageSizeString,
+      @RequestParam(value = "searchName", required = false, defaultValue = "") String searchName) {
+    ModelAndView model    = new ModelAndView("dashboard");
+    Integer      page     = Integer.parseInt(pageString);
+    Integer      pageSize = Integer.parseInt(pageSizeString);
+    ComputerPage cPage    = new ComputerPage(pageSize);
+    if ("".equals(searchName)) {
+      cPage.setComputers(computerService.list());
+    }
+    else {
+      cPage.setComputers(computerService.paginatedSearchByNameList(searchName));
+    }
+    cPage.setPage(page);
+    Double  computerCount = (double) cPage.getComputers().size();
+    Integer pageMax       = (int) Math.ceil((computerCount / pageSize));
+    model.addObject("page", page);
+    model.addObject("pageSize", pageSize);
+    model.addObject("pageMax", pageMax);
+    model.addObject("searchName", searchName);
+    model.addObject("count", computerCount.intValue());
+    model.addObject("computers", cPage.getCurrentPage());
+    return model;
   }
 
-  public void setComputerService(ComputerService computerService) {
-    this.computerService = computerService;
+  @PostMapping("/dashboard")
+  public ModelAndView postDashboard(
+      @RequestParam(value = "page", required = false, defaultValue = "1") String pageString,
+      @RequestParam(value = "pageSize", required = false, defaultValue = "10") String pageSizeString,
+      @RequestParam(value = "searchName", required = false, defaultValue = "") String searchName, Model model) {
+    return getDashboard(pageString, pageSizeString, searchName);
   }
 
-  public void delete() {
-    Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to delete :");
-    oId.ifPresentOrElse(id -> {
-      Optional<ComputerDTO> oComputer;
-      try {
-        oComputer = computerService.read(id);
-        oComputer.ifPresentOrElse(computer -> {
-          try {
-            computerService.delete(computer);
-          }
-          catch (DAOUnexecutedQuery e) {
-            UIHelper.displayError("The computer has not been deleted.\n" + e.getMessage());
-          }
-          catch (PropertiesNotFoundException e) {
-            UIHelper.displayError(e.getMessage());
-          }
-        }, () -> {
-          UIHelper.displayError("This computer ID doesn't exist");
-        });
-      }
-      catch (DAOUnexecutedQuery e) {
-        UIHelper.displayError(e.getMessage());
-      }
-      catch (PropertiesNotFoundException e) {
-        UIHelper.displayError(e.getMessage());
-      }
-    }, () -> {
-      UIHelper.displayError("Please enter a valid ID.");
-    });
+  @GetMapping("/addcomputer")
+  public String getAddComputer(Model model, MessageDTO message, BindingResult bindingResult, ComputerDTO computerDTO) {
+    LOGGER.debug("PLOP : " + bindingResult.getAllErrors().toString());
+    model.addAttribute("addComputerForm", ComputerDTO.builder().build());
+    model.addAttribute("companies", companyService.list());
+    return "addComputer";
   }
 
-  public void read() {
-    Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to display :");
-    oId.ifPresentOrElse(id -> {
-      Optional<ComputerDTO> oComputer;
-      try {
-        oComputer = computerService.read(id);
-        oComputer.ifPresentOrElse(computer -> {
-          EntityUI.print(computer);
-        }, () -> {
-          UIHelper.displayError("No computer with this ID exist in database.");
-        });
-      }
-      catch (DAOUnexecutedQuery e) {
-        UIHelper.displayError(e.getMessage());
-      }
-      catch (PropertiesNotFoundException e) {
-        UIHelper.displayError(e.getMessage());
-      }
-    }, () -> {
-      UIHelper.displayError("Please enter à valid ID.");
-    });
+  @PostMapping("/addcomputer")
+  public String postAddComputer(ModelAndView model, @ModelAttribute(
+    "addComputerForm"
+  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult, RedirectAttributes attributes, HttpServletRequest request,
+      HttpServletResponse response) {
+    computerDTO.setCompanyName(companyService.read(computerDTO.getCompanyId())
+                                             .map(CompanyDTO::getName)
+                                             .orElse(""));
+    computerValidator.validate(computerDTO, bindingResult);
+    if (bindingResult.hasErrors()) {
+      attributes.addFlashAttribute("bindingResult", bindingResult);
+      attributes.addFlashAttribute("computerDTO", computerDTO);
+      return "redirect:/addcomputer";
+    }
+    computerService.create(computerDTO);
+    return "redirect:/addcomputer";
   }
 
-  public void update() {
-
-    Optional<Long> oId = UIHelper.promptLong("Enter the ID of the computer to update :");
-    oId.ifPresentOrElse(id -> {
-      Optional<ComputerDTO> oComputer;
-      try {
-        oComputer = computerService.read(id);
-        oComputer.ifPresentOrElse(computer -> {
-
-          EntityUI.print(computer);
-
-          computer.setName(UIHelper.promptString("Enter the new name of the computer (or empty to keep it) :")
-                                   .orElseGet(computer::getName));
-
-          computer.setIntroduced(UIHelper.promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
-                                         .map(Date::toString)
-                                         .orElseGet(computer::getIntroduced));
-
-          computer.setDiscontinued(UIHelper.promptDate("Enter the new date of discontinuation of the computer (or empty to keep it) :")
-                                           .map(Date::toString)
-                                           .orElseGet(computer::getDiscontinued));
-
-          Long companyId = UIHelper.promptLong("Enter the id of the new company (or empty to keep it):")
-                                   .orElse(computer.getCompanyId());
-
-          try {
-            computer.setCompanyId(companyId);
-            computerService.update(computer);
-          }
-          catch (IllegalArgumentException e) {
-            logger.error(e.getMessage());
-            UIHelper.displayError(e.getMessage());
-          }
-          catch (PropertiesNotFoundException e) {
-            UIHelper.displayError(e.getMessage());
-          }
-        }, () -> {
-          UIHelper.displayError("This computer ID doesn't exist in database");
-        });
-      }
-      catch (DAOUnexecutedQuery e) {
-        UIHelper.displayError(e.getMessage());
-      }
-      catch (IllegalArgumentException e) {
-        logger.warn(e.getMessage());
-        UIHelper.displayError("One argument passed for update was wrong : " + e.getMessage());
-      }
-      catch (PropertiesNotFoundException e) {
-        UIHelper.displayError(e.getMessage());
-      }
-    }, () -> {
-      UIHelper.displayError("Please enter a valid ID.");
-    });
+  @GetMapping("/deletecomputer")
+  public ModelAndView getDeleteComputer(ModelAndView model) {
+    model.setViewName("deleteComputer");
+    model.addObject("computers", computerService.list());
+    model.addObject("computerDTOModel", ComputerDTO.builder().build());
+    return model;
   }
 
-  public void list() {
-    List<ComputerDTO> lComputer;
+  @PostMapping("/deletecomputer")
+  public RedirectView postDeleteComputer(ModelAndView model, @ModelAttribute(
+    "deleteComputerForm"
+  ) @Validated ComputerDTO computerDTO) {
+    model.setViewName("deleteComputer");
+    computerService.read(computerDTO.getId()).ifPresent(cDTO -> computerService.delete(cDTO));
+    return new RedirectView("dashboard");
+  }
+
+  @GetMapping("/editcomputer")
+  public ModelAndView getEditComputer(ModelAndView model, @RequestParam(
+    value = "computerId",
+    required = false,
+    defaultValue = "1"
+  ) String computerIdString) {
+    model.setViewName("editComputer");
+    LOGGER.debug(model.getModel().toString());
+    model.addObject("editComputerForm", computerService.read(Long.parseLong(computerIdString)));
+    model.addObject("companies", companyService.list());
+    return model;
+  }
+
+  @PostMapping("/editcomputer")
+  public RedirectView postEditComputer(ModelAndView model, @ModelAttribute(
+    "editComputerForm"
+  ) @Validated ComputerDTO computerDTO, BindingResult bindingResult) {
+    model.setViewName("editComputer");
+    LOGGER.debug(computerDTO.toString());
+    computerService.update(computerDTO);
+    return new RedirectView("dashboard");
+  }
+
+  @GetMapping("/detailscomputer")
+  public ModelAndView getDetailsComputer(ModelAndView model,
+      @RequestParam(name = "computerId", required = true, defaultValue = "") String computerIdString) {
+    model.setViewName("detailsComputer");
     try {
-      lComputer = computerService.list();
-      EntityUI.printComputerList(lComputer);
+      Long computerId = Long.parseLong(computerIdString);
+      computerService.read(computerId).ifPresent(computerDTO -> {
+        model.addObject("computer", computerDTO);
+      });
+
     }
-    catch (PropertiesNotFoundException e) {
-      UIHelper.displayError(e.getMessage());
+    catch (NumberFormatException e) {
     }
+    return model;
   }
 
-  public void pagedList() {
-    UIHelper.promptInt("How many computers per page?").ifPresent(pageSize -> {
-      try {
-        ComputerPage cPage = new ComputerPage(pageSize);
-        cPage.setComputers(computerService.list());
-        whileLoop: do {
-          EntityUI.printComputerList(cPage.getCurrentPage());
-          Integer choice = UIHelper.promptPage(cPage.getPage());
-          switch (choice) {
-            case -1:
-              cPage.previousPage();
-              break;
-            case 1:
-              cPage.nextPage();
-              break;
-            default:
-              break whileLoop;
-          }
-        } while (true);
-      }
-      catch (PropertiesNotFoundException e) {
-        UIHelper.displayError(e.getMessage());
-      }
-    });
+  @PostMapping("/detailscomputer")
+  public ModelAndView postDetailsComputer(ModelAndView model,
+      @RequestParam(name = "computerId", required = true, defaultValue = "") String computerIdString, RedirectAttributes attributes) {
+    model.addObject("computerId", computerIdString);
+    return getDetailsComputer(model, computerIdString);
+  }
+
+  private MessageDTO getMessage(String type, String titleCode, String messageCode, HttpServletRequest request) {
+    MessageDTOBuilder mDTOBuilder = MessageDTO.builder();
+    Locale            locale      = localeResolver.resolveLocale(request);
+    String            title       = reloadableResourceBundleMessageSource.getMessage(titleCode, null, locale);
+    String            message     = reloadableResourceBundleMessageSource.getMessage(messageCode, null, locale);
+    mDTOBuilder.withType(type);
+    mDTOBuilder.withTitle(title);
+    mDTOBuilder.withContent(message);
+    return mDTOBuilder.build();
   }
 
 }

@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.commons.validator.routines.DateValidator;
 import org.slf4j.Logger;
@@ -51,18 +52,23 @@ public class ComputerMapper implements RowMapper<Computer> {
     ComputerBuilder computerBuilder = Computer.builder();
     computerBuilder.withId(computerDTO.getId());
     computerBuilder.withName(computerDTO.getName());
-    Optional.ofNullable(computerDTO.getIntroduced()).ifPresent(strDate -> {
-      Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
-      computerBuilder.withIntroduced(date);
-    });
-    Optional.ofNullable(computerDTO.getDiscontinued()).ifPresent(strDate -> {
-      Date date = new Date(dValidator.validate(strDate, "yyyy-mm-dd").getTime());
-      computerBuilder.withDiscontinued(date);
-    });
+    Optional.ofNullable(computerDTO.getIntroduced())
+            .filter(Predicate.not(String::isBlank))
+            .ifPresent(strDate -> {
+              Date date = new Date(dValidator.validate(strDate, "yyyy-MM-dd").getTime());
+              computerBuilder.withIntroduced(date);
+            });
+    Optional.ofNullable(computerDTO.getDiscontinued())
+            .filter(Predicate.not(String::isBlank))
+            .ifPresent(strDate -> {
+              Date date = new Date(dValidator.validate(strDate, "yyyy-MM-dd").getTime());
+              computerBuilder.withDiscontinued(date);
+            });
     CompanyBuilder companyBuilder = Company.builder();
     Optional.ofNullable(computerDTO.getCompanyId())
             .ifPresent(companyId -> companyBuilder.withId(companyId));
     Optional.ofNullable(computerDTO.getCompanyName())
+            .filter(Predicate.not(String::isBlank))
             .ifPresent(companyName -> companyBuilder.withName(companyName));
     computerBuilder.withCompany(companyBuilder.build());
     return computerBuilder.build();

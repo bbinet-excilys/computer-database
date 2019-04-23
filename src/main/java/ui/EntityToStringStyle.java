@@ -3,12 +3,14 @@ package ui;
 import java.util.Optional;
 
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.commons.validator.routines.DateValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EntityToStringStyle extends ToStringStyle {
 
-  private Logger LOGGER = LoggerFactory.getLogger(EntityToStringStyle.class);
+  private Logger LOGGER        = LoggerFactory.getLogger(EntityToStringStyle.class);
+  DateValidator  dateValidator = DateValidator.getInstance();
 
   public EntityToStringStyle() {
     setUseClassName(false);
