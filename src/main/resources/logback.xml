@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <appender name="CONSOLE" 
-    class="ch.qos.logback.core.ConsoleAppender">
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
 
-  <appender name="FILE" 
-    class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
@@ -18,13 +16,22 @@
     </rollingPolicy>
   </appender>
 
-  <appender name="DEBUG-FILE" 
-    class="ch.qos.logback.core.FileAppender">
+  <appender name="DEBUG-FILE" class="ch.qos.logback.core.FileAppender">
     <file>cdb-debug.log</file>
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
     </encoder>
   </appender>
+
+  <logger name="org.springframework.web" level="DEBUG">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </logger>
+
+  <logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </logger>
 
   <logger name="service">
     <appender-ref ref="CONSOLE" />
@@ -60,7 +67,12 @@
     <appender-ref ref="FILE" />
   </logger>
 
-  <root level="WARN">
+  <logger name="controller" level="DEBUG">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </logger>
+
+  <root level="DEBUG">
     <appender-ref ref="FILE" />
   </root>
 </configuration>

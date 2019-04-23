@@ -3,13 +3,12 @@ package model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dto.CompanyDTO;
-import exception.PropertiesNotFoundException;
-import service.CompanyService;
 
 public class CompanyPage {
 
@@ -18,7 +17,6 @@ public class CompanyPage {
   private Integer          pageSize    = 10;
   private Integer          offset      = 0;
   private Integer          page        = 0;
-  private CompanyService   cService    = new CompanyService();
   private List<CompanyDTO> companies   = new ArrayList<>();
   private List<CompanyDTO> currentPage = new ArrayList<>();
 
@@ -27,46 +25,33 @@ public class CompanyPage {
     Optional.of(pageSize).filter(val -> val >= 1).ifPresent(size -> setPageSize(size));
     computeOffset();
     computePage();
-    logger.debug("Instanciate companyPage");
   }
 
   public void nextPage() {
     if (page < companies.size() / pageSize) {
       page++;
     }
-    logger.debug("Next page. Now :" + page);
   }
 
   public void previousPage() {
     if (page > 0) {
       page--;
     }
-    logger.info("Prev page. Now :" + page);
   }
 
   public List<CompanyDTO> getCurrentPage() {
     computeOffset();
     computePage();
-    logger.debug(currentPage.size() + "");
     return currentPage;
   }
 
   private void computeOffset() {
     offset = pageSize * page;
-    logger.debug("Update offset :" + offset);
   }
 
   private void computePage() {
-    logger.debug("Offset " + offset);
     if (offset < companies.size() && offset >= 0) {
-      logger.debug("Computing company page");
-      try {
-        currentPage = cService.paginatedList(pageSize, offset);
-      }
-      catch (PropertiesNotFoundException e) {
-        logger.error("Connection error, couldn't conenct to database");
-      }
-      logger.debug("Page size " + currentPage.size());
+      currentPage = companies.stream().skip(offset).limit(pageSize).collect(Collectors.toList());
     }
   }
 

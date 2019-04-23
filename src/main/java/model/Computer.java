@@ -26,11 +26,11 @@ public class Computer extends Entity {
   static final Logger LOG = LoggerFactory.getLogger(Computer.class);
 
   private Computer(ComputerBuilder builder) {
-    this.id           = builder.id;
-    this.name         = builder.name;
-    this.introduced   = builder.introduced;
-    this.discontinued = builder.discontinued;
-    this.company      = builder.company;
+    id           = builder.id;
+    name         = builder.name;
+    introduced   = builder.introduced;
+    discontinued = builder.discontinued;
+    company      = builder.company;
   }
 
   /**
@@ -49,7 +49,7 @@ public class Computer extends Entity {
   public Computer() {}
 
   public Date getIntroduced() {
-    return this.introduced;
+    return introduced;
   }
 
   public void setIntroduced(Date introduced) {
@@ -57,7 +57,7 @@ public class Computer extends Entity {
   }
 
   public Date getDiscontinued() {
-    return this.discontinued;
+    return discontinued;
   }
 
   public void setDiscontinued(Date discontinued) {
@@ -65,19 +65,23 @@ public class Computer extends Entity {
   }
 
   public Company getCompany() {
-    return this.company;
+    return company;
   }
 
   public void setCompany(Company company) {
     this.company = company;
   }
 
+  public Long getCompanyId() {
+    return company.getId();
+  }
+
   @Override
   public String toString() {
     return String
-                 .format("%5s | %30.30s | %10s | %10s | %s", getId(), this.name, this.introduced,
-                         this.discontinued,
-                         (this.company != null) ? this.company.toString()
+                 .format("%5s | %30.30s | %10s | %10s | %s", getId(), name, introduced,
+                         discontinued,
+                         (company != null) ? company.toString()
                              : String.format("%5s", "null"));
   }
 
