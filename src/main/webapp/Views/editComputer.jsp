@@ -23,8 +23,7 @@ pageEncoding="UTF-8"%>
   </c:if>
 
   <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
-    <form:form method="post" modelAttribute="editComputerForm" class="uk-width-1-2 uk-form-horizontal"
-      id="editComputerForm">
+    <form:form method="post" modelAttribute="computerDTO" class="uk-width-1-2 uk-form-horizontal">
       <div class="uk-margin">
         <div class="uk-inline uk-width-1-1">
           <form:label path="name" cssClass="uk-form-label">
@@ -77,13 +76,14 @@ pageEncoding="UTF-8"%>
         </div>
       </div>
       <form:hidden path="id" />
+      <input type="hidden" name="submitted" value="true" />
     </form:form>
   </div>
 </div>
-<script src="resources/js/jquery.min.js"></script>
-<script src="resources/js/uikit.min.js"></script>
-<script src="resources/js/uikit-icons.min.js"></script>
-<script src="resources/js/computerForms.js"></script>
+<script src="<c:url value=' /computerdatabase/resources/js/jquery.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit-icons.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/computerForms.js'/>"> </script>
 </body>
 
 </html>
