@@ -12,6 +12,8 @@ public class Company extends Entity {
 
   static final Logger LOG = LoggerFactory.getLogger(Company.class);
 
+  public Company() {}
+
   private Company(CompanyBuilder builder) {
     id   = builder.id;
     name = builder.name;

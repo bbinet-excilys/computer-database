@@ -34,16 +34,6 @@ public class Computer extends model.Entity {
   }
 
   /**
-   * Parametered constructor.
-   *
-   * @param id
-   * @param name
-   * @param introduced
-   * @param discontinued
-   * @param company
-   */
-
-  /**
    * Base constructor.
    */
   public Computer() {}

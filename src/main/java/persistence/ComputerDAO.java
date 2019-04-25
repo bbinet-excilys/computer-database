@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -30,15 +29,16 @@ public class ComputerDAO {
   private final String SELECT_WHEREID = "SELECT computer.id, computer.name, computer.introduced, computer.discontinued, company.id, company.name FROM computer LEFT OUTER JOIN company on computer.company_id=company.id WHERE computer.id=:id;";
   private final String DELETE_COMPANY = "DELETE FROM computer WHERE company_id = :id;";
 
+  private final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
+
   private NamedParameterJdbcTemplate jdbcTemplate;
   private ComputerMapper             computerMapper;
   private SessionFactory             sessionFactory;
+  private JPAQueryFactory            queryFactory;
 
   public void setSessionFactory(SessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
   }
-
-  private final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
   public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
     this.jdbcTemplate = jdbcTemplate;
@@ -46,6 +46,10 @@ public class ComputerDAO {
 
   public void setComputerMapper(ComputerMapper computerMapper) {
     this.computerMapper = computerMapper;
+  }
+
+  public void setQueryFactory(JPAQueryFactory queryFactory) {
+    this.queryFactory = queryFactory;
   }
 
   public void create(Computer computer) {
@@ -60,25 +64,16 @@ public class ComputerDAO {
   }
 
   public List<Computer> list() {
-    QComputer       qComputer    = QComputer.computer;
-    JPAQueryFactory queryFactory = new JPAQueryFactory(sessionFactory.createEntityManager());
-    List<Computer>  computersjpa = queryFactory.selectFrom(qComputer).fetchAll().fetch();
+    QComputer      qComputer    = QComputer.computer;
+    List<Computer> computersjpa = queryFactory.selectFrom(qComputer).fetchAll().fetch();
     LOGGER.debug(computersjpa.size() + "");
     return computersjpa;
   }
 
   public Optional<Computer> read(Long id) {
-    SqlParameterSource parameters = new MapSqlParameterSource().addValue("id", id);
-    Optional<Computer> rComputer;
-    try {
-      rComputer = Optional.of(jdbcTemplate.queryForObject(SELECT_WHEREID, parameters,
-                                                          computerMapper));
-    }
-    catch (EmptyResultDataAccessException e) {
-      LOGGER.debug("No matching company in database");
-      rComputer = Optional.empty();
-    }
-    return rComputer;
+    QComputer qComputer = QComputer.computer;
+    Computer  computer  = queryFactory.selectFrom(qComputer).fetchAll().where(qComputer.id.eq(id)).fetchOne();
+    return Optional.ofNullable(computer);
   }
 
   public void update(Computer computer) {

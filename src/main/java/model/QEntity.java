@@ -12,16 +12,12 @@ import com.querydsl.core.types.Path;
 /**
  * QEntity is a Querydsl query type for Entity
  */
-@Generated("com.querydsl.codegen.EntitySerializer")
+@Generated("com.querydsl.codegen.SupertypeSerializer")
 public class QEntity extends EntityPathBase<Entity> {
 
     private static final long serialVersionUID = -1847768472L;
 
     public static final QEntity entity = new QEntity("entity");
-
-    public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final StringPath name = createString("name");
 
     public QEntity(String variable) {
         super(Entity.class, forVariable(variable));
