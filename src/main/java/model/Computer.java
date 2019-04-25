@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author bbinet Model class for db computer entity
  */
-public class Computer extends Entity {
+public class Computer extends model.Entity {
 
   /**
    * Date of introduction of the computer.

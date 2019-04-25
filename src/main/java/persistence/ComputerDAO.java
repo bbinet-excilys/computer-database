@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -12,9 +13,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
 import mapping.ComputerMapper;
 import model.Company;
 import model.Computer;
+import model.QComputer;
 
 public class ComputerDAO {
 
@@ -28,6 +32,11 @@ public class ComputerDAO {
 
   private NamedParameterJdbcTemplate jdbcTemplate;
   private ComputerMapper             computerMapper;
+  private SessionFactory             sessionFactory;
+
+  public void setSessionFactory(SessionFactory sessionFactory) {
+    this.sessionFactory = sessionFactory;
+  }
 
   private final Logger LOGGER = LoggerFactory.getLogger(ComputerDAO.class);
 
@@ -40,6 +49,7 @@ public class ComputerDAO {
   }
 
   public void create(Computer computer) {
+
     SqlParameterSource parameters = new BeanPropertySqlParameterSource(computer);
     jdbcTemplate.update(CREATE, parameters);
   }
@@ -50,7 +60,11 @@ public class ComputerDAO {
   }
 
   public List<Computer> list() {
-    return jdbcTemplate.query(SELECT, computerMapper);
+    QComputer       qComputer    = QComputer.computer;
+    JPAQueryFactory queryFactory = new JPAQueryFactory(sessionFactory.createEntityManager());
+    List<Computer>  computersjpa = queryFactory.selectFrom(qComputer).fetchAll().fetch();
+    LOGGER.debug(computersjpa.size() + "");
+    return computersjpa;
   }
 
   public Optional<Computer> read(Long id) {

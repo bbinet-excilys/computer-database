@@ -44,7 +44,9 @@
   <bean id="ComputerDAO" class="persistence.ComputerDAO">
     <property name="jdbcTemplate" ref="JDBCTemplate" />
     <property name="computerMapper" ref="ComputerMapper" />
+    <property name="sessionFactory" ref="sessionFactory" />
   </bean>
+
   <bean id="CompanyDAO" class="persistence.CompanyDAO">
     <property name="jdbcTemplate" ref="JDBCTemplate" />
     <property name="companyMapper" ref="CompanyMapper" />
@@ -62,30 +64,48 @@
     </property>
   </bean>
 
-  <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-    <property name="dataSourceClassName" value="${driverClassName}" />
-    <property name="dataSourceProperties">
-      <props>
-        <prop key="user">${dataSource.user}</prop>
-        <prop key="password">${dataSource.password}</prop>
-        <prop key="databaseName">${dataSource.databaseName}</prop>
-        <prop key="portNumber">${dataSource.portNumber}</prop>
-        <prop key="serverName">${dataSource.serverName}</prop>
-      </props>
-    </property>
-  </bean>
-
-  <bean id="hikariDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-    <constructor-arg ref="hikariConfig" />
+  <bean id="dataSource" class="org.apache.tomcat.dbcp.dbcp2.BasicDataSource">
+    <property name="driverClassName" value="${dataSource.driverClassName}" />
+    <property name="url" value="${dataSource.url}" />
+    <property name="username" value="${dataSource.user}" />
+    <property name="password" value="${dataSource.password}" />
   </bean>
 
   <bean id="JDBCTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-    <constructor-arg ref="hikariDataSource" />
+    <constructor-arg ref="dataSource" />
   </bean>
+
+  <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+  <!-- Hibernate -->
+
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="packagesToScan" value="model" />
+    <property name="hibernateProperties">
+      <props>
+        <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+        <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+        <prop key="show_sql">true</prop>
+        <prop key="format_sql">true</prop>
+      </props>
+    </property>
+    <property name="mappingResources">
+      <list>
+        <value>mapping/Company.hbm.xml</value>
+        <value>mapping/Computer.hbm.xml</value>
+        <value>mapping/Entity.hbm.xml</value>
+      </list>
+    </property>
+  </bean>
+
+  <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 
   <!-- Entry Point -->
   <bean id="Main" class="Main">
     <property name="menuController" ref="MenuController" />
+    <property name="sessionFactory" ref="sessionFactory" />
   </bean>
 
   <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -94,11 +114,11 @@
     <property name="suffix" value=".jsp" />
   </bean>
 
-  <mvc:interceptors>
+  <!-- <mvc:interceptors>
     <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
       <property name="paramName" value="lang" />
     </bean>
-  </mvc:interceptors>
+  </mvc:interceptors> -->
 
   <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
     <property name="basename" value="classpath:languages/language" />
@@ -109,5 +129,7 @@
     <property name="defaultLocale" value="fr" />
   </bean>
 
-  <mvc:resources mapping="/resources/**" location="/resources/" />
+  <!-- <mvc:resources mapping="/resources/**" location="/resources/" /> -->
+
+
 </beans>

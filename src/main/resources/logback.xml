@@ -28,6 +28,11 @@
     <appender-ref ref="FILE" />
   </logger>
 
+  <logger name="org.hibernate" level="DEBUG">
+    <appender-ref ref="CONSOLE" />
+    <appender-ref ref="FILE" />
+  </logger>
+
   <logger name="org.springframework.jdbc.core.JdbcTemplate" level="DEBUG">
     <appender-ref ref="CONSOLE" />
     <appender-ref ref="FILE" />

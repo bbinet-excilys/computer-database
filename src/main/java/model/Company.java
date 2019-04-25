@@ -13,8 +13,8 @@ public class Company extends Entity {
   static final Logger LOG = LoggerFactory.getLogger(Company.class);
 
   private Company(CompanyBuilder builder) {
-    this.id   = builder.id;
-    this.name = builder.name;
+    id   = builder.id;
+    name = builder.name;
   }
 
   public Company(Long id, String name) {

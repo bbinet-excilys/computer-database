@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 24 avr. 2019 ?? 16:34:34 by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="model.Computer"  discriminator-value="Computer" lazy="false" table="computer">
+        <id name="id" type="java.lang.Long">
+            <column name="id" />
+            <generator class="assigned" />
+        </id>
+        <discriminator type="string">
+            <column name="DISCR_COL" />
+        </discriminator>
+        <property name="name" type="java.lang.String">
+            <column name="name" />
+        </property>
+        <property name="introduced" type="java.sql.Date">
+            <column name="introduced" />
+        </property>
+        <many-to-one name="company" class="model.Company" fetch="join">
+            <column name="company" />
+        </many-to-one>
+        <property name="discontinued" type="java.sql.Date">
+            <column name="discontinued" />
+        </property>
+    </class>
+</hibernate-mapping>

@@ -20,7 +20,7 @@ public abstract class Entity {
    * @return The Entity ID
    */
   public Long getId() {
-    return this.id;
+    return id;
   }
 
   /**
@@ -45,7 +45,7 @@ public abstract class Entity {
    * @return The name of the Computer
    */
   public String getName() {
-    return this.name;
+    return name;
   }
 
   /**
