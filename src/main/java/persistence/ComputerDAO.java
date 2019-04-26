@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -33,8 +34,10 @@ public class ComputerDAO {
 
   private NamedParameterJdbcTemplate jdbcTemplate;
   private ComputerMapper             computerMapper;
+  private QComputer                  qComputer = QComputer.computer;
   private SessionFactory             sessionFactory;
   private JPAQueryFactory            queryFactory;
+  HibernateTransactionManager        transactionManager;
 
   public void setSessionFactory(SessionFactory sessionFactory) {
     this.sessionFactory = sessionFactory;
@@ -64,22 +67,25 @@ public class ComputerDAO {
   }
 
   public List<Computer> list() {
-    QComputer      qComputer    = QComputer.computer;
-    List<Computer> computersjpa = queryFactory.selectFrom(qComputer).fetchAll().fetch();
-    LOGGER.debug(computersjpa.size() + "");
-    return computersjpa;
+    List<Computer> computers = queryFactory.selectFrom(qComputer).fetchAll().fetch();
+    return computers;
   }
 
   public Optional<Computer> read(Long id) {
-    QComputer qComputer = QComputer.computer;
-    Computer  computer  = queryFactory.selectFrom(qComputer).fetchAll().where(qComputer.id.eq(id)).fetchOne();
+    Computer computer = queryFactory.selectFrom(qComputer)
+                                    .where(qComputer.id.eq(id))
+                                    .fetchOne();
     return Optional.ofNullable(computer);
   }
 
   public void update(Computer computer) {
-    SqlParameterSource parameters = new BeanPropertySqlParameterSource(computer);
-    logParameters(parameters);
-    jdbcTemplate.update(UPDATE, parameters);
+    queryFactory.update(qComputer)
+                .set(qComputer.name, computer.getName())
+                .where(qComputer.id.eq(computer.getId()))
+                .execute();
+//                .where(qComputer.id.eq(1L)) // computer.getId()
+//                .set(qComputer.name, computer.getName())
+//                .execute();
   }
 
   public List<Computer> searchByName(String name) {
