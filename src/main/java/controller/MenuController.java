@@ -8,8 +8,8 @@ import ui.UIHelper;
  */
 public class MenuController {
 
-  ComputerController computerController;
-  CompanyController  companyController;
+  private ComputerCLIController computerController;
+  private CompanyCLIController  companyController;
 
   /**
    * Basic method looping until the user wants to exit. Get Controllers from the
@@ -70,11 +70,11 @@ public class MenuController {
     } while (loop);
   }
 
-  public void setComputerController(ComputerController computerController) {
+  public void setComputerController(ComputerCLIController computerController) {
     this.computerController = computerController;
   }
 
-  public void setCompanyController(CompanyController companyController) {
+  public void setCompanyController(CompanyCLIController companyController) {
     this.companyController = companyController;
   }
 

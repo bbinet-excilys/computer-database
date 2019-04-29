@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="model.Computer" table="computer">
+    <id name="id" type="long" column="id">
+      <generator class="identity" />
+    </id>
+    <property name="name" type="java.lang.String" column="name"></property>
+    <property name="introduced" type="java.sql.Date" column="introduced"></property>
+    <property name="discontinued" type="java.sql.Date" column="discontinued"></property>
+    <many-to-one name="company" class="model.Company" column="company_id" not-null="false" fetch="join"></many-to-one>
+  </class>
+</hibernate-mapping>

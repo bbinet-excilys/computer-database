@@ -1,52 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html>
-<html>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<jsp:include page="basepage.jsp" />
+<div class="uk-container uk-container-center uk-margin-large-bottom">
 
-<head>
-  <title>Computer Database</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="utf-8">
-  <link href="css/uikit.min.css" rel="stylesheet" media="screen">
-  <link href="css/main.css" rel="stylesheet">
-</head>
-
-<body>
-  <div uk-sticky="sel-target: .uk-navbar; cls-active: uk-navbar-sticky" class="uk-margin-bottom">
-    <nav class="uk-navbar uk-background-secondary uk-dark" uk-navbar="mode: click; boundary-align:true">
-      <div class="uk-navbar-left">
-        <a class="uk-navbar-item uk-logo uk-hidden_small" href="dashboard">Computer
-          DataBase &nbsp;<span uk-icon="icon: desktop"></span></a>
-        <ul class="uk-navbar-nav">
-          <li>
-            <a href="Dashboard">Computer</a>
-            <div uk-dropdown>
-              <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="Dashboard">List</a></li>
-                <li><a href="addComputer">Add</a></li>
-                <li><a href="deleteComputer">Delete</a></li>
-              </ul>
-            </div>
-          </li>
-          <li>
-            <a href="listCompany">Company</a>
-            <div uk-dropdown>
-              <ul class="uk-nav uk-dropdown-nav">
-                <li><a href="listCompany">List</a></li>
-              </ul>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </nav>
-  </div>
-  <div class="uk-container uk-container-center uk-margin-large-bottom">
-
-    <div class="uk-grid">
-      <div class="uk-width-1-1">
-        <h1>Computer Edition</h1>
-      </div>
+  <div class="uk-grid uk-flex-center" uk-grid>
+    <div class="uk-width-1-1">
+      <h1>
+        <spring:message code='page.title.update.computer' />
+      </h1>
     </div>
   </div>
 
@@ -59,55 +23,67 @@
   </c:if>
 
   <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
-    <form class="uk-width-1-2" method="POST" id="addComputerForm">
-      <fieldset class="uk-fieldset">
-        <div class="uk-margin">
-          <div class="uk-inline uk-width-1-1">
-            <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: desktop"></span>
-            <input class="uk-input" placeholder="Computer Name" type="text" id="computerName" name="computerName"
-              value="${computer.name}">
-          </div>
+    <form:form method="post" modelAttribute="computerDTO" class="uk-width-1-2 uk-form-horizontal">
+      <div class="uk-margin">
+        <div class="uk-inline uk-width-1-1">
+          <form:label path="name" cssClass="uk-form-label">
+            <spring:message code='form.label.name' />
+          </form:label>
+          <form:input path="name" type="text" cssClass="uk-input" />
+          <form:errors path="name" cssClass="uk-text-danger" />
         </div>
-        <div class="uk-margin">
-          <div class="uk-inline uk-width-1-1">
-            <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-            <input class="uk-input" placeholder="Introdction Date" type="date" id="computerIntroduced"
-              name="computerIntroduced" value="computer.introduced">
-          </div>
+      </div>
+      <div class="uk-margin">
+        <div class="uk-width-1-2">
+          <form:label path="introduced" cssClass="uk-form-label">
+            <spring:message code='form.label.introduced' />
+          </form:label>
+          <form:input path="introduced" type="date" cssClass="uk-input" />
+          <form:errors path="introduced" cssClass="uk-text-danger" />
         </div>
-        <div class="uk-margin">
-          <div class="uk-inline uk-width-1-1">
-            <span class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: calendar"></span>
-            <input class="uk-input" placeholder="Discontinued Date" type="date" id="computerDiscontinued"
-              name="computerDiscontinued" value="computer.discontinued">
-          </div>
+      </div>
+      <div class="uk-margin">
+        <div class="uk-width-1-2">
+          <form:label path="discontinued" cssClass="uk-form-label">
+            <spring:message code='form.label.discontinued' />
+          </form:label>
+          <form:input path="discontinued" type="date" cssClass="uk-input" />
+          <form:errors path="discontinued" cssClass="uk-text-danger" />
         </div>
-        <div class="uk-margin">
-          <select class="uk-select" name="computerCompanyId" id="computerCompanyId">
-            <option value="">Company</option>
-            <c:forEach items="${companies}" var="company">
-              <c:if test="${company.id == computer.companyId}">
-                <option value="${company.id}" selected="selected" class="uk-label-danger">
-                  ${company.name}
-                </option>
-              </c:if>
-              <c:if test="${company.id != computer.companyId}">
-                <option value="${company.id}">${company.name}</option>
-              </c:if>
-            </c:forEach>
-          </select>
+      </div>
+      <div class="uk-margin">
+        <div class="uk-inline uk-width-1-1">
+          <form:label path="companyId" cssClass="uk-form-label">
+            <spring:message code='form.label.company' />
+          </form:label>
+          <form:select path="companyId" type="select" cssClass="uk-select">
+            <form:option value="" label="Company" />
+            <form:options items="${companies}" itemValue="id" itemLabel="name" />
+          </form:select>
+          <form:errors path="companyId" cssClass="uk-text-danger" />
         </div>
-        <input type="hidden" id="computerCompanyName" name="computerCompanyName" value="" />
-      </fieldset>
-      <input type="submit" class="uk-button uk-button-primary uk-width-1-3" value="Update" />
-      <a class="uk-button uk-button-danger uk-width-1-3" href="dashboard">Cancel</a>
-    </form>
+      </div>
+      <div class="uk-margin">
+        <div class=" uk-width-1-1">
+          <a href="dashboard" class="uk-button uk-button-danger">
+            <spring:message code='button.cancel' /></a>
+        </div>
+      </div>
+      <div class="uk-margin">
+        <div class="uk-width-1-1">
+          <input type="submit" class="uk-button uk-button-primary"
+            value="<spring:message code='button.submit' />"></input>
+        </div>
+      </div>
+      <form:hidden path="id" />
+      <input type="hidden" name="submitted" value="true" />
+    </form:form>
   </div>
-
-  <script src="js/jquery.min.js"></script>
-  <script src="js/uikit.min.js"></script>
-  <script src="js/uikit-icons.min.js"></script>
-  <script src="js/computerForms.js"></script>
+</div>
+<script src="<c:url value=' /computerdatabase/resources/js/jquery.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit-icons.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/computerForms.js'/>"> </script>
 </body>
 
 </html>
