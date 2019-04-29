@@ -28,24 +28,24 @@ pageEncoding="UTF-8"%>
     <dl class="uk-description-list uk-description-list-divider">
       <dt>
         <spring:message code='table.header.name' />:</dt>
-      <dd>${computer.name}</dd>
+      <dd>${computerDTO.name}</dd>
       <dt>
         <spring:message code='table.header.introduced' />:</dt>
-      <dd>${computer.introduced}</dd>
+      <dd>${computerDTO.introduced}</dd>
       <dt>
         <spring:message code='table.header.discontinued' />:</dt>
-      <dd>${computer.discontinued}</dd>
+      <dd>${computerDTO.discontinued}</dd>
       <dt>
         <spring:message code='table.header.companyname' />:</dt>
-      <dd>${computer.companyName}</dd>
+      <dd>${computerDTO.companyName}</dd>
     </dl>
 
   </div>
 </div>
 
-<script src="resources/js/jquery.min.js"></script>
-<script src="resources/js/uikit.min.js"></script>
-<script src="resources/js/uikit-icons.min.js"></script>
+<script src="<c:url value=' /computerdatabase/resources/js/jquery.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit-icons.min.js'/>"> </script>
 </body>
 
 </html>

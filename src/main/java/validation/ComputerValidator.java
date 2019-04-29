@@ -57,10 +57,12 @@ public class ComputerValidator implements Validator {
   public void validate(Object target, Errors errors) {
     ComputerDTO      targetDTO = (ComputerDTO) target;
     Optional<String> name      = Optional.ofNullable(targetDTO.getName());
-    name.ifPresent(nameString -> {
+    name.ifPresentOrElse(nameString -> {
       if (nameString.trim().isBlank()) {
         errors.rejectValue("name", "error.label.name.empty");
       }
+    }, () -> {
+      errors.rejectValue("name", "error.label.name.empty");
     });
     Optional<Date> oIntroduced   = Optional.ofNullable(dateValidator.validate(targetDTO.getIntroduced(), DATE_PATTERN));
     Optional<Date> oDiscontinued = Optional.ofNullable(dateValidator.validate(targetDTO.getDiscontinued(), DATE_PATTERN));

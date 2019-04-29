@@ -3,45 +3,60 @@ pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<c:url var="baseURL" value="/computers/" />
 <jsp:include page="basepage.jsp" />
 <div class="uk-container uk-container-center uk-margin-large-bottom">
-
 
   <div class="uk-grid">
     <div class="uk-width-1-1">
       <h1>
-        <spring:message code="page.title.list.computer" arguments="${count}" />
+        <spring:message code="page.title.list.computer" arguments="${dashboardDTO.count}" />
       </h1>
     </div>
   </div>
 
-  <div class="uk-grid uk-flex" uk-grid>
-    <div class="uk-width-3-5">
-      <form class="uk-form-horizontal" method="GET" id="searchForm">
-        <div class="uk-width-1-2">
-          <label class="uk-form-label" for="searchComputerByName">
-            <spring:message code="form.label.search" /></label>
-          <div class="uk-form-controls uk-form-controls-text">
-            <input class="uk-input uk-form-width-medium uk-form-small" type="text" id="searchName" name="searchName"
-              value="${param.searchName}" />
-          </div>
-        </div>
-        <input type="hidden" id="page" value="1" name="page" />
-        <input type="hidden" id="pageSize" value="${pageSize}" name="pageSize" />
-        <input type="submit" class="uk-button uk-button-primary uk-width-1-3"
-          value="<spring:message code='button.search' />" />
-      </form>
+  <div class="uk-grid uk-flex " uk-grid>
+    <div class="uk-width-1-2@m uk-flex-left ">
+      <form:form modelAttribute="dashboardDTO" method="GET">
+        <form:hidden path="page" />
+        <form:hidden path="pageSize" value="10" />
+        <form:hidden path="pageMax" />
+        <form:label path="searchName" cssClass="uk-form-label"></form:label>
+        <form:input type="text" path="searchName" cssClass="uk-input uk-form-small" />
+        <input type="submit" value="<spring:message code='button.search' />"
+          class="uk-button-small uk-button-primary" />
+      </form:form>
     </div>
-    <div class="uk-width-1-5">
-      <div class="uk-button-group">
-        <a class="uk-button uk-button-default" href="?page=1&pageSize=10&searchName=${searchName}">10</a>
-        <a class=" uk-button uk-button-default" href="?page=1&pageSize=50&searchName=${searchName}">50</a>
-        <a class=" uk-button uk-button-default" href="?page=1&pageSize=100&searchName=${searchName}">100</a>
+    <div class="uk-width-1-4@m">
+      <div class="uk-button-group uk-grid uk-flex-center uk-flex-middle" uk-grid>
+        <form:form modelAttribute="dashboardDTO" method="GET" cssClass="uk-width-1-3">
+          <form:hidden path="page" />
+          <form:hidden path="pageSize" value="10" />
+          <form:hidden path="pageMax" />
+          <form:hidden path="searchName" />
+          <input type="submit" value="10" class="uk-button  uk-text-center" />
+        </form:form>
+        <form:form modelAttribute="dashboardDTO" method="GET" cssClass="uk-width-1-3">
+          <form:hidden path="page" />
+          <form:hidden path="pageSize" value="50" />
+          <form:hidden path="pageMax" />
+          <form:hidden path="searchName" />
+          <input type="submit" value="50" class="uk-button uk-text-center" />
+        </form:form>
+        <form:form modelAttribute="dashboardDTO" method="GET" cssClass="uk-width-1-3">
+          <form:hidden path="page" />
+          <form:hidden path="pageSize" value="100" />
+          <form:hidden path="pageMax" />
+          <form:hidden path="searchName" />
+          <input type="submit" value="100" class="uk-button uk-text-center" />
+        </form:form>
       </div>
     </div>
-    <div class=" uk-width-1-5">
-      <a class=" uk-button uk-button-primary uk-button-small uk-flex-right" href="addcomputer">
-        <spring:message code="page.title.create.computer" /></a>
+    <div class=" uk-width-1-4@m">
+      <form:form method="POST" cssClass="uk-width-1-3" action="computers">
+        <input type="submit" class="uk-button uk-button-primary uk-button-small uk-flex-right"
+          value="<spring:message code='page.title.create.computer' />" />
+      </form:form>
     </div>
   </div>
 
@@ -84,11 +99,19 @@ pageEncoding="UTF-8"%>
               <td>${computer.introduced}</td>
               <td>${computer.discontinued}</td>
               <td>${computer.companyName}</td>
-              <td><a href="editcomputer?computerId=${computer.id}"
-                  class="uk-button uk-button-primary uk-button-small uk-padding-small-left"><span
-                    uk-icon="icon: pencil"></span></a></td>
-              <td><button class="uk-button uk-button-danger uk-button-small uk-padding-small-left"><span
-                    uk-icon="icon: trash"></span></button></td>
+              <td>
+                <form:form method="POST" action="${baseURL}${computer.id}">
+                  <input type="submit" class="uk-button uk-button-primary uk-button-small"
+                    value="<spring:message code='navigation.item.update' />" />
+                </form:form>
+              </td>
+              <td>
+                <form:form method="POST" action="${baseURL}delete/${computer.id}">
+                  <input type="hidden" name="submitted" value="true" />
+                  <input type="submit" class="uk-button uk-button-primary uk-button-small"
+                    value="<spring:message code='navigation.item.delete' />" />
+                </form:form>
+              </td>
               <td>
                 <input type="checkbox" name="cb" class="uk-checkbox" value="${computer.id}">
               </td>
@@ -100,34 +123,60 @@ pageEncoding="UTF-8"%>
 
     <div class="uk-width-1-1">
       <ul class="uk-pagination uk-flex-center">
-        <c:if test="${page>1}">
-          <li><a href="?page=${page-1}&pageSize=${pageSize}&searchName=${param.searchName}"><span
-                uk-pagination-previous></span></a></li>
-        </c:if>
-        <c:if test="${!(page>1)}">
-          <li class="uk-disabled"><a><span uk-pagination-previous></span></a></li>
-        </c:if>
-        <li><a href="?page=1&pageSize=${pageSize}&searchName=${param.searchName}">
-            <spring:message code="pagination.first" /></a></li>
-        <li><a href="?page=${pageMax}&pageSize=${pageSize}&searchName=${param.searchName}">
-            <spring:message code="pagination.last" /></a></li>
-        <c:if test="${page<pageMax}">
-          <li><a href="?page=${page+1}&pageSize=${pageSize}&searchName=${param.searchName}"><span
-                uk-pagination-next></span></a></li>
-        </c:if>
-        <c:if test="${!(page<pageMax)}">
-          <li class="uk-disabled"><a><span uk-pagination-next></span></a></li>
-        </c:if>
+        <div class="uk-grid uk-flex-center uk-flex-middle" uk-grid>
+          <c:set var="previousDisabled" value="${dashboardDTO.page<=1?'disabled':''}" />
+          <c:set var="nextDisabled" value="${dashboardDTO.page>=dashboardDTO.pageMax?'disabled':''}" />
+          <li class="uk-width-1-4">
+            <form:form modelAttribute="dashboardDTO" method="GET">
+              <form:hidden path="page" value="${dashboardDTO.page-1}" />
+              <form:hidden path="pageSize" />
+              <form:hidden path="pageMax" />
+              <form:hidden path="searchName" />
+              <input type="submit" value="<spring:message code='pagination.previous' />"
+                class="uk-button uk-button-primary uk-width-1-1 uk-text-center" ${previousDisabled} />
+            </form:form>
+          </li>
+          <li class="uk-width-1-4">
+            <form:form modelAttribute="dashboardDTO" method="GET">
+              <form:hidden path="page" value="1" />
+              <form:hidden path="pageSize" />
+              <form:hidden path="pageMax" />
+              <form:hidden path="searchName" />
+              <input type="submit" value="<spring:message code='pagination.first' />"
+                class="uk-button uk-button-primary  uk-width-1-1 uk-text-center" />
+            </form:form>
+          </li>
+          <li class="uk-width-1-4">
+            <form:form modelAttribute="dashboardDTO" method="GET">
+              <form:hidden path="page" value="${dashboardDTO.pageMax}" />
+              <form:hidden path="pageSize" />
+              <form:hidden path="pageMax" />
+              <form:hidden path="searchName" />
+              <input type="submit" value="<spring:message code='pagination.last' />"
+                class="uk-button uk-button-primary  uk-width-1-1 uk-text-center" />
+            </form:form>
+          </li>
+          <li class="uk-width-1-4">
+            <form:form modelAttribute="dashboardDTO" method="GET">
+              <form:hidden path="page" value="${dashboardDTO.page+1}" />
+              <form:hidden path="pageSize" />
+              <form:hidden path="pageMax" />
+              <form:hidden path="searchName" />
+              <input type="submit" value="<spring:message code='pagination.next' />"
+                class="uk-button uk-button-primary  uk-width-1-1 uk-text-center" ${nextDisabled} />
+            </form:form>
+          </li>
+        </div>
       </ul>
     </div>
 
   </div>
 </div>
-<script src="resources/js/jquery.min.js"></script>
-<script src="resources/js/uikit.min.js"></script>
-<script src="resources/js/uikit-icons.min.js"></script>
-<script src="resources/js/sortable.min.js"></script>
-<script src="resources/js/dashboard.js"></script>
+<script src="<c:url value=' /computerdatabase/resources/js/jquery.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit-icons.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/sortable.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/dashboard.js'/>"> </script>
 </body>
 
 </html>

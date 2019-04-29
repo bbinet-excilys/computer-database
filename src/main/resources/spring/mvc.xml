@@ -9,12 +9,12 @@
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+  <mvc:annotation-driven />
 
-  <context:component-scan base-package="controller" />
-
-  <import resource="classpath:spring/persistence.xml" />
-  <import resource="classpath:spring/service.xml" />
-  <import resource="classpath:spring/controller.xml" />
-  <import resource="classpath:spring/mapping.xml" />
-  <import resource="classpath:spring/mvcBeans.xml" />
+  <mvc:resources mapping="/resources/**" location="/resources/" />
+  <mvc:interceptors>
+    <bean class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+      <property name="paramName" value="lang" />
+    </bean>
+  </mvc:interceptors>
 </beans>
