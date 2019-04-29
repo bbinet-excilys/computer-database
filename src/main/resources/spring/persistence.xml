@@ -32,21 +32,18 @@
   <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
     <constructor-arg ref="hikariConfig" />
   </bean>
-  <!-- JDBCTemplate /!\ -->
-  <bean id="JDBCTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
-    <constructor-arg ref="dataSource" />
-  </bean>
   <!-- SessionFactory -->
   <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
     <property name="dataSource" ref="dataSource" />
-    <property name="packagesToScan" value="model" />
+    <property name="packagesToScan" value="persistence" />
     <property name="hibernateProperties">
       <props>
         <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
         <prop key="hibernate.dialect">${hibernate.dialect}</prop>
         <prop key="show_sql">${hibernate.show_sql}</prop>
         <prop key="format_sql">${hibernate.format_sql}</prop>
-        <prop key="hibernate.flushMode">FLUSH_AUTO</prop>
+        <prop key="hibernate.allow_update_outside_transaction">${hibernate.allow_update_outside_transaction}</prop>
+        <!-- <prop key="hibernate.flushMode">FLUSH_AUTO</prop> -->
       </props>
     </property>
     <property name="mappingResources">
@@ -59,14 +56,11 @@
   <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
   <!-- DAOs -->
   <bean id="ComputerDAO" class="persistence.ComputerDAO">
-    <property name="jdbcTemplate" ref="JDBCTemplate" />
-    <property name="computerMapper" ref="ComputerMapper" />
     <property name="queryFactory" ref="queryFactory" />
     <property name="sessionFactory" ref="sessionFactory" />
   </bean>
   <bean id="CompanyDAO" class="persistence.CompanyDAO">
-    <property name="jdbcTemplate" ref="JDBCTemplate" />
-    <property name="companyMapper" ref="CompanyMapper" />
+    <property name="queryFactory" ref="queryFactory" />
   </bean>
   <!-- Beans -->
   <bean id="queryFactory" class="com.querydsl.jpa.impl.JPAQueryFactory">
@@ -76,7 +70,6 @@
   </bean>
   <!-- TransactionManager -->
   <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-    <property name="dataSource" ref="dataSource" />
     <property name="sessionFactory" ref="sessionFactory" />
   </bean>
   <!-- Transaction using aop -->

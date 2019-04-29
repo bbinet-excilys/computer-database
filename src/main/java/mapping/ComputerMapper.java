@@ -18,8 +18,15 @@ import model.Company;
 import model.Company.CompanyBuilder;
 import model.Computer;
 import model.Computer.ComputerBuilder;
+import service.CompanyService;
 
 public class ComputerMapper implements RowMapper<Computer> {
+
+  private static CompanyService companyService;
+
+  public static void setCompanyService(CompanyService companyService) {
+    ComputerMapper.companyService = companyService;
+  }
 
   /**
    * Logger for the ComputerMapper Factory.
@@ -64,13 +71,12 @@ public class ComputerMapper implements RowMapper<Computer> {
               Date date = new Date(dValidator.validate(strDate, "yyyy-MM-dd").getTime());
               computerBuilder.withDiscontinued(date);
             });
-    CompanyBuilder companyBuilder = Company.builder();
-    Optional.ofNullable(computerDTO.getCompanyId())
-            .ifPresent(companyId -> companyBuilder.withId(companyId));
-    Optional.ofNullable(computerDTO.getCompanyName())
-            .filter(Predicate.not(String::isBlank))
-            .ifPresent(companyName -> companyBuilder.withName(companyName));
-    computerBuilder.withCompany(companyBuilder.build());
+
+    Optional<Long> oCompanyId = Optional.ofNullable(computerDTO.getCompanyId());
+    if (oCompanyId.isPresent()) {
+      companyService.read(oCompanyId.get()).ifPresent(companyDTO -> computerBuilder.withCompany(CompanyMapper.companyFromDTO(companyDTO)));
+    }
+
     return computerBuilder.build();
   }
 

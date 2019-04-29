@@ -19,7 +19,7 @@ import ui.UIHelper;
 
 public class ComputerCLIController {
 
-  Logger logger = LoggerFactory.getLogger(ComputerCLIController.class);
+  private final Logger LOGGER = LoggerFactory.getLogger(ComputerCLIController.class);
 
   private ComputerService computerService;
   private CompanyService  companyService;
@@ -49,7 +49,7 @@ public class ComputerCLIController {
         computerService.create(computerBuilder.build());
       }
       catch (IllegalArgumentException e) {
-        logger.warn(e.getMessage());
+        LOGGER.warn(e.getMessage());
         UIHelper.displayError("One argument passed for creation was wrong : " + e.getMessage());
       }
     }, () -> {
@@ -102,30 +102,30 @@ public class ComputerCLIController {
       Optional<ComputerDTO> oComputer;
       try {
         oComputer = computerService.read(id);
-        oComputer.ifPresentOrElse(computer -> {
+        oComputer.ifPresentOrElse(computerDTO -> {
 
-          EntityUI.print(computer);
+          EntityUI.print(computerDTO);
 
-          computer.setName(UIHelper.promptString("Enter the new name of the computer (or empty to keep it) :")
-                                   .orElseGet(computer::getName));
+          computerDTO.setName(UIHelper.promptString("Enter the new name of the computer (or empty to keep it) :")
+                                      .orElseGet(computerDTO::getName));
 
-          computer.setIntroduced(UIHelper.promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
-                                         .map(Date::toString)
-                                         .orElseGet(computer::getIntroduced));
+          computerDTO.setIntroduced(UIHelper.promptDate("Enter the new introduction date of the computer (or empty to keep it) :")
+                                            .map(Date::toString)
+                                            .orElseGet(computerDTO::getIntroduced));
 
-          computer.setDiscontinued(UIHelper.promptDate("Enter the new date of discontinuation of the computer (or empty to keep it) :")
-                                           .map(Date::toString)
-                                           .orElseGet(computer::getDiscontinued));
+          computerDTO.setDiscontinued(UIHelper.promptDate("Enter the new date of discontinuation of the computer (or empty to keep it) :")
+                                              .map(Date::toString)
+                                              .orElseGet(computerDTO::getDiscontinued));
 
           Long companyId = UIHelper.promptLong("Enter the id of the new company (or empty to keep it):")
-                                   .orElse(computer.getCompanyId());
+                                   .orElse(computerDTO.getCompanyId());
 
           try {
-            computer.setCompanyId(companyId);
-            computerService.update(computer);
+            computerDTO.setCompanyId(companyId);
+            computerService.update(computerDTO);
           }
           catch (IllegalArgumentException e) {
-            logger.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             UIHelper.displayError(e.getMessage());
           }
         }, () -> {
@@ -133,7 +133,7 @@ public class ComputerCLIController {
         });
       }
       catch (IllegalArgumentException e) {
-        logger.warn(e.getMessage());
+        LOGGER.warn(e.getMessage());
         UIHelper.displayError("One argument passed for update was wrong : " + e.getMessage());
       }
     }, () -> {

@@ -16,7 +16,7 @@ public class QClassGenerator {
   private static final Logger LOGGER = LoggerFactory.getLogger(QClassGenerator.class);
 
   public static void main(String[] args) {
-    ApplicationContext appContext     = new ClassPathXmlApplicationContext("classpath:/spring/cliContext.xml");
+    ApplicationContext appContext     = new ClassPathXmlApplicationContext("classpath:/spring/qclassContext.xml");
     SessionFactory     sessionFactory = (SessionFactory) appContext.getBean("sessionFactory");
     JPADomainExporter  export         = new JPADomainExporter(new File("src/main/java"), sessionFactory.getMetamodel());
     try {
