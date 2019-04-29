@@ -4,7 +4,6 @@ import java.util.List;
 
 import dto.CompanyDTO;
 import dto.ComputerDTO;
-import model.Entity;
 
 /**
  * UserInterface class for entity.
@@ -32,10 +31,8 @@ public class EntityUI {
    *                   The list of objects to print. These object must extend
    *                   Entity.
    */
-  public void printList(List<Entity> objectList) {
-    for (Entity tObject : objectList) {
-      print(tObject);
-    }
+  public void printList(List<Object> objectList) {
+    objectList.stream().forEach(toPrint -> print(toPrint));
   }
 
   public static void printComputerList(List<ComputerDTO> lComputer) {

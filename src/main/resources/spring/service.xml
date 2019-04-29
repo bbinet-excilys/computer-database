@@ -10,11 +10,11 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-  <context:component-scan base-package="controller" />
-
-  <import resource="classpath:spring/persistence.xml" />
-  <import resource="classpath:spring/service.xml" />
-  <import resource="classpath:spring/controller.xml" />
-  <import resource="classpath:spring/mapping.xml" />
-  <import resource="classpath:spring/mvcBeans.xml" />
+  <bean id="ComputerService" class="service.ComputerService">
+    <property name="computerDAO" ref="ComputerDAO" />
+  </bean>
+  <bean id="CompanyService" class="service.CompanyService">
+    <property name="companyDAO" ref="CompanyDAO" />
+    <property name="computerService" ref="ComputerService" />
+  </bean>
 </beans>

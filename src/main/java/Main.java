@@ -18,17 +18,12 @@ public class Main {
    */
   static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
-  private static MenuController menuController;
-
-  public static void setMenuController(MenuController menuController) {
-    Main.menuController = menuController;
-  }
-
   /**
    * Entrypoint of the computer database application.
    */
   public static void main(String[] args) {
-    ApplicationContext appContext = new ClassPathXmlApplicationContext("classpath:/spring/applicationContext.xml");
+    ApplicationContext appContext     = new ClassPathXmlApplicationContext("classpath:/spring/cliContext.xml");
+    MenuController     menuController = (MenuController) appContext.getBean("MenuController");
     menuController.runMenu();
   }
 

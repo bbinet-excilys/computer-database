@@ -10,11 +10,15 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-  <context:component-scan base-package="controller" />
-
-  <import resource="classpath:spring/persistence.xml" />
-  <import resource="classpath:spring/service.xml" />
-  <import resource="classpath:spring/controller.xml" />
-  <import resource="classpath:spring/mapping.xml" />
-  <import resource="classpath:spring/mvcBeans.xml" />
+  <bean id="ComputerController" class="controller.ComputerCLIController">
+    <property name="companyService" ref="CompanyService" />
+    <property name="computerService" ref="ComputerService" />
+  </bean>
+  <bean id="CompanyController" class="controller.CompanyCLIController">
+    <property name="companyService" ref="CompanyService" />
+  </bean>
+  <bean id="MenuController" class="controller.MenuController">
+    <property name="computerController" ref="ComputerController" />
+    <property name="companyController" ref="CompanyController" />
+  </bean>
 </beans>

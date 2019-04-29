@@ -8,7 +8,45 @@ import org.slf4j.LoggerFactory;
 /**
  * @author bbinet Model class for db computer entity
  */
-public class Computer extends Entity {
+public class Computer {
+  protected Long id;
+
+  /**
+   * The name of the computer.
+   */
+  protected String name;
+
+  /**
+   * @return The Entity ID
+   */
+  public Long getId() {
+    return id;
+  }
+
+  /**
+   * @param id
+   *           The Entity ID to set
+   */
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * @return The name of the Computer
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name
+   *             The name of the Entity
+   */
+  public void setName(String name) {
+    if (name != null) {
+      this.name = name;
+    }
+  }
 
   /**
    * Date of introduction of the computer.
@@ -32,16 +70,6 @@ public class Computer extends Entity {
     discontinued = builder.discontinued;
     company      = builder.company;
   }
-
-  /**
-   * Parametered constructor.
-   *
-   * @param id
-   * @param name
-   * @param introduced
-   * @param discontinued
-   * @param company
-   */
 
   /**
    * Base constructor.

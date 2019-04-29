@@ -23,10 +23,11 @@ pageEncoding="UTF-8"%>
   </c:if>
 
   <div class="uk-grid uk-flex-center uk-flex-middle uk-margin" uk-grid>
-    <form:form method="POST" class="uk-width-1-2" modelAttribute="computerDTOModel" id="deleteComputerForm">
+    <form:form method="POST" class="uk-width-1-2" modelAttribute="computerDTO" id="deleteComputerForm">
       <form:select class="uk-select uk-width-1-1" path="id">
         <form:options items="${computers}" itemValue="id" itemLabel="name"></form:options>
       </form:select>
+      <input type="hidden" name="submitted" value="true" />
       <div class="uk-grid uk-flex-right uk-margin" uk-grid>
         <input type="submit" class="uk-button uk-button-danger uk-text-center"
           value="<spring:message code='button.delete' />" />
@@ -35,9 +36,9 @@ pageEncoding="UTF-8"%>
   </div>
 </div>
 
-<script src="resources/js/jquery.min.js"></script>
-<script src="resources/js/uikit.min.js"></script>
-<script src="resources/js/uikit-icons.min.js"></script>
+<script src="<c:url value=' /computerdatabase/resources/js/jquery.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit.min.js'/>"> </script>
+<script src="<c:url value=' /computerdatabase/resources/js/uikit-icons.min.js'/>"> </script>
 </body>
 
 </html>

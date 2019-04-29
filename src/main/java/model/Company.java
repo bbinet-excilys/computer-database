@@ -8,13 +8,53 @@ import org.slf4j.LoggerFactory;
  *
  * @author bbinet
  */
-public class Company extends Entity {
+public class Company {
+  protected Long id;
+
+  /**
+   * The name of the computer.
+   */
+  protected String name;
+
+  /**
+   * @return The Entity ID
+   */
+  public Long getId() {
+    return id;
+  }
+
+  /**
+   * @param id
+   *           The Entity ID to set
+   */
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  /**
+   * @return The name of the Computer
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * @param name
+   *             The name of the Entity
+   */
+  public void setName(String name) {
+    if (name != null) {
+      this.name = name;
+    }
+  }
 
   static final Logger LOG = LoggerFactory.getLogger(Company.class);
 
+  public Company() {}
+
   private Company(CompanyBuilder builder) {
-    this.id   = builder.id;
-    this.name = builder.name;
+    id   = builder.id;
+    name = builder.name;
   }
 
   public Company(Long id, String name) {
