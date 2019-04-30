@@ -1,13 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.excilys</groupId>
   <artifactId>computerdatabase</artifactId>
-  <packaging>war</packaging>
-  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <version>1.0-SNAPSHOT</version>
   <name>computerdatabase</name>
   <url>http://computerdatabase.com</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.version>1.0-SNAPSHOT</project.version>
+    <java.version>1.11</java.version>
+    <java.source.version>${java.version}</java.source.version>
+    <java.target.version>${java.version}</java.target.version>
     <apache-commons.version>1.6</apache-commons.version>
     <apache-lang.version>3.8.1</apache-lang.version>
     <aspectjweaver.version>1.9.3</aspectjweaver.version>
@@ -28,125 +33,171 @@
     <spring.version>5.1.6.RELEASE</spring.version>
     <tomcatdbcp.version>9.0.19</tomcatdbcp.version>
   </properties>
-  <dependencies>
-    <!-- Apache Lang commons -->
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${apache-lang.version}</version>
-    </dependency>
-    <!-- Apache Date Validator -->
-    <dependency>
-      <groupId>commons-validator</groupId>
-      <artifactId>commons-validator</artifactId>
-      <version>${apache-commons.version}</version>
-    </dependency>
-    <!-- AspectJWeaver -->
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <version>${aspectjweaver.version}</version>
-    </dependency>
-    <!-- Hibernate -->
-    <dependency>
-      <!-- <groupId>org.hibernate.orm</groupId> -->
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-hikaricp</artifactId>
-      <version>${hibernate.version}</version>
-    </dependency>
-    <!-- HikariCP -->
-    <dependency>
-      <groupId>com.zaxxer</groupId>
-      <artifactId>HikariCP</artifactId>
-      <version>${hikaricp.version}</version>
-    </dependency>
-    <!-- Javax Annotations (Required for QClasses) -->
-    <dependency>
-      <groupId>javax.annotation</groupId>
-      <artifactId>javax.annotation-api</artifactId>
-      <version>${javaxannotation.version}</version>
-    </dependency>
-    <!-- JSTL -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-      <version>${jstl.version}</version>
-    </dependency>
-    <!-- JUNIT -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- LogBack -->
-    <dependency>
-      <groupId>ch.qos.logback</groupId>
-      <artifactId>logback-classic</artifactId>
-      <version>${logback.version}</version>
-    </dependency>
-    <!-- MariaDB -->
-    <dependency>
-      <groupId>org.mariadb.jdbc</groupId>
-      <artifactId>mariadb-java-client</artifactId>
-      <version>${mariadb.version}</version>
-    </dependency>
-    <!-- Mockito -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>${mockito.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Powermock -->
-    <dependency>
-      <groupId>org.powermock</groupId>
-      <artifactId>powermock-api-mockito</artifactId>
-      <version>${powermock.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- QueryDSL -->
-    <dependency>
-      <groupId>com.querydsl</groupId>
-      <artifactId>querydsl-jpa-codegen</artifactId>
-      <version>${querydsl.version}</version>
-    </dependency>
-    <!-- https://mvnrepository.com/artifact/com.querydsl/querydsl-sql-spring -->
-    <dependency>
-      <groupId>com.querydsl</groupId>
-      <artifactId>querydsl-sql-spring</artifactId>
-      <version>4.2.1</version>
-    </dependency>
-    <!-- Servlet API -->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>${servlet.version}</version>
-    </dependency>
-    <!-- SLF4J API -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
-    <!-- Spring -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-webmvc</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <!-- Tomcat dbcp -->
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-dbcp</artifactId>
-      <version>${tomcatdbcp.version}</version>
-    </dependency>
-  </dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-binding</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-console</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-core</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-persistence</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-service</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-validation</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.excilys</groupId>
+        <artifactId>computerdatabase-webapp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <!-- Apache Lang commons -->
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${apache-lang.version}</version>
+      </dependency>
+      <!-- Apache Date Validator -->
+      <dependency>
+        <groupId>commons-validator</groupId>
+        <artifactId>commons-validator</artifactId>
+        <version>${apache-commons.version}</version>
+      </dependency>
+      <!-- AspectJWeaver -->
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>${aspectjweaver.version}</version>
+      </dependency>
+      <!-- Hibernate -->
+      <dependency>
+        <!-- <groupId>org.hibernate.orm</groupId> -->
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-hikaricp</artifactId>
+        <version>${hibernate.version}</version>
+      </dependency>
+      <!-- HikariCP -->
+      <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>${hikaricp.version}</version>
+      </dependency>
+      <!-- Javax Annotations (Required for QClasses) -->
+      <dependency>
+        <groupId>javax.annotation</groupId>
+        <artifactId>javax.annotation-api</artifactId>
+        <version>${javaxannotation.version}</version>
+      </dependency>
+      <!-- JSTL -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>${jstl.version}</version>
+      </dependency>
+      <!-- JUNIT -->
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- LogBack -->
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>${logback.version}</version>
+      </dependency>
+      <!-- MariaDB -->
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+        <version>${mariadb.version}</version>
+      </dependency>
+      <!-- Mockito -->
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-all</artifactId>
+        <version>${mockito.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- Powermock -->
+      <dependency>
+        <groupId>org.powermock</groupId>
+        <artifactId>powermock-api-mockito</artifactId>
+        <version>${powermock.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <!-- QueryDSL -->
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-jpa-codegen</artifactId>
+        <version>${querydsl.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/com.querydsl/querydsl-sql-spring -->
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-sql-spring</artifactId>
+        <version>${querydsl.version}</version>
+      </dependency>
+      <!-- Servlet API -->
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>${servlet.version}</version>
+      </dependency>
+      <!-- SLF4J API -->
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+      <!-- Spring -->
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+        <version>${spring.version}</version>
+      </dependency>
+      <!-- Tomcat dbcp -->
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-dbcp</artifactId>
+        <version>${tomcatdbcp.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <modules>
+    <module>computerdatabase-binding</module>
+    <module>computerdatabase-console</module>
+    <module>computerdatabase-core</module>
+    <module>computerdatabase-service</module>
+    <module>computerdatabase-validation</module>
+    <module>computerdatabase-persistence</module>
+    <module>computerdatabase-webapp</module>
+  </modules>
   <build>
     <finalName>computerdatabase</finalName>
     <plugins>
