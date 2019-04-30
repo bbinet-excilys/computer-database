@@ -121,7 +121,10 @@ public class ComputerCLIController {
                                    .orElse(computerDTO.getCompanyId());
 
           try {
-            computerDTO.setCompanyId(companyId);
+            companyService.read(companyId).ifPresent(companyDTO -> {
+              computerDTO.setCompanyId(companyId);
+              computerDTO.setCompanyName(companyDTO.getName());
+            });
             computerService.update(computerDTO);
           }
           catch (IllegalArgumentException e) {

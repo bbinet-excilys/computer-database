@@ -6,11 +6,9 @@
     <artifactId>computerdatabase</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
-  <groupId>com.excilys</groupId>
   <artifactId>computerdatabase-webapp</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
-  <name>computerdatabase-webapp Maven Webapp</name>
+  <name>computerdatabase-webapp</name>
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
@@ -36,6 +34,10 @@
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>jstl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
   </dependencies>
   <build>

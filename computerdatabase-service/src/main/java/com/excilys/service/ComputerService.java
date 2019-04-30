@@ -36,7 +36,7 @@ public class ComputerService {
   public void create(ComputerDTO computerDTO) {
     Computer computer = ComputerMapper.computerFromDTO(computerDTO);
     LOGGER.debug(computer.toString());
-    if (computer.getCompany().getName() != null) {
+    if (computer.getCompany() != null) {
       CompanyValidator.companyIsValid(computer.getCompany());
     }
     ComputerValidator.computerIsValid(computer);

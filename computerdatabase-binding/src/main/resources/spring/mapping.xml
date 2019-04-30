@@ -7,10 +7,8 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
   <!-- Mapping -->
-  <bean id="ComputerMapper" class="mapping.ComputerMapper">
-    <property name="companyService" ref="CompanyService"></property>
-  </bean>
-  <bean id="CompanyMapper" class="mapping.CompanyMapper" />
+  <bean id="ComputerMapper" class="com.excilys.mapping.ComputerMapper" />
+  <bean id="CompanyMapper" class="com.excilys.mapping.CompanyMapper" />
   <!-- Validation -->
-  <bean id="ComputerValidator" class="validation.ComputerValidator" />
+  <bean id="ComputerValidator" class="com.excilys.validation.ComputerValidator" />
 </beans>

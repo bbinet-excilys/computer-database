@@ -2,6 +2,8 @@ package com.excilys.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.excilys.ui.EntityToStringStyle;
+
 public class ComputerDTO {
   private Long   id;
   private String name;
@@ -9,6 +11,10 @@ public class ComputerDTO {
   private String discontinued;
   private Long   companyId;
   private String companyName;
+
+  public ComputerDTO() {
+
+  }
 
   private ComputerDTO(ComputerDTOBuilder builder) {
     id           = builder.id;
@@ -69,7 +75,7 @@ public class ComputerDTO {
 
   @Override
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    return ToStringBuilder.reflectionToString(this, new EntityToStringStyle());
   }
 
   public static ComputerDTOBuilder builder() {

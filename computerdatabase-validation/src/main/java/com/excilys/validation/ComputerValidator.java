@@ -13,11 +13,12 @@ import java.util.Optional;
 
 import org.apache.commons.validator.routines.DateValidator;
 import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
 import com.excilys.dto.ComputerDTO;
 import com.excilys.model.Computer;
 
-public class ComputerValidator implements org.springframework.validation.Validator {
+public class ComputerValidator implements Validator {
 
   private DateValidator dateValidator = DateValidator.getInstance();
   private String        DATE_PATTERN  = "yyyy-MM-dd";

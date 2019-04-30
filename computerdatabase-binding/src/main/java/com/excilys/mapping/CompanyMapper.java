@@ -8,18 +8,19 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.RowMapper;
 
 import com.excilys.dto.CompanyDTO;
 import com.excilys.dto.CompanyDTO.CompanyDTOBuilder;
 import com.excilys.model.Company;
 import com.excilys.model.Company.CompanyBuilder;
 
-public class CompanyMapper {
+public class CompanyMapper implements RowMapper<Company> {
 
   /**
    * Logger for the CompanyMapper class.
    */
-  static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
+  private static final Logger LOG = LoggerFactory.getLogger(CompanyMapper.class);
 
   public Optional<Company> map(ResultSet result) {
     Optional<Company> oCompany = Optional.empty();
@@ -72,5 +73,14 @@ public class CompanyMapper {
     cBuilder.withId(companyDTO.getId());
     cBuilder.withName(companyDTO.getName());
     return cBuilder.build();
+  }
+
+  @Override
+  public Company mapRow(ResultSet rs, int rowNum) throws SQLException {
+    rs.absolute(rowNum + 1);
+    CompanyBuilder companyBuilder = Company.builder();
+    companyBuilder.withId(rs.getLong("id"));
+    companyBuilder.withName(rs.getString("name"));
+    return companyBuilder.build();
   }
 }
