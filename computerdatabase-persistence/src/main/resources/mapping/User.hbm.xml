@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+  <class name="com.excilys.model.User" table="users">
+    <id name="username" type="java.lang.String" column="username">
+      <generator class="assigned"></generator>
+    </id>
+    <property name="password" type="java.lang.String" column="password" />
+    <property name="enabled" type="java.lang.Boolean" column="enabled" />
+    <set name="authorities" inverse="false" lazy="false" table="authorities">
+      <key>
+        <column name="username"></column>
+      </key>
+      <one-to-many class="com.excilys.model.Authority" />
+    </set>
+  </class>
+</hibernate-mapping>

@@ -1,4 +1,4 @@
-package com.excilys.model;
+package com.excilys;
 
 import java.io.File;
 import java.io.IOException;

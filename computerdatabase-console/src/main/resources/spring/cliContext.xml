@@ -8,4 +8,5 @@
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
   <import resource="classpath:spring/applicationContext.xml" />
   <import resource="classpath:spring/controller.xml" />
+  <bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 </beans>
