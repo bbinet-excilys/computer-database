@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xmlns:security="http://www.springframework.org/schema/security" xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
-        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd">
   <mvc:annotation-driven />
   <context:component-scan base-package="com.excilys.controller" />
   <mvc:resources mapping="/resources/**" location="/resources/" />
@@ -14,4 +16,16 @@
       <property name="paramName" value="lang" />
     </bean>
   </mvc:interceptors>
+  <security:http-firewall ref="defaultHttpFirewall" />
+  <security:http>
+    <security:intercept-url pattern="/computers/**" access="hasAnyRole('USER','ADMIN')" method="GET" />
+    <security:intercept-url pattern="/computers/**" access="hasRole('ADMIN')" method="POST" />
+    <security:form-login />
+    <security:logout />
+  </security:http>
+  <security:authentication-manager>
+    <security:authentication-provider ref="UserService"></security:authentication-provider>
+  </security:authentication-manager>
+  <bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+  <bean id="defaultHttpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall" />
 </beans>

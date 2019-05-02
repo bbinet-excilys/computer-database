@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:mvc="http://www.springframework.org/schema/mvc"
-    xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:p="http://www.springframework.org/schema/p"
-    xmlns:jee="http://www.springframework.org/schema/jee"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:task="http://www.springframework.org/schema/task"
-    xsi:schemaLocation="
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task" xsi:schemaLocation="
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
@@ -19,100 +10,89 @@
         http://www.springframework.org/schema/tx/spring-tx.xsd
         http://www.springframework.org/schema/aop
         http://www.springframework.org/schema/aop/spring-aop.xsd">
-    <!-- Configuration -->
-    <bean
-        class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations">
-            <list>
-                <value>classpath:/properties/hikari.properties</value>
-            </list>
-        </property>
-    </bean>
-    <!-- Datasource -->
-    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-        <property name="driverClassName"
-            value="${dataSource.driverClassName}" />
-        <property name="jdbcUrl" value="${dataSource.url}" />
-        <property name="dataSourceProperties">
-            <props>
-                <prop key="user">${dataSource.user}</prop>
-                <prop key="password">${dataSource.password}</prop>
-            </props>
-        </property>
-    </bean>
-    <bean id="dataSource"
-        class="com.zaxxer.hikari.HikariDataSource"
-        destroy-method="close">
-        <constructor-arg ref="hikariConfig" />
-    </bean>
-    <!-- SessionFactory -->
-    <bean id="sessionFactory"
-        class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="packagesToScan" value="persistence" />
-        <property name="hibernateProperties">
-            <props>
-                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
-                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
-                <prop key="show_sql">${hibernate.show_sql}</prop>
-                <prop key="format_sql">${hibernate.format_sql}</prop>
-                <prop
-                    key="hibernate.allow_update_outside_transaction">${hibernate.allow_update_outside_transaction}
-                </prop>
-                <!-- <prop key="hibernate.flushMode">FLUSH_AUTO</prop> -->
-            </props>
-        </property>
-        <property name="mappingResources">
-            <list>
-                <value>mapping/Computer.hbm.xml</value>
-                <value>mapping/Company.hbm.xml</value>
-            </list>
-        </property>
-    </bean>
-    <bean id="persistenceExceptionTranslationPostProcessor"
-        class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
-    <!-- DAOs -->
-    <bean id="ComputerDAO"
-        class="com.excilys.persistence.ComputerDAO">
-        <property name="queryFactory" ref="queryFactory" />
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    <bean id="CompanyDAO"
-        class="com.excilys.persistence.CompanyDAO">
-        <property name="queryFactory" ref="queryFactory" />
-    </bean>
-    <!-- Beans -->
-    <bean id="queryFactory"
-        class="com.querydsl.jpa.impl.JPAQueryFactory">
-        <constructor-arg>
-            <bean factory-bean="sessionFactory"
-                factory-method="createEntityManager"></bean>
-        </constructor-arg>
-    </bean>
-    <!-- TransactionManager -->
-    <bean id="transactionManager"
-        class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory" ref="sessionFactory" />
-    </bean>
-    <!-- Transaction using aop -->
-    <aop:config>
-        <aop:pointcut id="persistenceOperations"
-            expression="execution(* com.excilys.persistence.*.*(..)))" />
-        <aop:advisor pointcut-ref="persistenceOperations"
-            advice-ref="txAdvice" />
-    </aop:config>
-    <!-- Transaction behavior -->
-    <tx:advice id="txAdvice"
-        transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="list*" read-only="true" />
-            <tx:method name="read*" read-only="true" />
-            <tx:method name="find*" read-only="true" />
-            <tx:method name="search*" read-only="true" />
-            <tx:method name="delete*" read-only="false" />
-            <tx:method name="create*" read-only="false" />
-            <tx:method name="update*" read-only="false" />
-            <tx:method name="*" />
-        </tx:attributes>
-    </tx:advice>
+  <!-- Configuration -->
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>classpath:/properties/hikari.properties</value>
+      </list>
+    </property>
+  </bean>
+  <!-- Datasource -->
+  <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
+    <property name="driverClassName" value="${dataSource.driverClassName}" />
+    <property name="jdbcUrl" value="${dataSource.url}" />
+    <property name="dataSourceProperties">
+      <props>
+        <prop key="user">${dataSource.user}</prop>
+        <prop key="password">${dataSource.password}</prop>
+      </props>
+    </property>
+  </bean>
+  <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+    <constructor-arg ref="hikariConfig" />
+  </bean>
+  <!-- SessionFactory -->
+  <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="packagesToScan" value="persistence" />
+    <property name="hibernateProperties">
+      <props>
+        <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+        <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+        <prop key="show_sql">${hibernate.show_sql}</prop>
+        <prop key="format_sql">${hibernate.format_sql}</prop>
+        <prop key="hibernate.allow_update_outside_transaction">${hibernate.allow_update_outside_transaction}</prop>
+        <!-- <prop key="hibernate.flushMode">FLUSH_AUTO</prop> -->
+      </props>
+    </property>
+    <property name="mappingResources">
+      <list>
+        <value>mapping/Computer.hbm.xml</value>
+        <value>mapping/Company.hbm.xml</value>
+        <value>mapping/User.hbm.xml</value>
+        <value>mapping/Authority.hbm.xml</value>
+      </list>
+    </property>
+  </bean>
+  <bean id="persistenceExceptionTranslationPostProcessor" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+  <!-- DAOs -->
+  <bean id="ComputerDAO" class="com.excilys.persistence.ComputerDAO">
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+  <bean id="CompanyDAO" class="com.excilys.persistence.CompanyDAO">
+    <property name="queryFactory" ref="queryFactory" />
+  </bean>
+  <bean id="UserDAO" class="com.excilys.persistence.UserDAO">
+    <property name="queryFactory" ref="queryFactory" />
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+  <bean id="queryFactory" class="com.querydsl.jpa.impl.JPAQueryFactory">
+    <constructor-arg>
+      <bean factory-bean="sessionFactory" factory-method="createEntityManager"></bean>
+    </constructor-arg>
+  </bean>
+  <!-- TransactionManager -->
+  <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+  <!-- Transaction using aop -->
+  <aop:config>
+    <aop:pointcut id="persistenceOperations" expression="execution(* com.excilys.persistence.*.*(..)))" />
+    <aop:advisor pointcut-ref="persistenceOperations" advice-ref="txAdvice" />
+  </aop:config>
+  <!-- Transaction behavior -->
+  <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    <tx:attributes>
+      <tx:method name="list*" read-only="true" />
+      <tx:method name="read*" read-only="true" />
+      <tx:method name="find*" read-only="true" />
+      <tx:method name="search*" read-only="true" />
+      <tx:method name="delete*" read-only="false" />
+      <tx:method name="create*" read-only="false" />
+      <tx:method name="update*" read-only="false" />
+      <tx:method name="*" />
+    </tx:attributes>
+  </tx:advice>
 </beans>

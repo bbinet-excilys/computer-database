@@ -9,15 +9,17 @@ tmp/
 *~.nib
 *.log
 *.properties
-.settings/
+*/.settings/
 .loadpath
 .recommenders
+*.class
 .*
 *.launch
-build/
-doc/
+*/build/
+*/doc/
 WebContent/WEB-INF/lib/
-target/*
+*/target/
+target/
 .vscode*
 # Code Recommenders
 .recommenders/
@@ -27,7 +29,7 @@ target/*
 
 ### Eclipse Patch ###
 # Eclipse Core
-.project
+*/.project
 
 # JDT-specific (Eclipse Java Development Tools)
-.classpath
+*/.classpath
