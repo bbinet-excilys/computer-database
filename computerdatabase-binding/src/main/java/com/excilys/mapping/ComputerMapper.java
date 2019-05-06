@@ -18,13 +18,15 @@ import com.excilys.model.Company;
 import com.excilys.model.Company.CompanyBuilder;
 import com.excilys.model.Computer;
 import com.excilys.model.Computer.ComputerBuilder;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ComputerMapper implements RowMapper<Computer> {
 
   /**
    * Logger for the ComputerMapper Factory.
    */
-  static final Logger LOG = LoggerFactory.getLogger(ComputerMapper.class);
+  static final Logger LOGGER = LoggerFactory.getLogger(ComputerMapper.class);
 
   public static ComputerDTO computerToDTO(Computer computer) {
     ComputerDTOBuilder cDTOBuilder = ComputerDTO.builder();
@@ -89,4 +91,16 @@ public class ComputerMapper implements RowMapper<Computer> {
     computerBuilder.withCompany(rCompany);
     return computerBuilder.build();
   }
+
+  public static String objectToJson(Object object) {
+    ObjectMapper mapper = new ObjectMapper();
+    try {
+      return mapper.writeValueAsString(object);
+    }
+    catch (JsonProcessingException e) {
+      LOGGER.debug("Couldn't create JSON from " + object + " :" + e.getMessage());
+    }
+    return "";
+  }
+
 }
