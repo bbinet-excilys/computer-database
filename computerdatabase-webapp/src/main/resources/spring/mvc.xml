@@ -18,8 +18,10 @@
   </mvc:interceptors>
   <security:http-firewall ref="defaultHttpFirewall" />
   <security:http>
-    <security:intercept-url pattern="/computers/**" access="hasAnyRole('USER','ADMIN')" method="GET" />
-    <security:intercept-url pattern="/computers/**" access="hasRole('ADMIN')" method="POST" />
+    <security:intercept-url pattern="**/computers/**" access="hasAnyRole('USER','ADMIN')" method="GET" />
+    <security:intercept-url pattern="**/computers/**" access="hasRole('ADMIN')" method="POST" />
+    <security:intercept-url pattern="**/computers/**" access="hasRole('ADMIN')" method="DELETE" />
+    <security:intercept-url pattern="**/computers/**" access="hasRole('ADMIN')" method="PATCH" />
     <security:form-login />
     <security:logout />
   </security:http>
