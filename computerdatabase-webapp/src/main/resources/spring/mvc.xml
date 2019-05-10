@@ -17,15 +17,25 @@
     </bean>
   </mvc:interceptors>
   <security:http-firewall ref="defaultHttpFirewall" />
-  <security:http>
+  <security:http create-session="stateless">
+    <security:http-basic entry-point-ref="EntryPointJWT" />
     <security:intercept-url pattern="/computers/**" access="hasAnyRole('USER','ADMIN')" method="GET" />
     <security:intercept-url pattern="/computers/**" access="hasRole('ADMIN')" method="POST" />
-    <security:form-login />
+    <security:custom-filter ref="authenticationTokenFilterJwt" before="BASIC_AUTH_FILTER" />
+    <security:form-login login-processing-url="/auth" authentication-success-forward-url="/auth"/>
+    <security:csrf disabled="true"/>
     <security:logout />
   </security:http>
-  <security:authentication-manager>
-    <security:authentication-provider ref="UserService"></security:authentication-provider>
+  <security:authentication-manager alias="authenticationManager">
+    <security:authentication-provider ref="userService">
+    </security:authentication-provider>
   </security:authentication-manager>
   <bean id="bcryptEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
   <bean id="defaultHttpFirewall" class="org.springframework.security.web.firewall.DefaultHttpFirewall" />
+  <bean id="authenticationTokenFilterJwt" class="com.excilys.jwt.AuthenticationTokenFilterJwt">
+    <property name="userService" ref="userService"></property>
+    <property name="jwtUtils" ref="jwtUtils"></property>
+  </bean>
+  <bean id="EntryPointJWT" class="com.excilys.jwt.EntryPointJWT"></bean>
+  <bean id="jwtUtils" class="com.excilys.jwt.JWTUtils"></bean>
 </beans>

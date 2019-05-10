@@ -122,6 +122,11 @@
         <version>${junit.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
       <!-- LogBack -->
       <dependency>
         <groupId>ch.qos.logback</groupId>

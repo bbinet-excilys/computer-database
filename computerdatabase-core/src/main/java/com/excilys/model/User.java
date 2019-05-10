@@ -1,19 +1,32 @@
 package com.excilys.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
-public class User {
-  private String         username;
-  private String         password;
-  private Boolean        enabled;
-  private Set<Authority> authorities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+public class User implements UserDetails {
+
+  private static Logger LOGGER = LoggerFactory.getLogger(User.class);
+
+  private String          username;
+  private String          password;
+  private Boolean         enabled;
+  private List<Authority> authorities;
+  private String          token;
 
   private User(UserBuilder builder) {
     username    = builder.username;
     password    = builder.password;
     enabled     = builder.enabled;
     authorities = builder.authorities;
+    token       = builder.token;
   }
 
   public User(String username, String password, Boolean enabled) {
@@ -28,6 +41,7 @@ public class User {
   /**
    * @return the username
    */
+  @Override
   public String getUsername() {
     return username;
   }
@@ -43,6 +57,7 @@ public class User {
   /**
    * @return the password
    */
+  @Override
   public String getPassword() {
     return password;
   }
@@ -56,13 +71,6 @@ public class User {
   }
 
   /**
-   * @return the enabled
-   */
-  public Boolean getEnabled() {
-    return enabled;
-  }
-
-  /**
    * @param enabled
    *                the enabled value to set
    */
@@ -71,18 +79,25 @@ public class User {
   }
 
   /**
-   * @return the authorities
-   */
-  public Set<Authority> getAuthorities() {
-    return authorities;
-  }
-
-  /**
    * @param authorities
    *                    the authorities set
    */
-  public void setAuthorities(Set<Authority> authorities) {
-    this.authorities = authorities;
+  public void setAuthorities(Collection<Authority> authorities) {
+    this.authorities = List.copyOf(authorities);
+    LOGGER.warn(this.authorities.toString());
+  }
+
+  public String getToken() {
+    return token;
+  }
+
+  public void setToken(String token) {
+    this.token = token;
+  }
+
+  @Override
+  public String toString() {
+    return "Name :" + username + " Password:" + password;
   }
 
   public static UserBuilder builder() {
@@ -90,10 +105,11 @@ public class User {
   }
 
   public static final class UserBuilder {
-    private String         username;
-    private String         password;
-    private Boolean        enabled;
-    private Set<Authority> authorities = Collections.emptySet();
+    private String          username;
+    private String          password;
+    private Boolean         enabled;
+    private List<Authority> authorities = Collections.emptyList();
+    private String          token;
 
     private UserBuilder() {}
 
@@ -112,13 +128,50 @@ public class User {
       return this;
     }
 
-    public UserBuilder withAuthorities(Set<Authority> authorities) {
+    public UserBuilder withAuthorities(List<Authority> authorities) {
       this.authorities = authorities;
+      return this;
+    }
+
+    public UserBuilder withToken(String token) {
+      this.token = token;
       return this;
     }
 
     public User build() {
       return new User(this);
     }
+  }
+
+  @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    List<SimpleGrantedAuthority> grantedAuthorities = new ArrayList<>();
+    grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+    if (authorities.stream()
+                   .anyMatch(authority -> authority.getAuthority()
+                                                   .equals(AuthorityName.ROLE_ADMIN))) {
+      grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+    }
+    return grantedAuthorities;
   }
 }

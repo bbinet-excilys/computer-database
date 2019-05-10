@@ -13,7 +13,7 @@
     <property name="companyDAO" ref="CompanyDAO" />
     <property name="computerService" ref="ComputerService" />
   </bean>
-  <bean id="UserService" class="com.excilys.service.UserService">
+  <bean id="userService" class="com.excilys.service.UserService">
     <property name="userDAO" ref="UserDAO" />
   </bean>
 </beans>

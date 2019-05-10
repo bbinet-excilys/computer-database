@@ -1,9 +1,9 @@
 package com.excilys.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +12,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.excilys.model.Authority;
 import com.excilys.model.User;
 import com.excilys.persistence.UserDAO;
 
@@ -38,8 +37,8 @@ public class UserService implements AuthenticationProvider {
     String         password = authentication.getCredentials().toString();
     Optional<User> optional = userDAO.read(authentication.getName());
     if (optional.isPresent()) {
-      Set<Authority>         setAuthorities = optional.get().getAuthorities();
-      List<GrantedAuthority> authorities    = new ArrayList();
+      Collection<? extends GrantedAuthority> setAuthorities = optional.get().getAuthorities();
+      List<GrantedAuthority>                 authorities    = new ArrayList();
       setAuthorities.stream().forEach(authority -> authorities.add(new SimpleGrantedAuthority(authority.getAuthority())));
       return new UsernamePasswordAuthenticationToken(name, password, authorities);
     }

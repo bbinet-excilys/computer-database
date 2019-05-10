@@ -7,6 +7,8 @@
 <jsp:include page="basepage.jsp" />
 <div class="uk-container uk-container-center uk-margin-large-bottom">
 
+<c:out value="${token}"></c:out>
+
   <div class="uk-grid">
     <div class="uk-width-1-1">
       <h1>
